@@ -1,0 +1,13 @@
+name: single_call
+description: "Single-call strategy — one LLM call for both plain_english and legal_language"
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 6
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+generation:
+  strategy: single
+  model: claude-haiku-4-5-20251001

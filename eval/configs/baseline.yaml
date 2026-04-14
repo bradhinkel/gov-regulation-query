@@ -1,0 +1,13 @@
+name: baseline
+description: "Baseline config — sequential strategy, top_k=6, federal_regulations corpus"
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 6
+  source_id_filter: null      # null = search all titles
+  title_number: null          # null = search all titles
+  corpus_type: cfr
+
+generation:
+  strategy: sequential        # "single" or "sequential"
+  model: claude-haiku-4-5-20251001

@@ -1,0 +1,24 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Environment
+.env
+.env.local
+!.env.example
+
+# Frontend
+frontend/.next/
+frontend/node_modules/
+
+# Eval data and results (generated, not source-controlled)
+eval/data/eval_dataset.json
+eval/results/*.json
+
+# Editor
+.vscode/
+.idea/
+*.swp
