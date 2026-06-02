@@ -19,12 +19,21 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.query import retrieve
-from src.generate import generate
+from src.generate import generate, classify_intent
 
 # Defaults driven by eval results (Phase 4 winner: top_k=10, sequential Haiku)
 _DEFAULT_SOURCE_SYSTEM = os.getenv("RAG_SOURCE_SYSTEM", "federal_regulations")
 _DEFAULT_TOP_K = int(os.getenv("RAG_TOP_K", "10"))
 _DEFAULT_STRATEGY = os.getenv("LLM_CALL_STRATEGY", "sequential")
+
+
+async def run_classify(query: str) -> bool:
+    """
+    Phase 8.5 intent gate. Returns True if the query is regulatory, False if
+    off-topic. Runs the synchronous Haiku classifier in a thread pool.
+    """
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, lambda: classify_intent(query))
 
 
 async def run_retrieve(

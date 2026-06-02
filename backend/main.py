@@ -10,6 +10,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 load_dotenv()
 
@@ -18,12 +20,18 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from backend.routes import query, sources
 from backend.services import db_service
+from backend.rate_limit import limiter
 
 app = FastAPI(
     title="Federal Regulation RAG API",
     description="RAG-powered federal regulatory query engine with plain English and legal language outputs",
     version="1.0.0",
 )
+
+# Phase 8.5: per-IP rate limiting. The limiter is attached per-route in
+# routes/query.py; here we register state + the 429 handler (sets Retry-After).
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,

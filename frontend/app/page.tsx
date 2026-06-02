@@ -9,7 +9,14 @@ import { Citation } from "./components/CitationList";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
 
-type Status = "idle" | "retrieving" | "generating" | "done" | "error";
+type Status =
+  | "idle"
+  | "classifying"
+  | "retrieving"
+  | "generating"
+  | "done"
+  | "off_topic"
+  | "error";
 
 interface Confidence {
   score: number;
@@ -43,6 +50,7 @@ interface SourceTitle {
 export default function Home() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string>();
+  const [offTopic, setOffTopic] = useState<string>();
   const [result, setResult] = useState<QueryResult | null>(null);
   const [sources, setSources] = useState<SourceTitle[]>([]);
 
@@ -57,8 +65,9 @@ export default function Home() {
     query: string,
     options: { titleNumber?: number; strategy?: string }
   ) => {
-    setStatus("retrieving");
+    setStatus("classifying");
     setError(undefined);
+    setOffTopic(undefined);
     setResult(null);
 
     try {
@@ -95,10 +104,13 @@ export default function Home() {
           } else if (line.startsWith("data: ")) {
             const data = JSON.parse(line.slice(6));
             if (currentEvent === "status") {
-              setStatus(data.status === "generating" ? "generating" : "retrieving");
+              setStatus(data.status as Status);
             } else if (currentEvent === "result") {
               setResult(data);
               setStatus("done");
+            } else if (currentEvent === "off_topic") {
+              setOffTopic(data.message);
+              setStatus("off_topic");
             } else if (currentEvent === "error") {
               setError(data.error);
               setStatus("error");
@@ -139,11 +151,15 @@ export default function Home() {
 
       <QueryForm
         onSubmit={handleQuery}
-        isLoading={status === "retrieving" || status === "generating"}
+        isLoading={
+          status === "classifying" ||
+          status === "retrieving" ||
+          status === "generating"
+        }
         sources={sources}
       />
 
-      <StatusBanner status={status} error={error} />
+      <StatusBanner status={status} error={error} offTopic={offTopic} />
 
       {result && status === "done" && (
         <div className="space-y-2">

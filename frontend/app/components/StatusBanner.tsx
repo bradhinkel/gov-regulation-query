@@ -1,13 +1,21 @@
 "use client";
 
-type Status = "idle" | "retrieving" | "generating" | "done" | "error";
+type Status =
+  | "idle"
+  | "classifying"
+  | "retrieving"
+  | "generating"
+  | "done"
+  | "off_topic"
+  | "error";
 
 interface StatusBannerProps {
   status: Status;
   error?: string;
+  offTopic?: string;
 }
 
-export default function StatusBanner({ status, error }: StatusBannerProps) {
+export default function StatusBanner({ status, error, offTopic }: StatusBannerProps) {
   if (status === "idle" || status === "done") return null;
 
   if (status === "error") {
@@ -18,7 +26,17 @@ export default function StatusBanner({ status, error }: StatusBannerProps) {
     );
   }
 
+  if (status === "off_topic") {
+    return (
+      <div className="rounded-lg border border-amber-800 bg-amber-950/30 px-4 py-3 text-sm text-amber-300">
+        {offTopic ||
+          "This system answers questions about U.S. federal regulations. Please rephrase your question as a regulatory inquiry."}
+      </div>
+    );
+  }
+
   const messages: Record<string, string> = {
+    classifying: "Checking your question…",
     retrieving: "Searching the Code of Federal Regulations…",
     generating: "Generating plain English and legal language responses…",
   };

@@ -24,3 +24,6 @@ lxml==5.3.0
 rich==13.8.1
 pyyaml==6.0.2
 numpy==1.26.4
+
+# Security (Phase 8.5) — in-memory per-IP rate limiting
+slowapi==0.1.9

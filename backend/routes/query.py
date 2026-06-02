@@ -2,18 +2,23 @@
 backend/routes/query.py — POST /query and GET /history endpoints.
 
 POST /query returns Server-Sent Events:
-  event: status   — {"status": "retrieving"} | {"status": "generating"}
-  event: result   — full QueryResponse JSON
-  event: error    — {"error": "message"}
+  event: status     — {"status": "classifying"|"retrieving"|"generating"}
+  event: off_topic  — {"tier": "off_topic", "message": "..."}   (Phase 8.5 gate)
+  event: result     — full QueryResponse JSON
+  event: error      — {"error": "message"}
 
 Status events fire at the correct point in the pipeline:
-  "retrieving" → before vector search
-  "generating" → after retrieval, before LLM call
+  "classifying" → before anything (intent gate)
+  "retrieving"  → before vector search
+  "generating"  → after retrieval, before LLM call
+
+Phase 8.5 security layers wrap this path: input validation + rate limiting on
+the endpoint, the intent gate below, and output validation before the result.
 """
 
 import json
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import StreamingResponse
 from typing import AsyncIterator
 
@@ -21,8 +26,15 @@ from backend.models.schemas import (
     QueryRequest, QueryResponse, QueryHistoryResponse, CitationOut, ConfidenceOut
 )
 from backend.services import rag_service, db_service
+from backend.rate_limit import limiter, QUERY_RATE_LIMITS
+from backend.security import validate_query, check_output, QueryValidationError
 
 router = APIRouter()
+
+_OFF_TOPIC_MESSAGE = (
+    "This system answers questions about U.S. federal regulations. "
+    "Please rephrase your question as a regulatory inquiry."
+)
 
 
 async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
@@ -32,6 +44,14 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
         return f"event: {event}\ndata: {json.dumps(data)}\n\n"
 
     try:
+        # Step 0: Intent gate (Phase 8.5) — reject off-topic before spending
+        # tokens on retrieval or generation.
+        yield sse("status", {"status": "classifying"})
+        is_regulatory = await rag_service.run_classify(request.query)
+        if not is_regulatory:
+            yield sse("off_topic", {"tier": "off_topic", "message": _OFF_TOPIC_MESSAGE})
+            return
+
         # Step 1: Retrieve
         yield sse("status", {"status": "retrieving", "query": request.query})
 
@@ -54,6 +74,21 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
             timing=timing,
             strategy=request.strategy,
         )
+
+        # Step 2.5: Output content validation (Phase 8.5). Reject answers that
+        # smuggle code/script; downgrade confidence for non-official URLs.
+        if not result["not_found"]:
+            verdict = check_output(
+                f"{result['plain_english']}\n{result['legal_language']}"
+            )
+            if verdict["reject"]:
+                yield sse("error", {
+                    "error": "The generated response failed a content safety check "
+                             "and was withheld. Please rephrase your question.",
+                })
+                return
+            if verdict["downgrade"] and result.get("confidence"):
+                result["confidence"]["tier"] = "low"
 
         # Persist to DB
         saved = await db_service.save_query(
@@ -96,13 +131,22 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
 
 
 @router.post("/query")
-async def query_endpoint(request: QueryRequest):
+@limiter.limit(QUERY_RATE_LIMITS)
+async def query_endpoint(request: Request, payload: QueryRequest):
     """
     Submit a regulatory query. Returns Server-Sent Events stream.
-    Events: status(retrieving) → status(generating) → result (or error)
+    Events: status(classifying→retrieving→generating) → result | off_topic | error
+
+    Phase 8.5: input is validated (HTTP 400) and rate limited (HTTP 429) before
+    the stream opens. `request: Request` is required by the slowapi limiter.
     """
+    try:
+        payload.query = validate_query(payload.query)
+    except QueryValidationError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
     return StreamingResponse(
-        _sse_stream(request),
+        _sse_stream(payload),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
