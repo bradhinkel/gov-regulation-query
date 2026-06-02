@@ -1,9 +1,9 @@
 name: baseline
-description: "Baseline config — sequential strategy, top_k=6, federal_regulations corpus"
+description: "Production config — sequential strategy, top_k=10 (Phase 4 eval winner)"
 
 retrieval:
   source_system: federal_regulations
-  top_k: 6
+  top_k: 10
   source_id_filter: null      # null = search all titles
   title_number: null          # null = search all titles
   corpus_type: cfr

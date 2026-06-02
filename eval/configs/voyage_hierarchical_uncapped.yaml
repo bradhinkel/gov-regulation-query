@@ -1,0 +1,19 @@
+name: voyage_hierarchical_uncapped
+description: "Hierarchical retrieval with no per-section character cap. Full sections passed to LLM. Tests theoretical ceiling if truncation is removed entirely. May hit token limits on long sections."
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 25
+  search_mode: hierarchical
+  max_sections: 4          # fewer sections to control total context size
+  max_chars_per_section: 99999  # effectively uncapped
+  query_rewrite: false
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+eval_top_k: 4
+
+generation:
+  strategy: sequential
+  model: claude-haiku-4-5-20251001

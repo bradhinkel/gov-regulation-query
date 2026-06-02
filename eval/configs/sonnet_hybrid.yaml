@@ -1,0 +1,14 @@
+name: sonnet_hybrid
+description: "Sonnet generation + hybrid retrieval (vector + FTS via RRF), top_k=10 — Phase 4 quick-win configuration"
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 10
+  search_mode: hybrid
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+generation:
+  strategy: sequential
+  model: claude-sonnet-4-6

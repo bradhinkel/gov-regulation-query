@@ -10,8 +10,9 @@ class QueryRequest(BaseModel):
     source_id: Optional[str] = None       # Filter by source slug (e.g. "cfr_title_7")
     corpus_type: Optional[str] = None     # Filter by type (e.g. "cfr")
     source_system: Optional[str] = None   # Override corpus (default: federal_regulations)
-    top_k: Optional[int] = None           # None → use RAG_TOP_K from env (default 6)
+    top_k: Optional[int] = None           # None → use RAG_TOP_K from env (default 10)
     strategy: Optional[str] = None        # Override LLM_CALL_STRATEGY ("single" | "sequential")
+    use_hyde: bool = False                 # HyDE query expansion (experimental)
 
 
 class CitationOut(BaseModel):
@@ -25,6 +26,15 @@ class CitationOut(BaseModel):
     citation_string: Optional[str] = None
 
 
+class ConfidenceOut(BaseModel):
+    score: float
+    tier: str                              # "high" | "medium" | "low" | "not_found"
+    retrieval_score: float
+    citation_coverage: float
+    verified_citations: list[str] = []
+    unverified_citations: list[str] = []
+
+
 class QueryResponse(BaseModel):
     id: str
     query: str
@@ -34,6 +44,7 @@ class QueryResponse(BaseModel):
     not_found: bool
     strategy_used: str
     latency_ms: int
+    confidence: Optional[ConfidenceOut] = None
     created_at: str
 
 

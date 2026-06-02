@@ -1,0 +1,14 @@
+name: sonnet_vector
+description: "Sonnet generation + vector retrieval, top_k=10 — isolates model improvement over Haiku baseline"
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 10
+  search_mode: vector
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+generation:
+  strategy: sequential
+  model: claude-sonnet-4-6

@@ -1,0 +1,19 @@
+name: voyage_top_k25_hierarchical
+description: "voyage-law-2 paragraph retrieval (top_k=25) + hierarchical section assembly, max 6 sections at 4000 chars each"
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 25          # paragraph chunks retrieved; deduplicates to max 6 sections
+  search_mode: hierarchical
+  query_rewrite: false
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+# eval_top_k controls the k in NDCG@k / Precision@k — set to 6 to match the
+# actual number of assembled sections returned, giving a fair comparison to top_k10.
+eval_top_k: 6
+
+generation:
+  strategy: sequential
+  model: claude-haiku-4-5-20251001

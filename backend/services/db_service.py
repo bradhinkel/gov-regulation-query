@@ -10,6 +10,8 @@ Table: queries
   citations       JSONB
   llm_strategy    TEXT
   latency_ms      INTEGER
+  not_found       BOOLEAN
+  confidence      JSONB
   created_at      TIMESTAMPTZ
 """
 
@@ -51,6 +53,8 @@ async def save_query(
     llm_strategy: str,
     latency_ms: int,
     source_system: str = "federal_regulations",
+    not_found: bool = False,
+    confidence: Optional[dict] = None,
 ) -> dict:
     pool = await get_pool()
     item_id = str(uuid.uuid4())
@@ -61,11 +65,12 @@ async def save_query(
             """
             INSERT INTO queries
                 (id, query_text, source_system, plain_english, legal_language,
-                 citations, llm_strategy, latency_ms, created_at)
-            VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8, $9)
+                 citations, llm_strategy, latency_ms, not_found, confidence, created_at)
+            VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8, $9, $10::jsonb, $11)
             """,
             item_id, query_text, source_system, plain_english, legal_language,
-            json.dumps(citations), llm_strategy, latency_ms, now,
+            json.dumps(citations), llm_strategy, latency_ms,
+            not_found, json.dumps(confidence) if confidence else None, now,
         )
 
     return {
@@ -76,6 +81,8 @@ async def save_query(
         "citations": citations,
         "llm_strategy": llm_strategy,
         "latency_ms": latency_ms,
+        "not_found": not_found,
+        "confidence": confidence,
         "created_at": now.isoformat(),
     }
 
@@ -92,7 +99,7 @@ async def get_queries(
         rows = await conn.fetch(
             """
             SELECT id, query_text, plain_english, legal_language, citations,
-                   llm_strategy, latency_ms, created_at
+                   llm_strategy, latency_ms, not_found, confidence, created_at
             FROM queries
             WHERE source_system = $1
             ORDER BY created_at DESC
@@ -117,6 +124,12 @@ async def get_queries(
             ),
             "llm_strategy": r["llm_strategy"],
             "latency_ms": r["latency_ms"],
+            "not_found": r["not_found"] or False,
+            "confidence": (
+                json.loads(r["confidence"])
+                if isinstance(r["confidence"], str)
+                else (dict(r["confidence"]) if r["confidence"] else None)
+            ),
             "created_at": r["created_at"].isoformat(),
         }
         for r in rows

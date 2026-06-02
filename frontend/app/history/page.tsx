@@ -5,6 +5,11 @@ import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
 
+interface Confidence {
+  score: number;
+  tier: string;
+}
+
 interface HistoryItem {
   id: string;
   query: string;
@@ -14,8 +19,16 @@ interface HistoryItem {
   not_found: boolean;
   strategy_used: string;
   latency_ms: number;
+  confidence: Confidence | null;
   created_at: string;
 }
+
+const TIER_COLORS: Record<string, string> = {
+  high:      "text-green-400",
+  medium:    "text-yellow-400",
+  low:       "text-red-400",
+  not_found: "text-gray-500",
+};
 
 export default function HistoryPage() {
   const [items, setItems] = useState<HistoryItem[]>([]);
@@ -67,7 +80,7 @@ export default function HistoryPage() {
               &ldquo;{item.query}&rdquo;
             </p>
             {item.not_found ? (
-              <p className="text-xs text-[var(--muted)] italic">Not found</p>
+              <p className="text-xs text-[var(--muted)] italic">Not found in indexed regulations</p>
             ) : (
               <p className="text-xs text-[var(--foreground)] line-clamp-3 leading-relaxed">
                 {item.plain_english}
@@ -77,6 +90,11 @@ export default function HistoryPage() {
               <span>{new Date(item.created_at).toLocaleString()}</span>
               <span>{item.citations.length} citation{item.citations.length !== 1 ? "s" : ""}</span>
               <span>{item.latency_ms}ms</span>
+              {item.confidence && !item.not_found && (
+                <span className={TIER_COLORS[item.confidence.tier] ?? "text-gray-400"}>
+                  {item.confidence.tier} · {Math.round(item.confidence.score * 100)}%
+                </span>
+              )}
             </div>
           </div>
         ))}

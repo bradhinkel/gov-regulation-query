@@ -1,5 +1,9 @@
 """
 backend/services/rag_service.py — Orchestrates retrieve → generate for regulatory queries.
+
+Exposes two async steps so the SSE stream can emit status events between them:
+  run_retrieve()  — vector search, returns (chunks, timing)
+  run_generate()  — LLM generation, returns structured result dict
 """
 
 import asyncio
@@ -17,32 +21,29 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from src.query import retrieve
 from src.generate import generate
 
-# Defaults driven by eval results — override via .env
+# Defaults driven by eval results (Phase 4 winner: top_k=10, sequential Haiku)
 _DEFAULT_SOURCE_SYSTEM = os.getenv("RAG_SOURCE_SYSTEM", "federal_regulations")
-_DEFAULT_TOP_K = int(os.getenv("RAG_TOP_K", "6"))
+_DEFAULT_TOP_K = int(os.getenv("RAG_TOP_K", "10"))
 _DEFAULT_STRATEGY = os.getenv("LLM_CALL_STRATEGY", "sequential")
 
 
-async def run_query(
+async def run_retrieve(
     query: str,
     top_k: int | None = None,
     title_number: int | None = None,
     source_id: str | None = None,
     corpus_type: str | None = None,
-    strategy: str | None = None,
     source_system: str | None = None,
-) -> dict:
+    use_hyde: bool = False,
+) -> tuple[list, dict]:
     """
-    Full RAG pipeline: retrieve → generate → return structured result.
-    Runs synchronous operations in a thread pool.
+    Run the retrieval step only. Returns (chunks, timing).
+    Runs synchronous pgvector query in a thread pool.
     """
     resolved_top_k = top_k if top_k is not None else _DEFAULT_TOP_K
-    resolved_strategy = strategy or _DEFAULT_STRATEGY
     resolved_source_system = source_system or _DEFAULT_SOURCE_SYSTEM
 
     loop = asyncio.get_event_loop()
-
-    # Retrieve (synchronous pgvector query)
     chunks, timing = await loop.run_in_executor(
         None,
         lambda: retrieve(
@@ -52,16 +53,33 @@ async def run_query(
             title_number=title_number,
             source_id=source_id,
             corpus_type=corpus_type,
+            use_hyde=use_hyde,
         ),
     )
+    return chunks, timing
 
-    # Generate (synchronous Anthropic call)
+
+async def run_generate(
+    query: str,
+    chunks: list,
+    timing: dict,
+    strategy: str | None = None,
+) -> dict:
+    """
+    Run the generation step only. Returns structured result dict.
+    Runs synchronous Anthropic call in a thread pool.
+    """
+    resolved_strategy = strategy or _DEFAULT_STRATEGY
+
+    loop = asyncio.get_event_loop()
     gen_result = await loop.run_in_executor(
         None,
         lambda: generate(query, chunks, strategy=resolved_strategy),
     )
 
     qr = gen_result.response
+    conf = gen_result.confidence
+
     return {
         "plain_english": qr.plain_english,
         "legal_language": qr.legal_language,
@@ -72,4 +90,12 @@ async def run_query(
         "input_tokens": gen_result.input_tokens,
         "output_tokens": gen_result.output_tokens,
         "timing": timing,
+        "confidence": {
+            "score": conf.score,
+            "tier": conf.tier,
+            "retrieval_score": conf.retrieval_score,
+            "citation_coverage": conf.citation_coverage,
+            "verified_citations": conf.verified_citations,
+            "unverified_citations": conf.unverified_citations,
+        } if conf else None,
     }

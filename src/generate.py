@@ -17,8 +17,9 @@ ENABLE_VERBATIM_QUOTES=true for this project — federal regulations are public 
 
 import json
 import os
+import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import anthropic
 from dotenv import load_dotenv
@@ -61,11 +62,144 @@ class QueryResponse(BaseModel):
 
 
 @dataclass
+class ConfidenceResult:
+    """
+    Inference-time answer quality signal — computed without a judge LLM call.
+
+    Two components:
+      retrieval_score   — avg cosine similarity of top-3 retrieved chunks.
+                          High value means semantically relevant content was found.
+      citation_coverage — fraction of CFR section references in the generated text
+                          that were actually present in the retrieved context.
+                          Low value means the LLM cited sections it didn't retrieve
+                          (hallucination risk or training-memory recall).
+
+    composite score = 0.35 * retrieval_score + 0.65 * citation_coverage
+
+    Tiers:
+      high      ≥ 0.75  — strong retrieval + grounded citations; answer is reliable
+      medium    0.50–0.74 — moderate signal; useful but verify for high-stakes decisions
+      low       < 0.50  — weak retrieval or ungrounded citations; treat with caution
+      not_found          — system found no relevant content; explicit coverage gap
+    """
+    score: float                              # composite 0.0–1.0
+    tier: str                                 # "high" | "medium" | "low" | "not_found"
+    retrieval_score: float                    # avg top-3 cosine similarity
+    citation_coverage: float                  # fraction of cited sections verified
+    verified_citations: list[str] = field(default_factory=list)    # refs grounded in retrieved context
+    unverified_citations: list[str] = field(default_factory=list)  # refs not in retrieved context
+
+
+@dataclass
 class GenerationResult:
     response: QueryResponse
     input_tokens: int
     output_tokens: int
     latency_ms: float
+    confidence: ConfidenceResult | None = None
+
+
+# ---------------------------------------------------------------------------
+# Citation verification & confidence scoring
+# ---------------------------------------------------------------------------
+
+# Matches CFR section refs in generated text:
+#   "7 CFR § 205.301"  "21 CFR §507.42"  "§ 205.301"  "§205.301-1"
+_CFR_REF_RE = re.compile(
+    r'(?:(\d{1,2})\s+CFR\s+)?'        # optional title number
+    r'§\s*'                             # section sign (with optional space)
+    r'([\d]+\.[\d]+(?:-[\d]+)?)',       # section number like 205.301 or 205.301-1
+    re.IGNORECASE,
+)
+
+
+def _extract_cited_refs(text: str) -> set[str]:
+    """Extract normalized base CFR section refs from generated text.
+
+    Sub-paragraph notation like (a)(1)(i) is stripped because retrieved chunk
+    metadata stores only section-level references.
+    """
+    refs: set[str] = set()
+    for m in _CFR_REF_RE.finditer(text):
+        title = m.group(1)
+        section = m.group(2)
+        refs.add(f"{title} cfr § {section}".lower() if title else f"§ {section}".lower())
+    return refs
+
+
+def compute_confidence(response: QueryResponse, chunks: list) -> ConfidenceResult:
+    """
+    Compute an inference-time confidence score without a judge LLM call.
+
+    Algorithm:
+      1. If not_found → score=0, tier="not_found"
+      2. retrieval_score = avg cosine similarity of top-3 chunks
+      3. Extract every CFR § reference mentioned in plain_english + legal_language
+      4. citation_coverage = fraction of those refs present in the retrieved chunk set
+      5. composite = 0.35 * retrieval_score + 0.65 * citation_coverage
+      6. Assign tier based on composite thresholds
+
+    Why citation_coverage dominates (0.65 weight):
+      An answer that cites sections not in the retrieved context is either drawing
+      on model memory (hallucination risk) or quoting cross-references verbatim from
+      the regulatory text. Either way, the claim is unverifiable from the retrieved
+      evidence alone — which is what the user needs to know.
+    """
+    if response.not_found or not chunks:
+        return ConfidenceResult(
+            score=0.0, tier="not_found",
+            retrieval_score=0.0, citation_coverage=0.0,
+        )
+
+    # Retrieval signal: avg similarity of top-3 chunks (or all if fewer)
+    top_scores = [getattr(c, "similarity", 0.0) for c in chunks[:3]]
+    retrieval_score = sum(top_scores) / len(top_scores) if top_scores else 0.0
+
+    # Build a lookup of all retrieved section refs (normalized to lowercase)
+    retrieved_refs: set[str] = set()
+    for chunk in chunks:
+        ref = getattr(chunk, "cfr_reference", None)
+        if ref:
+            norm = ref.lower().strip()
+            retrieved_refs.add(norm)
+            # Also index by section number only (for refs without title prefix in text)
+            m = _CFR_REF_RE.search(norm)
+            if m and m.group(2):
+                retrieved_refs.add(f"§ {m.group(2)}")
+
+    # Extract CFR refs from generated text
+    all_text = (response.plain_english or "") + " " + (response.legal_language or "")
+    cited_refs = _extract_cited_refs(all_text)
+
+    if not cited_refs:
+        # LLM answered without citing any CFR section — poor attribution
+        citation_coverage = 0.0
+        verified, unverified = [], []
+    else:
+        verified, unverified = [], []
+        for ref in cited_refs:
+            # A ref is grounded if it (or something containing it) is in the retrieved set
+            grounded = any(ref in r or r in ref for r in retrieved_refs)
+            (verified if grounded else unverified).append(ref)
+        citation_coverage = len(verified) / len(cited_refs)
+
+    composite = 0.35 * retrieval_score + 0.65 * citation_coverage
+
+    if composite >= 0.75:
+        tier = "high"
+    elif composite >= 0.50:
+        tier = "medium"
+    else:
+        tier = "low"
+
+    return ConfidenceResult(
+        score=round(composite, 4),
+        tier=tier,
+        retrieval_score=round(retrieval_score, 4),
+        citation_coverage=round(citation_coverage, 4),
+        verified_citations=sorted(verified),
+        unverified_citations=sorted(unverified),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -146,13 +280,13 @@ def _citations_from_chunks(chunks) -> list[CFRCitation]:
 # Single-call strategy
 # ---------------------------------------------------------------------------
 
-def _generate_single(query: str, chunks) -> GenerationResult:
+def _generate_single(query: str, chunks, model: str) -> GenerationResult:
     context = _build_context_block(chunks)
     prompt = f"Regulatory Context:\n{context}\n\nQuestion: {query}"
 
     t0 = time.time()
     response = _client.messages.create(
-        model=GENERATION_MODEL,
+        model=model,
         max_tokens=1536,
         system=_SINGLE_CALL_SYSTEM,
         messages=[{"role": "user", "content": prompt}],
@@ -190,7 +324,7 @@ def _generate_single(query: str, chunks) -> GenerationResult:
 # Sequential-call strategy
 # ---------------------------------------------------------------------------
 
-def _generate_sequential(query: str, chunks) -> GenerationResult:
+def _generate_sequential(query: str, chunks, model: str) -> GenerationResult:
     context = _build_context_block(chunks)
     user_msg = f"Regulatory Context:\n{context}\n\nQuestion: {query}"
 
@@ -200,16 +334,16 @@ def _generate_sequential(query: str, chunks) -> GenerationResult:
 
     # Call 1: Plain English
     r1 = _client.messages.create(
-        model=GENERATION_MODEL,
-        max_tokens=768,
+        model=model,
+        max_tokens=1536,
         system=_PLAIN_ENGLISH_SYSTEM,
         messages=[{"role": "user", "content": user_msg}],
     )
-    plain_text = r1.content[0].text.strip()
+    plain_text = r1.content[0].text.strip() if r1.content else ""
     total_input += r1.usage.input_tokens
     total_output += r1.usage.output_tokens
 
-    not_found = '{"not_found": true}' in plain_text or plain_text == '{"not_found": true}'
+    not_found = not plain_text or '{"not_found": true}' in plain_text or plain_text == '{"not_found": true}'
 
     if not_found:
         qr = QueryResponse(
@@ -231,12 +365,12 @@ def _generate_sequential(query: str, chunks) -> GenerationResult:
         "Cite each quote with its CFR reference. Base your answer only on the context above."
     )
     r2 = _client.messages.create(
-        model=GENERATION_MODEL,
-        max_tokens=1024,
+        model=model,
+        max_tokens=2048,
         system=_LEGAL_SYSTEM,
         messages=[{"role": "user", "content": legal_user}],
     )
-    legal_text = r2.content[0].text.strip()
+    legal_text = r2.content[0].text.strip() if r2.content else ""
     total_input += r2.usage.input_tokens
     total_output += r2.usage.output_tokens
 
@@ -254,7 +388,7 @@ def _generate_sequential(query: str, chunks) -> GenerationResult:
 # Public entry point
 # ---------------------------------------------------------------------------
 
-def generate(query: str, chunks, strategy: str | None = None) -> GenerationResult:
+def generate(query: str, chunks, strategy: str | None = None, model: str | None = None) -> GenerationResult:
     """
     Generate a three-output response from retrieved regulation chunks.
 
@@ -262,6 +396,7 @@ def generate(query: str, chunks, strategy: str | None = None) -> GenerationResul
         query:    The user's natural language question
         chunks:   List of RetrievedChunk objects from src/query.py
         strategy: Override LLM_CALL_STRATEGY ("single" | "sequential")
+        model:    Override GENERATION_MODEL (e.g. "claude-sonnet-4-6")
 
     Returns:
         GenerationResult with QueryResponse and token/latency stats
@@ -277,6 +412,11 @@ def generate(query: str, chunks, strategy: str | None = None) -> GenerationResul
         return GenerationResult(qr, 0, 0, 0.0)
 
     strat = strategy or LLM_CALL_STRATEGY
+    active_model = model or GENERATION_MODEL
     if strat == "sequential":
-        return _generate_sequential(query, chunks)
-    return _generate_single(query, chunks)
+        result = _generate_sequential(query, chunks, active_model)
+    else:
+        result = _generate_single(query, chunks, active_model)
+
+    result.confidence = compute_confidence(result.response, chunks)
+    return result

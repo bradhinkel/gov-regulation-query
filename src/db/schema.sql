@@ -55,8 +55,8 @@ CREATE TABLE chunks (
     chunk_text      TEXT            NOT NULL,
     chunk_index     INTEGER         NOT NULL DEFAULT 0,
 
-    -- Embedding (text-embedding-3-small = 1536 dimensions)
-    embedding       vector(1536),
+    -- Embedding (voyage-law-2 = 1024 dimensions, legal-domain fine-tuned)
+    embedding       vector(1024),
 
     -- Timestamps
     created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
@@ -82,6 +82,10 @@ CREATE INDEX idx_chunks_cfr_ref_status  ON chunks(cfr_reference, status);
 CREATE INDEX idx_chunks_title_number    ON chunks(title_number);
 CREATE INDEX idx_chunks_part_number     ON chunks(part_number);
 CREATE INDEX idx_chunks_effective_date  ON chunks(effective_date);
+
+-- Hierarchical retrieval: sibling-fetch queries group by (source_id, section_number)
+-- and order by chunk_index. This index covers both the WHERE and ORDER BY.
+CREATE INDEX idx_chunks_section_siblings ON chunks(source_id, section_number, status, chunk_index);
 
 -- ── Query history table ──────────────────────────────────────────────────────
 CREATE TABLE queries (

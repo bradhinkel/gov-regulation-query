@@ -1,0 +1,20 @@
+name: voyage_hierarchical_8k
+description: "Hierarchical retrieval with 8000 char/section limit (2x the original 4000). Tests whether truncation was the primary bottleneck in generation quality."
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 25           # paragraph chunks retrieved; deduplicates to max_sections
+  search_mode: hierarchical
+  max_sections: 6
+  max_chars_per_section: 8000   # was 4000 — doubled to test truncation hypothesis
+  query_rewrite: false
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+# eval_top_k=6 matches max_sections so metrics reflect the assembled section set
+eval_top_k: 6
+
+generation:
+  strategy: sequential
+  model: claude-haiku-4-5-20251001

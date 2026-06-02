@@ -11,6 +11,15 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
 
 type Status = "idle" | "retrieving" | "generating" | "done" | "error";
 
+interface Confidence {
+  score: number;
+  tier: string;
+  retrieval_score: number;
+  citation_coverage: number;
+  verified_citations: string[];
+  unverified_citations: string[];
+}
+
 interface QueryResult {
   id: string;
   query: string;
@@ -20,6 +29,7 @@ interface QueryResult {
   not_found: boolean;
   strategy_used: string;
   latency_ms: number;
+  confidence: Confidence | null;
   created_at: string;
 }
 
@@ -59,7 +69,6 @@ export default function Home() {
           query,
           title_number: options.titleNumber || null,
           strategy: options.strategy || null,
-          top_k: 6,
         }),
       });
 
@@ -103,6 +112,8 @@ export default function Home() {
     }
   };
 
+  // Aggregate chunk counts per unique title for the subtitle
+  const titleCount = new Set(sources.map((s) => s.title_number).filter(Boolean)).size;
   const totalChunks = sources.reduce((sum, s) => sum + s.chunk_count, 0);
 
   return (
@@ -120,8 +131,8 @@ export default function Home() {
           </Link>
         </div>
         <p className="text-sm text-[var(--muted)]">
-          {sources.length > 0
-            ? `${sources.length} CFR title${sources.length !== 1 ? "s" : ""} indexed — ${totalChunks.toLocaleString()} sections`
+          {titleCount > 0
+            ? `${titleCount} CFR title${titleCount !== 1 ? "s" : ""} indexed — ${totalChunks.toLocaleString()} sections`
             : "Search the Code of Federal Regulations"}
         </p>
       </header>
@@ -136,9 +147,14 @@ export default function Home() {
 
       {result && status === "done" && (
         <div className="space-y-2">
-          <p className="text-xs text-[var(--muted)]">
-            &ldquo;{result.query}&rdquo;
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-[var(--muted)]">
+              &ldquo;{result.query}&rdquo;
+            </p>
+            {result.confidence && !result.not_found && (
+              <ConfidenceBadge confidence={result.confidence} />
+            )}
+          </div>
           <ResponsePanel
             plainEnglish={result.plain_english}
             legalLanguage={result.legal_language}
@@ -150,5 +166,25 @@ export default function Home() {
         </div>
       )}
     </main>
+  );
+}
+
+function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
+  const tierColors: Record<string, string> = {
+    high:      "bg-green-900/40 text-green-400 border-green-800",
+    medium:    "bg-yellow-900/40 text-yellow-400 border-yellow-800",
+    low:       "bg-red-900/40 text-red-400 border-red-800",
+    not_found: "bg-gray-800 text-gray-500 border-gray-700",
+  };
+  const color = tierColors[confidence.tier] ?? tierColors.low;
+  const pct = Math.round(confidence.score * 100);
+
+  return (
+    <span
+      className={`text-xs px-2 py-0.5 rounded-full border font-medium ${color}`}
+      title={`Retrieval: ${Math.round(confidence.retrieval_score * 100)}%  Citation coverage: ${Math.round(confidence.citation_coverage * 100)}%`}
+    >
+      {confidence.tier === "not_found" ? "not found" : `${confidence.tier} confidence · ${pct}%`}
+    </span>
   );
 }

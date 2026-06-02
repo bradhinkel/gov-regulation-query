@@ -64,22 +64,53 @@ def load_dataset(limit: int | None = None) -> list:
 def retrieval_metrics(retrieved_chunks: list, ground_truth_reference: str, k: int) -> dict:
     """
     Precision@k, Recall@k, MRR@k, NDCG@k.
-    'Relevant' = chunk whose text or citation contains the ground-truth CFR reference.
+    'Relevant' = chunk whose CFR citation metadata matches the ground-truth section.
+
+    Matching rules:
+    - Sub-paragraph notation in ground truth (e.g. '§ 205.301(a)(1)') is stripped to the
+      base section ('§ 205.301') before matching, since chunk metadata stores only the
+      section-level reference.
+    - Matching is against citation_string() ONLY, not chunk_text. Regulatory text frequently
+      contains cross-references (e.g. "See § 135.110 for definitions") that would create
+      false positives if the full text were searched.
+    - ideal_hits for NDCG is the number of unique base sections in the ground truth,
+      ensuring NDCG stays in [0, 1].
     """
+    import re as _re
+
     if not ground_truth_reference:
         return {"precision_at_k": None, "recall_at_k": None, "mrr": None, "ndcg_at_k": None}
 
-    refs = [r.strip().lower() for r in ground_truth_reference.split("|")]
+    def _base_ref(ref: str) -> str:
+        """Strip paragraph sub-identifiers like (a)(1)(i), (84), 'and (c)' from a CFR ref."""
+        return _re.split(r'\s+and\s+|\(', ref.strip())[0].strip()
 
-    def is_relevant(chunk) -> bool:
-        haystack = (chunk.chunk_text + chunk.citation_string()).lower()
-        return any(ref in haystack for ref in refs)
+    raw_refs = [r.strip() for r in ground_truth_reference.split("|") if r.strip()]
+    # Use only base section refs for matching; deduplicate in case two raw refs share a base
+    base_refs = {_base_ref(r).lower() for r in raw_refs}
 
-    hits = [is_relevant(c) for c in retrieved_chunks[:k]]
-    relevant_count = sum(hits)
+    # Deduplicate by section: each ground-truth section can contribute at most
+    # one "hit" regardless of how many paragraph chunks from that section appear
+    # in the retrieved list. Without dedup, multiple paragraph chunks from the
+    # same section inflate DCG beyond IDCG, making NDCG > 1 (physically impossible).
+    seen_sections: set = set()
+
+    def is_relevant_dedup(chunk) -> bool:
+        """Return True only for the FIRST chunk from each matched ground-truth section."""
+        citation = chunk.citation_string().lower()
+        for br in base_refs:
+            if br in citation:
+                if br not in seen_sections:
+                    seen_sections.add(br)
+                    return True
+                return False  # duplicate section — don't credit again
+        return False
+
+    hits = [is_relevant_dedup(c) for c in retrieved_chunks[:k]]
+    relevant_count = sum(hits)  # = number of unique ground-truth sections found
 
     precision = relevant_count / k if k else 0.0
-    recall = relevant_count / len(refs) if refs else 0.0
+    recall = relevant_count / len(base_refs) if base_refs else 0.0
 
     mrr = 0.0
     for i, hit in enumerate(hits):
@@ -88,7 +119,8 @@ def retrieval_metrics(retrieved_chunks: list, ground_truth_reference: str, k: in
             break
 
     dcg = sum(hit / math.log2(i + 2) for i, hit in enumerate(hits))
-    ideal_hits = min(len(refs), k)
+    # ideal_hits: best case = all ground-truth sections appear in top-k positions
+    ideal_hits = min(len(base_refs), k)
     idcg = sum(1.0 / math.log2(i + 2) for i in range(ideal_hits))
     ndcg = dcg / idcg if idcg else 0.0
 
@@ -170,17 +202,28 @@ def run_evaluation(config_path: str, limit: int | None = None, skip_generation: 
     questions = load_dataset(limit)
 
     strategy = config.get("generation", {}).get("strategy", "sequential")
+    model = config.get("generation", {}).get("model", "claude-haiku-4-5-20251001")
     top_k = config.get("retrieval", {}).get("top_k", 6)
+    # eval_top_k overrides the k used for NDCG/Precision metrics — useful when
+    # hierarchical retrieval returns fewer chunks than the retrieval top_k.
+    eval_top_k = config.get("eval_top_k", top_k)
+    search_mode = config.get("retrieval", {}).get("search_mode", "vector")
+    query_rewrite = config.get("retrieval", {}).get("query_rewrite", False)
     source_id_filter = config.get("retrieval", {}).get("source_id_filter")
     title_number = config.get("retrieval", {}).get("title_number")
     source_system = config.get("retrieval", {}).get("source_system", "federal_regulations")
+    max_sections = config.get("retrieval", {}).get("max_sections", 6)
+    max_chars_per_section = config.get("retrieval", {}).get("max_chars_per_section", 4000)
+    use_hyde = config.get("retrieval", {}).get("use_hyde", False)
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
     results = []
     total_input_tokens = 0
     total_output_tokens = 0
 
-    print(f"[eval] Config: {config['name']}  strategy={strategy}  top_k={top_k}  source_system={source_system}  questions={len(questions)}")
+    hier_info = f"  max_sections={max_sections}  max_chars={max_chars_per_section}" if search_mode == "hierarchical" else ""
+    hyde_info = "  hyde=True" if use_hyde else ""
+    print(f"[eval] Config: {config['name']}  strategy={strategy}  model={model}  search_mode={search_mode}  query_rewrite={query_rewrite}{hyde_info}  top_k={top_k}  eval_top_k={eval_top_k}{hier_info}  questions={len(questions)}")
 
     for i, q in enumerate(questions):
         print(f"  [{i+1}/{len(questions)}] {q['id']} — {q['question'][:70]}...")
@@ -193,9 +236,14 @@ def run_evaluation(config_path: str, limit: int | None = None, skip_generation: 
             source_system=source_system,
             title_number=title_number,
             source_id=source_id_filter,
+            search_mode=search_mode,
+            query_rewrite=query_rewrite,
+            use_hyde=use_hyde,
+            max_sections=max_sections,
+            max_chars_per_section=max_chars_per_section,
         )
 
-        ret_metrics = retrieval_metrics(chunks, q.get("ground_truth_reference", ""), top_k)
+        ret_metrics = retrieval_metrics(chunks, q.get("ground_truth_reference", ""), eval_top_k)
 
         if skip_generation:
             results.append({
@@ -210,7 +258,7 @@ def run_evaluation(config_path: str, limit: int | None = None, skip_generation: 
             continue
 
         # Generate
-        gen_result = generate(q["question"], chunks, strategy=strategy)
+        gen_result = generate(q["question"], chunks, strategy=strategy, model=model)
         timing["generation_ms"] = gen_result.latency_ms
         timing["e2e_ms"] = (time.time() - t0) * 1000
         total_input_tokens += gen_result.input_tokens
@@ -231,6 +279,7 @@ def run_evaluation(config_path: str, limit: int | None = None, skip_generation: 
             )
             gen_scores["not_found"] = False
 
+        conf = gen_result.confidence
         results.append({
             "id": q["id"],
             "question": q["question"],
@@ -243,6 +292,14 @@ def run_evaluation(config_path: str, limit: int | None = None, skip_generation: 
             "num_chunks": len(chunks),
             "retrieval_metrics": ret_metrics,
             "generation_scores": gen_scores,
+            "confidence": {
+                "score": conf.score,
+                "tier": conf.tier,
+                "retrieval_score": conf.retrieval_score,
+                "citation_coverage": conf.citation_coverage,
+                "verified_citations": conf.verified_citations,
+                "unverified_citations": conf.unverified_citations,
+            } if conf else None,
             "timing": {k: round(v, 1) for k, v in timing.items()},
             "tokens": {"input": gen_result.input_tokens, "output": gen_result.output_tokens},
         })
@@ -255,6 +312,9 @@ def run_evaluation(config_path: str, limit: int | None = None, skip_generation: 
     summary = {
         "config": config["name"],
         "strategy": strategy,
+        "model": model,
+        "search_mode": search_mode,
+        "query_rewrite": query_rewrite,
         "top_k": top_k,
         "source_system": source_system,
         "num_questions": len(results),
@@ -270,6 +330,15 @@ def run_evaluation(config_path: str, limit: int | None = None, skip_generation: 
             "avg_legal_accuracy":      avg("generation_scores", "legal_accuracy"),
             "avg_citation_accuracy":   avg("generation_scores", "citation_accuracy"),
             "avg_answer_completeness": avg("generation_scores", "answer_completeness"),
+        },
+        "confidence": {
+            "avg_score":             avg("confidence", "score"),
+            "avg_retrieval_score":   avg("confidence", "retrieval_score"),
+            "avg_citation_coverage": avg("confidence", "citation_coverage"),
+            "tier_counts": {
+                tier: sum(1 for r in results if r.get("confidence", {}) and r["confidence"].get("tier") == tier)
+                for tier in ("high", "medium", "low", "not_found")
+            },
         },
         "timing": {
             "avg_embed_ms":      avg("timing", "embed_ms"),
@@ -295,6 +364,9 @@ def run_evaluation(config_path: str, limit: int | None = None, skip_generation: 
         print(f"[eval] Faithfulness:   {summary['generation']['avg_faithfulness']}")
         print(f"[eval] Legal Accuracy: {summary['generation']['avg_legal_accuracy']}")
         print(f"[eval] Citation Acc:   {summary['generation']['avg_citation_accuracy']}")
+        tiers = summary["confidence"]["tier_counts"]
+        print(f"[eval] Confidence:     avg={summary['confidence']['avg_score']}  "
+              f"high={tiers['high']}  medium={tiers['medium']}  low={tiers['low']}  not_found={tiers['not_found']}")
         print(f"[eval] Tokens used:    {total_input_tokens + total_output_tokens}")
 
     return output

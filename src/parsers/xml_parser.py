@@ -1,7 +1,7 @@
 """
 src/parsers/xml_parser.py — eCFR XML parser for federal regulations.
 
-Fetches regulation XML from the eCFR API and chunks at § (section) boundaries.
+Fetches regulation XML from the eCFR API and produces chunks at configurable boundaries.
 
 eCFR XML hierarchy:
   DIV1 TYPE="TITLE"      — Title (e.g., Title 7: Agriculture)
@@ -11,13 +11,26 @@ eCFR XML hierarchy:
   DIV5 TYPE="PART"       — Part (e.g., Part 205: National Organic Program)
   DIV6 TYPE="SUBPART"    — Subpart (optional, e.g., Subpart A: Definitions)
   DIV7 TYPE="SUBJGRP"    — Subject group (optional)
-  DIV8 TYPE="SECTION"    — Section §  ← primary chunking boundary
+  DIV8 TYPE="SECTION"    — Section §  ← natural regulatory unit
   DIV9 TYPE="APPENDIX"   — Appendix (optional)
 
 Each DIV8 contains:
   HEAD  — "§ 205.301   Allowed and prohibited substances."
-  P     — paragraph text
+  P     — paragraph text elements
   NOTE, CITA, AUTH, SOURCE — metadata elements (excluded from chunk text)
+
+Chunking strategies (controlled by CHUNK_STRATEGY env var):
+
+  "section" (default) — one chunk per DIV8 SECTION, all paragraphs joined.
+      Long sections are split at TARGET_CHUNK_CHARS sentence boundaries with
+      CHUNK_OVERLAP_CHARS overlap. Each chunk is a self-contained regulatory unit.
+      Produces ~83K chunks for the Titles 7/21/42 starter corpus.
+      Best for: text-embedding-3-small, coherent LLM generation context.
+
+  "paragraph" — one chunk per <P> element, with context prefix prepended.
+      Short paragraphs (< MIN_CHUNK_CHARS) are accumulated with the next one.
+      Produces ~224K chunks for the same corpus (2.7× more).
+      Best for: voyage-law-2 (legal-domain fine-tuned), high-recall retrieval.
 
 Usage:
     from src.parsers.xml_parser import ECFRXMLParser
@@ -39,7 +52,11 @@ from src.parsers.base import BaseParser, ChunkWithMetadata
 
 ECFR_API_BASE = os.getenv("ECFR_API_BASE", "https://www.ecfr.gov/api/versioner/v1")
 
-# Chunking constants — start with Sword Coast Phase 2 winner (1200 chars)
+# Chunking strategy — "section" (one DIV8 per chunk) or "paragraph" (one <P> per chunk)
+# "section" is the production default; "paragraph" was used for the voyage-law-2 experiments.
+CHUNK_STRATEGY = os.getenv("CHUNK_STRATEGY", "section")
+
+# Chunking constants — used by section strategy for splitting very long sections
 # Override via env vars for eval sweeps
 TARGET_CHUNK_CHARS = int(os.getenv("TARGET_CHUNK_CHARS", "1200"))
 CHUNK_OVERLAP_CHARS = int(os.getenv("CHUNK_OVERLAP_CHARS", "150"))
@@ -62,7 +79,7 @@ def _get_latest_date(title_number: int) -> str:
         # content_versions is a list sorted by date desc
         versions = data.get("content_versions", [])
         if versions:
-            return versions[0].get("date", date.today().isoformat())
+            return versions[-1].get("date", date.today().isoformat())
     except Exception:
         pass
     return date.today().isoformat()
@@ -204,8 +221,10 @@ class ECFRXMLParser(BaseParser):
                 # Extract heading (text after the § number)
                 section_heading = re.sub(r"^§\s*[\d.\-]+\s*", "", section_head).strip().rstrip(".")
 
-                # Build full text from P, NOTE, etc. (skip metadata elements)
-                text_parts = []
+                # Collect individual paragraph texts — one <P> per chunk.
+                # Very short paragraphs (< MIN_CHUNK_CHARS) are accumulated
+                # with the next paragraph rather than emitted alone.
+                para_texts = []
                 for child in el:
                     if child.tag == "HEAD":
                         continue
@@ -213,10 +232,9 @@ class ECFRXMLParser(BaseParser):
                         continue
                     t = _element_text(child)
                     if t:
-                        text_parts.append(t)
-                full_text = " ".join(text_parts).strip()
+                        para_texts.append(t)
 
-                if not full_text or len(full_text) < MIN_CHUNK_CHARS:
+                if not para_texts:
                     return
 
                 cfr_ref = f"{title_number} CFR \u00a7 {section_number}" if title_number else f"\u00a7 {section_number}"
@@ -224,17 +242,13 @@ class ECFRXMLParser(BaseParser):
                 if section_heading:
                     location += f" \u2014 {section_heading}"
 
-                # Build context prefix for chunks
+                # Context prefix prepended to every chunk so each is self-contained.
                 context_prefix = f"[{cfr_ref}]\n"
                 if section_heading:
                     context_prefix += f"{section_heading}\n\n"
 
-                # Chunk the section text (most sections fit in one chunk)
-                chunks = _split_text(full_text)
-                if not chunks:
-                    chunks = [full_text[:TARGET_CHUNK_CHARS]]
-
-                for sub_chunk in chunks:
+                def _emit(text: str):
+                    nonlocal chunk_index
                     yield ChunkWithMetadata(
                         source_system=self.source_system,
                         corpus_type="cfr",
@@ -248,10 +262,37 @@ class ECFRXMLParser(BaseParser):
                         agency=new_ctx.get("agency"),
                         cfr_reference=cfr_ref,
                         effective_date=effective_date,
-                        chunk_text=context_prefix + sub_chunk,
+                        chunk_text=context_prefix + text,
                         chunk_index=chunk_index,
                     )
                     chunk_index += 1
+
+                if CHUNK_STRATEGY == "section":
+                    # ── Section-level strategy (production default) ─────────────
+                    # Join all paragraphs into one coherent section chunk.
+                    # Long sections (substance tables, lengthy requirements) are
+                    # split at TARGET_CHUNK_CHARS sentence boundaries with overlap.
+                    full_text = "\n\n".join(para_texts)
+                    text_parts = _split_text(full_text) or [full_text]
+                    for part in text_parts:
+                        yield from _emit(part)
+
+                else:
+                    # ── Paragraph-level strategy (voyage-law-2 experiments) ─────
+                    # One chunk per <P> element; short paragraphs accumulate into
+                    # the next one so each chunk is at least MIN_CHUNK_CHARS long.
+                    pending = ""
+                    for para in para_texts:
+                        if not pending:
+                            pending = para
+                        elif len(pending) < MIN_CHUNK_CHARS:
+                            pending = pending + " " + para
+                        else:
+                            yield from _emit(pending)
+                            pending = para
+                    if pending and len(pending) >= MIN_CHUNK_CHARS:
+                        yield from _emit(pending)
+
                 return  # Don't recurse into section children
 
             # Recurse into children

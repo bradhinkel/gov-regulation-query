@@ -1,0 +1,16 @@
+name: sweep_k15
+description: "Top-k sweep: section-level chunks, vector search, sequential Haiku, top_k=15"
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 15
+  search_mode: vector
+  query_rewrite: false
+  use_hyde: false
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+generation:
+  strategy: sequential
+  model: claude-haiku-4-5-20251001

@@ -1,0 +1,13 @@
+name: top_k10
+description: "Sequential strategy with top_k=10 — testing higher recall impact on generation quality"
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 10
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+generation:
+  strategy: sequential
+  model: claude-haiku-4-5-20251001

@@ -5,6 +5,10 @@ POST /query returns Server-Sent Events:
   event: status   — {"status": "retrieving"} | {"status": "generating"}
   event: result   — full QueryResponse JSON
   event: error    — {"error": "message"}
+
+Status events fire at the correct point in the pipeline:
+  "retrieving" → before vector search
+  "generating" → after retrieval, before LLM call
 """
 
 import json
@@ -14,7 +18,7 @@ from fastapi.responses import StreamingResponse
 from typing import AsyncIterator
 
 from backend.models.schemas import (
-    QueryRequest, QueryResponse, QueryHistoryResponse, CitationOut
+    QueryRequest, QueryResponse, QueryHistoryResponse, CitationOut, ConfidenceOut
 )
 from backend.services import rag_service, db_service
 
@@ -28,19 +32,28 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
         return f"event: {event}\ndata: {json.dumps(data)}\n\n"
 
     try:
+        # Step 1: Retrieve
         yield sse("status", {"status": "retrieving", "query": request.query})
 
-        result = await rag_service.run_query(
+        chunks, timing = await rag_service.run_retrieve(
             query=request.query,
             top_k=request.top_k,
             title_number=request.title_number,
             source_id=request.source_id,
             corpus_type=request.corpus_type,
-            strategy=request.strategy,
             source_system=request.source_system,
+            use_hyde=request.use_hyde,
         )
 
+        # Step 2: Generate
         yield sse("status", {"status": "generating"})
+
+        result = await rag_service.run_generate(
+            query=request.query,
+            chunks=chunks,
+            timing=timing,
+            strategy=request.strategy,
+        )
 
         # Persist to DB
         saved = await db_service.save_query(
@@ -50,6 +63,8 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
             citations=result["citations"],
             llm_strategy=result["strategy_used"],
             latency_ms=result["latency_ms"],
+            not_found=result["not_found"],
+            confidence=result["confidence"],
         )
 
         # Build citation_string for each citation
@@ -60,6 +75,7 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
                 cs += f" \u2014 {c['section_heading']}"
             citations_out.append({**c, "citation_string": cs})
 
+        conf = result.get("confidence")
         response_payload = {
             "id": saved["id"],
             "query": request.query,
@@ -69,6 +85,7 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
             "not_found": result["not_found"],
             "strategy_used": result["strategy_used"],
             "latency_ms": result["latency_ms"],
+            "confidence": conf,
             "created_at": saved["created_at"],
         }
 
@@ -82,7 +99,7 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
 async def query_endpoint(request: QueryRequest):
     """
     Submit a regulatory query. Returns Server-Sent Events stream.
-    Events: status → result (or error)
+    Events: status(retrieving) → status(generating) → result (or error)
     """
     return StreamingResponse(
         _sse_stream(request),
@@ -118,9 +135,10 @@ async def history(page: int = 1, page_size: int = 20):
                 )
                 for c in item["citations"]
             ],
-            not_found=not bool(item["plain_english"]),
-            strategy_used=item["llm_strategy"] or "single",
+            not_found=item.get("not_found", not bool(item["plain_english"])),
+            strategy_used=item["llm_strategy"] or "sequential",
             latency_ms=item["latency_ms"] or 0,
+            confidence=ConfidenceOut(**item["confidence"]) if item.get("confidence") else None,
             created_at=item["created_at"],
         )
         for item in items

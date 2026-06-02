@@ -13,7 +13,24 @@ interface QueryFormProps {
   sources: SourceTitle[];
 }
 
+// Known title names for the three starter titles
+const TITLE_NAMES: Record<number, string> = {
+  7:  "Title 7 — Agriculture",
+  21: "Title 21 — Food and Drugs",
+  42: "Title 42 — Public Health",
+};
+
 export default function QueryForm({ onSubmit, isLoading, sources }: QueryFormProps) {
+  // Deduplicate to one row per title_number (backend now returns one row per title,
+  // but guard here in case source data ever has duplicates)
+  const uniqueTitles = sources
+    .filter((s) => s.title_number != null)
+    .reduce<SourceTitle[]>((acc, s) => {
+      if (!acc.find((t) => t.title_number === s.title_number)) acc.push(s);
+      return acc;
+    }, [])
+    .sort((a, b) => (a.title_number ?? 0) - (b.title_number ?? 0));
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -29,7 +46,7 @@ export default function QueryForm({ onSubmit, isLoading, sources }: QueryFormPro
       <textarea
         name="query"
         rows={3}
-        placeholder="Ask a regulatory question… e.g. What are the labeling requirements for organic produce? What does OSHA require for fall protection?"
+        placeholder="Ask a regulatory question… e.g. What are the labeling requirements for organic produce? What does 21 CFR require for food additives?"
         className="w-full rounded-lg px-4 py-3 text-base resize-none
           bg-[var(--surface-2)] border border-[var(--border)]
           text-[var(--foreground)] placeholder-[var(--muted)]
@@ -38,17 +55,18 @@ export default function QueryForm({ onSubmit, isLoading, sources }: QueryFormPro
       />
 
       <div className="flex flex-wrap gap-3 items-center">
-        {sources.length > 0 && (
+        {uniqueTitles.length > 0 && (
           <select
             name="titleNumber"
             className="rounded px-3 py-2 text-sm bg-[var(--surface-2)] border border-[var(--border)]
               text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)]"
           >
             <option value="">All titles</option>
-            {sources.map((s) => (
-              <option key={s.source_id} value={s.title_number ?? ""}>
-                {s.title_number ? `Title ${s.title_number}` : s.source_id}
-                {s.agency ? ` — ${s.agency}` : ""}
+            {uniqueTitles.map((s) => (
+              <option key={s.title_number} value={s.title_number ?? ""}>
+                {s.title_number != null
+                  ? (TITLE_NAMES[s.title_number] ?? `Title ${s.title_number}`)
+                  : s.source_id}
               </option>
             ))}
           </select>

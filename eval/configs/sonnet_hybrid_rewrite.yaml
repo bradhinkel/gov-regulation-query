@@ -1,0 +1,15 @@
+name: sonnet_hybrid_rewrite
+description: "Sonnet + hybrid + query rewrite, top_k=10 — tests all three improvements combined"
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 10
+  search_mode: hybrid
+  query_rewrite: true
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+generation:
+  strategy: sequential
+  model: claude-sonnet-4-6

@@ -1,0 +1,15 @@
+name: voyage_top_k25                                                                                                    
+description: "voyage-law-2 paragraph chunks, top_k=25 — scaled for 2.7x corpus growth"
+                                                                                                                          
+retrieval:
+  source_system: federal_regulations                                                                                      
+  top_k: 25
+  search_mode: vector                                                                                                    
+  query_rewrite: false
+  source_id_filter: null                                                                                                  
+  title_number: null
+  corpus_type: cfr  
+                                                                                                  
+generation:                                                                                                               
+  strategy: sequential
+  model: claude-haiku-4-5-20251001                                                                                      

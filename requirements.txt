@@ -14,6 +14,7 @@ pgvector==0.3.2
 # AI/ML
 openai==1.51.0
 anthropic==0.34.2
+voyageai==0.3.2
 
 # HTTP + XML parsing (eCFR API)
 httpx==0.27.2

@@ -1,0 +1,16 @@
+name: section_hyde
+description: "text-embedding-3-small, section-level chunks, top_k=10 — HyDE query expansion. Generates a hypothetical CFR passage for the query before embedding, bridging the language gap between plain-English questions and formal regulatory text."
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 10
+  search_mode: vector
+  query_rewrite: false
+  use_hyde: true
+  source_id_filter: null
+  title_number: null
+  corpus_type: cfr
+
+generation:
+  strategy: sequential
+  model: claude-haiku-4-5-20251001

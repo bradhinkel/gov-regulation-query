@@ -24,7 +24,6 @@ from pathlib import Path
 
 import psycopg
 from dotenv import load_dotenv
-from openai import OpenAI
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
 from rich.table import Table
@@ -38,21 +37,49 @@ from src.parsers.base import ChunkWithMetadata
 from src.parsers.xml_parser import ECFRXMLParser
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://regulation_app:regulation_dev_password@localhost:5432/regulation_rag")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
-EMBEDDING_BATCH_SIZE = 100
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "voyage-law-2")
+EMBEDDING_BATCH_SIZE = 128  # Voyage allows up to 128 texts per request
+EMBEDDING_BATCH_SLEEP = float(os.getenv("EMBEDDING_BATCH_SLEEP", "6.5"))  # seconds between batches; 6.5s = safe for 10 RPM
 SOURCE_SYSTEM = os.getenv("SOURCE_SYSTEM", "federal_regulations")
 
 console = Console()
-openai_client = OpenAI()
+
+# Initialise embedding client based on model name
+if "voyage" in EMBEDDING_MODEL:
+    import voyageai
+    _voyage_client = voyageai.Client()
+    _openai_client = None
+else:
+    from openai import OpenAI
+    _openai_client = OpenAI()
+    _voyage_client = None
 
 
 def embed_chunks(texts: list[str]) -> list[list[float]]:
-    """Embed a batch of texts. Returns list of 1536-dim vectors."""
-    response = openai_client.embeddings.create(
-        model=EMBEDDING_MODEL,
-        input=texts,
-    )
-    return [item.embedding for item in response.data]
+    """Embed a batch of texts with exponential backoff on rate limit errors."""
+    if _voyage_client:
+        for attempt in range(8):
+            try:
+                result = _voyage_client.embed(texts, model=EMBEDDING_MODEL, input_type="document")
+                return result.embeddings
+            except Exception as e:
+                if attempt == 7:
+                    raise
+                wait = 2 ** attempt
+                console.print(f"[yellow]Voyage rate limit, retrying in {wait}s (attempt {attempt + 1}/8)...[/yellow]")
+                time.sleep(wait)
+    else:
+        from openai import RateLimitError
+        for attempt in range(8):
+            try:
+                response = _openai_client.embeddings.create(model=EMBEDDING_MODEL, input=texts)
+                return [item.embedding for item in response.data]
+            except RateLimitError:
+                if attempt == 7:
+                    raise
+                wait = 2 ** attempt
+                console.print(f"[yellow]Rate limit hit, retrying in {wait}s (attempt {attempt + 1}/8)...[/yellow]")
+                time.sleep(wait)
 
 
 def already_ingested(conn: psycopg.Connection, source_id: str, source_system: str) -> bool:
@@ -61,6 +88,15 @@ def already_ingested(conn: psycopg.Connection, source_id: str, source_system: st
         (source_id, source_system),
     ).fetchone()
     return row[0] > 0
+
+
+def last_committed_index(conn: psycopg.Connection, source_id: str, source_system: str, version_id: str) -> int:
+    """Return the highest chunk_index already committed for this title+version, or -1 if none."""
+    row = conn.execute(
+        "SELECT MAX(chunk_index) FROM chunks WHERE source_id = %s AND source_system = %s AND version_id = %s",
+        (source_id, source_system, version_id),
+    ).fetchone()
+    return row[0] if row and row[0] is not None else -1
 
 
 def _clean(s: str | None) -> str | None:
@@ -160,27 +196,41 @@ def ingest_title(
             "parse_s": round(elapsed, 1),
         }
 
-    # Embed in batches
+    # Resume support: skip batches already committed from a prior interrupted run.
+    resume_index = last_committed_index(conn, source_id, source_system, version_id)
+    if resume_index >= 0:
+        console.print(f"[yellow]Resuming Title {title_number} from chunk_index {resume_index + 1}[/yellow]")
+
+    # Embed and commit one batch at a time — safe to interrupt and resume.
     embed_t0 = time.time()
-    all_embeddings: list[list[float]] = []
+    committed = 0
+    batches = list(range(0, len(all_chunks), EMBEDDING_BATCH_SIZE))
     try:
-        for i in range(0, len(all_chunks), EMBEDDING_BATCH_SIZE):
+        for batch_num, i in enumerate(batches):
             batch = all_chunks[i: i + EMBEDDING_BATCH_SIZE]
+
+            # Skip batches already in the DB from a previous run.
+            if batch[-1].chunk_index <= resume_index:
+                committed += len(batch)
+                continue
+
             texts = [c.chunk_text for c in batch]
             embeddings = embed_chunks(texts)
-            all_embeddings.extend(embeddings)
-    except Exception as exc:
-        return {"title": title_number, "status": "error", "error": f"embedding failed: {exc}"}
-    embed_s = time.time() - embed_t0
+            insert_chunks(conn, batch, embeddings, version_id)
+            conn.commit()
+            committed += len(batch)
 
-    insert_chunks(conn, all_chunks, all_embeddings, version_id)
-    conn.commit()
+            if EMBEDDING_BATCH_SLEEP > 0 and batch_num < len(batches) - 1:
+                time.sleep(EMBEDDING_BATCH_SLEEP)
+    except Exception as exc:
+        return {"title": title_number, "status": "error", "error": f"embedding failed at chunk {committed}: {exc}"}
+    embed_s = time.time() - embed_t0
 
     elapsed = time.time() - t0
     return {
         "title": title_number,
         "status": "ok",
-        "chunks": len(all_chunks),
+        "chunks": committed,
         "source_id": source_id,
         "elapsed_s": round(elapsed, 1),
         "embed_s": round(embed_s, 1),
