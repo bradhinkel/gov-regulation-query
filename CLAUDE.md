@@ -72,13 +72,18 @@ python eval/run_all.py --phase 5   # Top-k sweep
 ```
 
 ## Phase checklist
-- [ ] Phase 0: Repository Setup & Component Reuse
-- [ ] Phase 1: Corpus Ingestion & Parsing (eCFR API)
-- [ ] Phase 2: Retrieval Engine & Metadata Filtering
-- [ ] Phase 3: Three-Output Generation
-- [ ] Phase 4: Evaluation & Quality Assurance
-- [ ] Phase 5: Backend API
-- [ ] Phase 6: Frontend UI
-- [ ] Phase 7: Deployment (regs.bradhinkel.com, DigitalOcean)
-- [ ] Phase 8: Corpus Freshness & Versioned Replacement
-- [ ] Phase 9: Corpus Expansion (all 50 CFR titles)
+- [x] Phase 0: Repository Setup & Component Reuse
+- [x] Phase 1: Corpus Ingestion & Parsing (eCFR API)
+- [x] Phase 2: Retrieval Engine & Metadata Filtering
+- [x] Phase 3: Three-Output Generation
+- [x] Phase 4: Evaluation & Quality Assurance
+- [x] Phase 5: Backend API
+- [x] Phase 6: Frontend UI
+- [x] Phase 7: Deployment — LIVE at regs.bradhinkel.com (DigitalOcean droplet
+      137.184.234.166, /opt/regs; systemd regs-backend :8002 + regs-frontend :3002,
+      nginx + Certbot TLS, deploy via rsync since /opt/regs is not a git checkout)
+- [x] Phase 8.5: Security Hardening (input validation, rate limiting, intent
+      classifier, prompt hardening, output validation) — deployed
+- [ ] Phase 8.6: Corpus Expansion to 8 CFR titles (hnsw migration)
+- [ ] Phase 9: Corpus Freshness & Versioned Replacement (atomic swap, temporal queries)
+- [ ] Phase 9.1: Eval Expansion (200+ questions) & Confidence Reweighting
