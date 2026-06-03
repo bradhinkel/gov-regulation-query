@@ -109,11 +109,13 @@ def insert_chunks(
     chunks: list[ChunkWithMetadata],
     embeddings: list[list[float]],
     version_id: str,
+    status: str = "active",
 ):
-    """Bulk insert regulatory chunks with their embeddings."""
+    """Bulk insert regulatory chunks with their embeddings at the given status."""
     rows = []
     for chunk, embedding in zip(chunks, embeddings):
         rows.append((
+            status,
             _clean(chunk.source_system),
             _clean(chunk.corpus_type),
             _clean(chunk.source_id),
@@ -136,14 +138,14 @@ def insert_chunks(
         cur.executemany(
             """
             INSERT INTO chunks (
-                source_system, corpus_type, source_id,
+                status, source_system, corpus_type, source_id,
                 title_number, part_number, subpart,
                 section_number, section_heading, agency,
                 cfr_reference, effective_date,
                 location_reference, chunk_index,
                 chunk_text, embedding, version_id
             ) VALUES (
-                %s, %s, %s,
+                %s, %s, %s, %s,
                 %s, %s, %s,
                 %s, %s, %s,
                 %s, %s,
@@ -161,12 +163,17 @@ def ingest_title(
     dry_run: bool,
     parser: ECFRXMLParser,
     version_id: str,
+    target_status: str = "active",
 ) -> dict:
-    """Ingest a single CFR title."""
+    """Ingest a single CFR title at the given target status (active | staged)."""
     source_id = parser.source_id_for(title_number)
     source_system = parser.source_system
 
-    if not dry_run and conn and already_ingested(conn, source_id, source_system):
+    # The already-ingested guard only applies to initial active loads. Staged
+    # ingestion deliberately writes a new version alongside the live (active)
+    # chunks — invisible to retrieval until the atomic swap promotes it.
+    if (target_status == "active" and not dry_run and conn
+            and already_ingested(conn, source_id, source_system)):
         return {
             "title": title_number,
             "status": "skipped",
@@ -216,7 +223,7 @@ def ingest_title(
 
             texts = [c.chunk_text for c in batch]
             embeddings = embed_chunks(texts)
-            insert_chunks(conn, batch, embeddings, version_id)
+            insert_chunks(conn, batch, embeddings, version_id, status=target_status)
             conn.commit()
             committed += len(batch)
 
@@ -251,14 +258,17 @@ def run_ingestion(
     dry_run: bool,
     reset: bool,
     source_system: str = "federal_regulations",
+    target_status: str = "active",
+    version_id: str | None = None,
 ):
-    version_id = date.today().isoformat()
+    version_id = version_id or date.today().isoformat()
     parser = ECFRXMLParser(source_system=source_system)
 
     console.print(f"[bold]Government Regulation RAG — Ingestion Pipeline[/bold]")
     console.print(f"Source:        eCFR API (live)")
     console.print(f"Source system: {source_system}")
     console.print(f"Version ID:    {version_id}")
+    console.print(f"Target status: {target_status}")
     console.print(f"Titles:        {titles}")
     console.print(f"Dry run:       {dry_run}")
     console.print()
@@ -283,7 +293,8 @@ def run_ingestion(
         task = progress.add_task("Ingesting...", total=len(titles))
         for title_number in titles:
             progress.update(task, description=f"[cyan]Title {title_number}[/cyan]")
-            result = ingest_title(title_number, conn, dry_run=dry_run, parser=parser, version_id=version_id)
+            result = ingest_title(title_number, conn, dry_run=dry_run, parser=parser,
+                                  version_id=version_id, target_status=target_status)
             results.append(result)
             progress.advance(task)
 
@@ -334,6 +345,11 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run", action="store_true", help="Parse only; no DB writes or embeddings")
     parser.add_argument("--reset", action="store_true", help="Delete existing chunks before re-ingesting")
     parser.add_argument("--source-system", default="federal_regulations", help="source_system tag (default: federal_regulations)")
+    parser.add_argument("--target-status", choices=["active", "staged"], default="active",
+                        help="Status for inserted chunks. 'staged' = invisible to retrieval "
+                             "until an atomic swap promotes it (Phase 9 versioned replacement).")
+    parser.add_argument("--version-id", help="Explicit version_id tag for this run "
+                                             "(default: today's date). Use a distinct tag for staged syncs.")
     args = parser.parse_args()
 
     if args.title:
@@ -350,4 +366,6 @@ if __name__ == "__main__":
         dry_run=args.dry_run,
         reset=args.reset,
         source_system=args.source_system,
+        target_status=args.target_status,
+        version_id=args.version_id,
     )
