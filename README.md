@@ -6,7 +6,7 @@ A retrieval-augmented generation (RAG) system over the U.S. Code of Federal Regu
 2. **Legal/Regulatory language** — domain-voice synthesis with verbatim quotes
 3. **CFR Citations** — precise Title / Part / Section references (e.g., `7 CFR § 205.301`)
 
-The starter corpus covers Titles 7 (Agriculture), 21 (Food and Drugs), and 42 (Public Health) — 85,000+ regulatory sections ingested directly from the free [eCFR API](https://www.ecfr.gov/developers).
+The corpus covers 8 major CFR titles — agriculture, food and drugs, public health, energy, aviation, labor, environment, and transportation (Titles 7, 10, 14, 21, 29, 40, 42, 49) — totaling ~253,000 regulatory sections ingested directly from the free [eCFR API](https://www.ecfr.gov/developers).
 
 ## Links
 
@@ -63,18 +63,15 @@ This creates the `regulation_rag` database, the `regulation_app` user, and the s
 
 ### 5. Ingest regulations
 
-Start with a single title, or ingest all three starter titles:
+Start with a single title, or ingest the full 8-title corpus:
 
 ```bash
 source venv/bin/activate
-python src/ingest.py --title 7       # Agriculture
-python src/ingest.py --title 21      # Food and Drugs
-python src/ingest.py --title 42      # Public Health
-# or:
-python src/ingest.py --all-starter
+python src/ingest.py --title 7                          # Agriculture
+python src/ingest.py --titles 7 10 14 21 29 40 42 49    # full corpus
 ```
 
-Full ingest of all three titles takes ~1–2 hours depending on API rate limits and embedding throughput.
+Oversized titles (e.g. 40/EPA) whose full-title eCFR XML times out are fetched part-by-part automatically. Full 8-title ingest takes a few hours, dominated by eCFR fetch time; embedding (OpenAI `text-embedding-3-small`) is fast.
 
 ### 6. Run the app
 

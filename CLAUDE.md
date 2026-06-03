@@ -55,14 +55,18 @@ cd frontend && npm run dev -- --port 3002
 sudo -u postgres psql < src/db/schema.sql
 ```
 
-## Ingestion (starter corpus: Titles 7, 21, 42)
+## Ingestion (corpus: 8 CFR titles — 7, 10, 14, 21, 29, 40, 42, 49 ≈ 253K sections)
 ```bash
 source venv/bin/activate
-python src/ingest.py --title 7     # Title 7: Agriculture
-python src/ingest.py --title 21    # Title 21: Food and Drugs
-python src/ingest.py --title 42    # Title 42: Public Health
-python src/ingest.py --all-starter # All three starter titles
+python src/ingest.py --title 7              # Agriculture (USDA)
+python src/ingest.py --titles 7 21 42      # multiple titles in one run
+# Full 8-title corpus:
+python src/ingest.py --titles 7 10 14 21 29 40 42 49
+# Agriculture(7) Energy(10) Aeronautics(14) Food&Drugs(21) Labor(29)
+# Environment(40) Public Health(42) Transportation(49)
 ```
+Oversized titles (e.g. 40/EPA, 94K sections) whose full-title eCFR XML times out
+are fetched part-by-part automatically (see _fetch_title_parts in xml_parser.py).
 
 ## Evaluation
 ```bash
@@ -84,6 +88,9 @@ python eval/run_all.py --phase 5   # Top-k sweep
       nginx + Certbot TLS, deploy via rsync since /opt/regs is not a git checkout)
 - [x] Phase 8.5: Security Hardening (input validation, rate limiting, intent
       classifier, prompt hardening, output validation) — deployed
-- [ ] Phase 8.6: Corpus Expansion to 8 CFR titles (hnsw migration)
+- [x] Phase 8.6: Corpus Expansion to 8 CFR titles (7,10,14,21,29,40,42,49 ≈
+      253K sections) + HNSW index. Built on laptop, shipped to droplet via
+      pg_dump → chunks_new staging → indexes → atomic rename swap. Droplet
+      resized to 8GB. Live at regs.bradhinkel.com.
 - [ ] Phase 9: Corpus Freshness & Versioned Replacement (atomic swap, temporal queries)
 - [ ] Phase 9.1: Eval Expansion (200+ questions) & Confidence Reweighting
