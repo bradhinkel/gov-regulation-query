@@ -18,3 +18,38 @@ body {
   color: var(--foreground);
   font-family: 'Inter', 'Segoe UI', sans-serif;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Print / Save-as-PDF conventions (reusable across projects)
+   - `.no-print`   : hidden when printing
+   - `.print-only` : hidden on screen; the ONLY thing rendered when printing
+   Pair with the <PrintButton> component. To reuse elsewhere, copy this block
+   and render a single `.print-only` container holding the printable document.
+   ───────────────────────────────────────────────────────────────────────── */
+.print-only { display: none; }
+
+@media print {
+  /* Hide the interactive app, reveal only the printable document. */
+  body * { visibility: hidden; }
+  .print-only, .print-only * { visibility: visible; }
+  .print-only { display: block; position: absolute; left: 0; top: 0; width: 100%; }
+  .no-print { display: none !important; }
+
+  body { background: #fff !important; color: #000 !important; }
+  @page { margin: 0.75in; }
+
+  .printable-doc { color: #000; font-size: 11pt; line-height: 1.45; }
+  .printable-doc h1 { font-size: 18pt; margin: 0 0 0.25rem; }
+  .printable-doc h2 {
+    font-size: 12.5pt; margin: 1.1rem 0 0.35rem;
+    border-bottom: 1px solid #999; padding-bottom: 2px;
+  }
+  .printable-doc .pd-question { font-size: 10.5pt; color: #333; margin-bottom: 0.5rem; }
+  .printable-doc .pd-body { white-space: pre-wrap; margin: 0; }
+  .printable-doc .pd-citations { padding-left: 1.25rem; }
+  .printable-doc .pd-citations li { margin-bottom: 0.4rem; }
+  .printable-doc .pd-footer {
+    margin-top: 1.5rem; padding-top: 0.5rem; border-top: 1px solid #ccc;
+    font-size: 8.5pt; color: #555;
+  }
+}

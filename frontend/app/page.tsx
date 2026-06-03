@@ -5,6 +5,9 @@ import Link from "next/link";
 import QueryForm from "./components/QueryForm";
 import ResponsePanel from "./components/ResponsePanel";
 import StatusBanner from "./components/StatusBanner";
+import PrintButton from "./components/PrintButton";
+import PrintableResult from "./components/PrintableResult";
+import AboutModal from "./components/AboutModal";
 import { Citation } from "./components/CitationList";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
@@ -53,6 +56,7 @@ export default function Home() {
   const [offTopic, setOffTopic] = useState<string>();
   const [result, setResult] = useState<QueryResult | null>(null);
   const [sources, setSources] = useState<SourceTitle[]>([]);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/sources`)
@@ -135,12 +139,20 @@ export default function Home() {
           <h1 className="text-2xl font-bold text-[var(--accent)] tracking-wide">
             Federal Regulation Query
           </h1>
-          <Link
-            href="/history"
-            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-          >
-            Query history →
-          </Link>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setAboutOpen(true)}
+              className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            >
+              About
+            </button>
+            <Link
+              href="/history"
+              className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            >
+              Query history →
+            </Link>
+          </div>
         </div>
         <p className="text-sm text-[var(--muted)]">
           {titleCount > 0
@@ -163,13 +175,16 @@ export default function Home() {
 
       {result && status === "done" && (
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-[var(--muted)]">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs text-[var(--muted)] truncate">
               &ldquo;{result.query}&rdquo;
             </p>
-            {result.confidence && !result.not_found && (
-              <ConfidenceBadge confidence={result.confidence} />
-            )}
+            <div className="flex items-center gap-3 flex-shrink-0">
+              {result.confidence && !result.not_found && (
+                <ConfidenceBadge confidence={result.confidence} />
+              )}
+              {!result.not_found && <PrintButton />}
+            </div>
           </div>
           <ResponsePanel
             plainEnglish={result.plain_english}
@@ -179,8 +194,19 @@ export default function Home() {
             strategyUsed={result.strategy_used}
             latencyMs={result.latency_ms}
           />
+          {!result.not_found && (
+            <PrintableResult
+              query={result.query}
+              plainEnglish={result.plain_english}
+              legalLanguage={result.legal_language}
+              citations={result.citations}
+              createdAt={result.created_at}
+            />
+          )}
         </div>
       )}
+
+      <AboutModal open={aboutOpen} onClose={() => setAboutOpen(false)} />
     </main>
   );
 }
