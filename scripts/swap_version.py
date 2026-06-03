@@ -13,6 +13,12 @@ swap is zero-downtime. Archived chunks are retained by default (they back
 temporal "what changed" queries and rollback); pass --delete-archived to drop
 them (use for fixing bug-staged data that isn't a meaningful prior version).
 
+LARGE swaps: the status UPDATEs churn the HNSW index (each updated row rewrites
+an index entry), which on a full-corpus swap (100k+ rows) is slow and memory-
+heavy enough to risk OOM. For a big swap, drop the HNSW index first, run the
+swap, then rebuild the index (see docs / Phase 9.0 runbook). For routine weekly
+syncs (a few hundred changed sections) the in-place swap is fine as-is.
+
 Usage:
     # Promote staged version v2026-06-02-refresh for these titles:
     python scripts/swap_version.py --titles 10 14 29 40 49 --version-id v2026-06-02-refresh

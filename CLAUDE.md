@@ -92,5 +92,13 @@ python eval/run_all.py --phase 5   # Top-k sweep
       253K sections) + HNSW index. Built on laptop, shipped to droplet via
       pg_dump → chunks_new staging → indexes → atomic rename swap. Droplet
       resized to 8GB. Live at regs.bradhinkel.com.
-- [ ] Phase 9: Corpus Freshness & Versioned Replacement (atomic swap, temporal queries)
+- [~] Phase 9: Corpus Freshness & Versioned Replacement
+      - [x] 9.0: fixed stale corpus (titles 10/14/29/40/49 were 2017-2021 due to
+            the _get_latest_date bug); re-ingested current 2026 editions via
+            staged-ingest (ingest.py --target-status staged) + atomic swap
+            (scripts/swap_version.py). All 8 titles now current; 265,595 chunks.
+      - [x] 9.5: citations show "current as of [date]" (effective_date in payload)
+      - [ ] 9.2: weekly change-detection sync job + 20% threshold alert
+      - [ ] 9.4: temporal "what changed?" query handler (current + archived)
+      - [ ] 9.6: sync logging + /health freshness; 9.7: freshness/temporal eval
 - [ ] Phase 9.1: Eval Expansion (200+ questions) & Confidence Reweighting
