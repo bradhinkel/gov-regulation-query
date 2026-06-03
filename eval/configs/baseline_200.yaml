@@ -1,0 +1,13 @@
+name: baseline_200
+description: "Phase 9.1 — production config over the 200-question, 8-title eval set"
+
+retrieval:
+  source_system: federal_regulations
+  top_k: 10
+  source_id_filter: null
+  title_number: null          # search all titles
+  corpus_type: cfr
+
+generation:
+  strategy: sequential
+  model: claude-haiku-4-5-20251001

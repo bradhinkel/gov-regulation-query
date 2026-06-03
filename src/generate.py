@@ -18,6 +18,7 @@ ENABLE_VERBATIM_QUOTES=true for this project — federal regulations are public 
 import json
 import os
 import re
+import statistics
 import time
 from dataclasses import dataclass, field
 
@@ -35,6 +36,18 @@ CLASSIFIER_MODEL = os.getenv("CLASSIFIER_MODEL", GENERATION_MODEL)
 # Temporal "what changed?" diffing is harder than normal Q&A (comparing two long
 # texts), so it can use a stronger model. Defaults to the generation model.
 TEMPORAL_MODEL = os.getenv("TEMPORAL_MODEL", GENERATION_MODEL)
+
+# Confidence composite weights (Phase 9.1). Defaults preserve the original
+# hand-tuned 2-component formula (concentration weight 0); after the grid search
+# these are updated to the empirically optimal triple. Env-overridable so they
+# can be retuned without a redeploy.
+RETRIEVAL_WEIGHT     = float(os.getenv("CONF_RETRIEVAL_WEIGHT", "0.35"))
+CITATION_WEIGHT      = float(os.getenv("CONF_CITATION_WEIGHT", "0.65"))
+CONCENTRATION_WEIGHT = float(os.getenv("CONF_CONCENTRATION_WEIGHT", "0.0"))
+TIER_HIGH_THRESHOLD  = float(os.getenv("CONF_TIER_HIGH", "0.75"))
+TIER_MED_THRESHOLD   = float(os.getenv("CONF_TIER_MEDIUM", "0.50"))
+# Normalizer for retrieval concentration: 95th-pct stdev of top-K similarities.
+CONF_STDEV_MAX       = float(os.getenv("CONF_STDEV_MAX", "0.15"))
 
 _client = anthropic.Anthropic()
 
@@ -164,6 +177,7 @@ class ConfidenceResult:
     tier: str                                 # "high" | "medium" | "low" | "not_found"
     retrieval_score: float                    # avg top-3 cosine similarity
     citation_coverage: float                  # fraction of cited sections verified
+    retrieval_concentration: float = 0.0      # 1 - normalized stdev of top-K sims (Phase 9.1)
     verified_citations: list[str] = field(default_factory=list)    # refs grounded in retrieved context
     unverified_citations: list[str] = field(default_factory=list)  # refs not in retrieved context
 
@@ -233,6 +247,14 @@ def compute_confidence(response: QueryResponse, chunks: list) -> ConfidenceResul
     top_scores = [getattr(c, "similarity", 0.0) for c in chunks[:3]]
     retrieval_score = sum(top_scores) / len(top_scores) if top_scores else 0.0
 
+    # Retrieval concentration (Phase 9.1): how tightly clustered the top-K
+    # similarities are. A tight cluster (low stdev) means a coherent set of
+    # relevant sections; a wide spread means the top hit is much stronger than
+    # the rest. concentration = 1 - stdev/STDEV_MAX, clipped to [0, 1].
+    sims = [getattr(c, "similarity", 0.0) for c in chunks]
+    stdev = statistics.pstdev(sims) if len(sims) > 1 else 0.0
+    retrieval_concentration = max(0.0, min(1.0, 1.0 - stdev / CONF_STDEV_MAX)) if CONF_STDEV_MAX else 0.0
+
     # Build a lookup of all retrieved section refs (normalized to lowercase)
     retrieved_refs: set[str] = set()
     for chunk in chunks:
@@ -261,11 +283,15 @@ def compute_confidence(response: QueryResponse, chunks: list) -> ConfidenceResul
             (verified if grounded else unverified).append(ref)
         citation_coverage = len(verified) / len(cited_refs)
 
-    composite = 0.35 * retrieval_score + 0.65 * citation_coverage
+    composite = (
+        RETRIEVAL_WEIGHT * retrieval_score
+        + CITATION_WEIGHT * citation_coverage
+        + CONCENTRATION_WEIGHT * retrieval_concentration
+    )
 
-    if composite >= 0.75:
+    if composite >= TIER_HIGH_THRESHOLD:
         tier = "high"
-    elif composite >= 0.50:
+    elif composite >= TIER_MED_THRESHOLD:
         tier = "medium"
     else:
         tier = "low"
@@ -275,6 +301,7 @@ def compute_confidence(response: QueryResponse, chunks: list) -> ConfidenceResul
         tier=tier,
         retrieval_score=round(retrieval_score, 4),
         citation_coverage=round(citation_coverage, 4),
+        retrieval_concentration=round(retrieval_concentration, 4),
         verified_citations=sorted(verified),
         unverified_citations=sorted(unverified),
     )

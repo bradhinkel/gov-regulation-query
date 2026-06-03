@@ -108,6 +108,7 @@ def _to_result_dict(gen_result, timing: dict, temporal: bool = False) -> dict:
             "tier": conf.tier,
             "retrieval_score": conf.retrieval_score,
             "citation_coverage": conf.citation_coverage,
+            "retrieval_concentration": conf.retrieval_concentration,
             "verified_citations": conf.verified_citations,
             "unverified_citations": conf.unverified_citations,
         } if conf else None,

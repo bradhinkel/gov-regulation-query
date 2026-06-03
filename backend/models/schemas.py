@@ -32,6 +32,7 @@ class ConfidenceOut(BaseModel):
     tier: str                              # "high" | "medium" | "low" | "not_found"
     retrieval_score: float
     citation_coverage: float
+    retrieval_concentration: float = 0.0
     verified_citations: list[str] = []
     unverified_citations: list[str] = []
 

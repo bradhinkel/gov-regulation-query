@@ -48,8 +48,8 @@ def load_config(path: str) -> dict:
         return yaml.safe_load(f)
 
 
-def load_dataset(limit: int | None = None) -> list:
-    with open(EVAL_DATASET) as f:
+def load_dataset(limit: int | None = None, dataset_path: str | None = None) -> list:
+    with open(dataset_path or EVAL_DATASET) as f:
         data = json.load(f)
     questions = data["questions"]
     if limit:
@@ -197,9 +197,10 @@ Respond with ONLY:
 # Main evaluation loop
 # ---------------------------------------------------------------------------
 
-def run_evaluation(config_path: str, limit: int | None = None, skip_generation: bool = False):
+def run_evaluation(config_path: str, limit: int | None = None, skip_generation: bool = False,
+                   dataset_path: str | None = None):
     config = load_config(config_path)
-    questions = load_dataset(limit)
+    questions = load_dataset(limit, dataset_path=dataset_path)
 
     strategy = config.get("generation", {}).get("strategy", "sequential")
     model = config.get("generation", {}).get("model", "claude-haiku-4-5-20251001")
@@ -297,6 +298,7 @@ def run_evaluation(config_path: str, limit: int | None = None, skip_generation: 
                 "tier": conf.tier,
                 "retrieval_score": conf.retrieval_score,
                 "citation_coverage": conf.citation_coverage,
+                "retrieval_concentration": conf.retrieval_concentration,
                 "verified_citations": conf.verified_citations,
                 "unverified_citations": conf.unverified_citations,
             } if conf else None,
@@ -377,5 +379,7 @@ if __name__ == "__main__":
     parser.add_argument("--config", required=True)
     parser.add_argument("--limit", type=int)
     parser.add_argument("--retrieval-only", action="store_true")
+    parser.add_argument("--dataset", help="Path to a dataset JSON (default: eval/data/eval_dataset.json)")
     args = parser.parse_args()
-    run_evaluation(args.config, limit=args.limit, skip_generation=args.retrieval_only)
+    run_evaluation(args.config, limit=args.limit, skip_generation=args.retrieval_only,
+                   dataset_path=args.dataset)
