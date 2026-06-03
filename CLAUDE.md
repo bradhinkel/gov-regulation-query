@@ -98,7 +98,16 @@ python eval/run_all.py --phase 5   # Top-k sweep
             staged-ingest (ingest.py --target-status staged) + atomic swap
             (scripts/swap_version.py). All 8 titles now current; 265,595 chunks.
       - [x] 9.5: citations show "current as of [date]" (effective_date in payload)
-      - [ ] 9.2: weekly change-detection sync job + 20% threshold alert
-      - [ ] 9.4: temporal "what changed?" query handler (current + archived)
-      - [ ] 9.6: sync logging + /health freshness; 9.7: freshness/temporal eval
+      - [x] 9.2/9.3: incremental change-detection (versioner issue_date[gte]) +
+            per-section staged swap (src/sync.py); 20% threshold alert; sync_state
+            watermark + sync_runs audit. Reconciled drifted titles 7/21/42.
+      - [x] 9.4: temporal "what changed?" handler — is_temporal_query intent,
+            fetch_section_versions (active+archived), generate_temporal diff
+            summary; falls back to a normal answer when no archived history.
+      - [x] 9.6: weekly systemd timer (deploy/regs-sync.*) + /health freshness.
+      - [x] 9.7: freshness/temporal eval (eval/src/eval_freshness_temporal.py):
+            intent 100%, staleness 0%, temporal coverage 75%, faithfulness ~0.72
+            (strong on prose amendments; large enumerated list sections are the
+            weak spot — generation model is configurable via TEMPORAL_MODEL).
+- [ ] Phase 9.1: Eval expansion (200+ Qs) & confidence reweighting (deferred)
 - [ ] Phase 9.1: Eval Expansion (200+ questions) & Confidence Reweighting

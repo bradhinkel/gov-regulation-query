@@ -539,6 +539,47 @@ def list_titles(source_system: str = "federal_regulations") -> list[dict]:
     ]
 
 
+def fetch_section_versions(
+    cfr_references: list[str],
+    source_system: str = "federal_regulations",
+) -> dict:
+    """
+    Phase 9.4 — fetch current + prior versions of the given sections for temporal
+    "what changed?" queries.
+
+    Returns { cfr_reference: {"active": [RetrievedChunk...],
+                              "archived": [RetrievedChunk...]} }
+    ordered newest-first by effective_date. Archived chunks are the superseded
+    text retained by the versioned-replacement swap.
+    """
+    if not cfr_references:
+        return {}
+    conn = psycopg.connect(DATABASE_URL)
+    try:
+        rows = conn.execute(
+            f"""
+            SELECT {_COLS}, status
+            FROM chunks
+            WHERE source_system = %s
+              AND cfr_reference = ANY(%s)
+              AND status IN ('active', 'archived')
+            ORDER BY cfr_reference, effective_date DESC, chunk_index ASC
+            """,
+            (source_system, cfr_references),
+        ).fetchall()
+    finally:
+        conn.close()
+
+    result: dict = {}
+    for row in rows:
+        status = row[13]
+        chunk = _row_to_chunk(row[:13], 0.0)
+        bucket = result.setdefault(chunk.cfr_reference, {"active": [], "archived": []})
+        if status in bucket:
+            bucket[status].append(chunk)
+    return result
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query the Federal Regulation RAG")
     parser.add_argument("query", help="Question to ask")

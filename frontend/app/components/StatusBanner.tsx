@@ -4,6 +4,7 @@ type Status =
   | "idle"
   | "classifying"
   | "retrieving"
+  | "comparing"
   | "generating"
   | "done"
   | "off_topic"
@@ -38,6 +39,7 @@ export default function StatusBanner({ status, error, offTopic }: StatusBannerPr
   const messages: Record<string, string> = {
     classifying: "Checking your question…",
     retrieving: "Searching the Code of Federal Regulations…",
+    comparing: "Comparing current and prior versions…",
     generating: "Generating plain English and legal language responses…",
   };
 

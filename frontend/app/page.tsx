@@ -16,6 +16,7 @@ type Status =
   | "idle"
   | "classifying"
   | "retrieving"
+  | "comparing"
   | "generating"
   | "done"
   | "off_topic"
@@ -40,6 +41,7 @@ interface QueryResult {
   strategy_used: string;
   latency_ms: number;
   confidence: Confidence | null;
+  temporal?: boolean;
   created_at: string;
 }
 
@@ -166,6 +168,7 @@ export default function Home() {
         isLoading={
           status === "classifying" ||
           status === "retrieving" ||
+          status === "comparing" ||
           status === "generating"
         }
         sources={sources}
@@ -180,6 +183,12 @@ export default function Home() {
               &ldquo;{result.query}&rdquo;
             </p>
             <div className="flex items-center gap-3 flex-shrink-0">
+              {result.temporal && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                  border border-purple-800 bg-purple-900/40 text-purple-300">
+                  Change comparison
+                </span>
+              )}
               {result.confidence && !result.not_found && (
                 <ConfidenceBadge confidence={result.confidence} />
               )}

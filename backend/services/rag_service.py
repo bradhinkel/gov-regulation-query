@@ -18,8 +18,8 @@ load_dotenv()
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.query import retrieve
-from src.generate import generate, classify_intent
+from src.query import retrieve, fetch_section_versions
+from src.generate import generate, classify_intent, is_temporal_query, generate_temporal
 
 # Defaults driven by eval results (Phase 4 winner: top_k=10, sequential Haiku)
 _DEFAULT_SOURCE_SYSTEM = os.getenv("RAG_SOURCE_SYSTEM", "federal_regulations")
@@ -85,10 +85,13 @@ async def run_generate(
         None,
         lambda: generate(query, chunks, strategy=resolved_strategy),
     )
+    return _to_result_dict(gen_result, timing)
 
+
+def _to_result_dict(gen_result, timing: dict, temporal: bool = False) -> dict:
+    """Shape a GenerationResult into the SSE result payload."""
     qr = gen_result.response
     conf = gen_result.confidence
-
     return {
         "plain_english": qr.plain_english,
         "legal_language": qr.legal_language,
@@ -99,6 +102,7 @@ async def run_generate(
         "input_tokens": gen_result.input_tokens,
         "output_tokens": gen_result.output_tokens,
         "timing": timing,
+        "temporal": temporal,
         "confidence": {
             "score": conf.score,
             "tier": conf.tier,
@@ -108,3 +112,32 @@ async def run_generate(
             "unverified_citations": conf.unverified_citations,
         } if conf else None,
     }
+
+
+def is_temporal(query: str) -> bool:
+    """Phase 9.4 intent check (sync, cheap)."""
+    return is_temporal_query(query)
+
+
+async def run_temporal(query: str, chunks: list, timing: dict, max_refs: int = 8) -> dict | None:
+    """
+    Build a 'what changed?' answer from current vs archived versions of the top
+    retrieved sections. Returns a result dict, or None if no section has recorded
+    changes (the caller then falls back to a normal answer).
+    """
+    refs: list[str] = []
+    for c in chunks:
+        ref = getattr(c, "cfr_reference", None)
+        if ref and ref not in refs:
+            refs.append(ref)
+        if len(refs) >= max_refs:
+            break
+
+    loop = asyncio.get_event_loop()
+    versions = await loop.run_in_executor(None, lambda: fetch_section_versions(refs))
+    gen_result = await loop.run_in_executor(
+        None, lambda: generate_temporal(query, versions, chunks)
+    )
+    if gen_result is None:
+        return None
+    return _to_result_dict(gen_result, timing, temporal=True)

@@ -32,6 +32,9 @@ ENABLE_VERBATIM_QUOTES = os.getenv("ENABLE_VERBATIM_QUOTES", "true").lower() == 
 LLM_CALL_STRATEGY = os.getenv("LLM_CALL_STRATEGY", "sequential")
 # Phase 8.5: lightweight intent classifier — defaults to the generation model (Haiku).
 CLASSIFIER_MODEL = os.getenv("CLASSIFIER_MODEL", GENERATION_MODEL)
+# Temporal "what changed?" diffing is harder than normal Q&A (comparing two long
+# texts), so it can use a stronger model. Defaults to the generation model.
+TEMPORAL_MODEL = os.getenv("TEMPORAL_MODEL", GENERATION_MODEL)
 
 _client = anthropic.Anthropic()
 
@@ -88,6 +91,24 @@ def classify_intent(query: str) -> bool:
         return not answer.startswith("no")
     except Exception:
         return True
+
+
+# Phase 9.4 — temporal "what changed?" intent. Cheap regex pre-filter; the
+# handler falls back to a normal answer when no archived history exists, so a
+# false positive is harmless.
+_TEMPORAL_RE = re.compile(
+    r"\b(what|which|how|when)\b.{0,40}\b(chang|amend|updat|revis|differ|modif|repeal|"
+    r"add|remov)\w*", re.I,
+)
+_TEMPORAL_PHRASES = re.compile(
+    r"(what'?s new|recent(ly)? (chang|amend|updat|revis)|over time|version history|"
+    r"history of|compared to (the )?(last|previous|prior)|since \d{4}|in \d{4})", re.I,
+)
+
+
+def is_temporal_query(query: str) -> bool:
+    """True if the query asks how regulations changed over time."""
+    return bool(_TEMPORAL_RE.search(query) or _TEMPORAL_PHRASES.search(query))
 
 
 # ---------------------------------------------------------------------------
@@ -479,4 +500,119 @@ def generate(query: str, chunks, strategy: str | None = None, model: str | None 
         result = _generate_single(query, chunks, active_model)
 
     result.confidence = compute_confidence(result.response, chunks)
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Phase 9.4 — Temporal "what changed?" generation
+# ---------------------------------------------------------------------------
+
+_TEMPORAL_SYSTEM = (
+    "You are a regulatory analyst explaining how U.S. federal regulations changed "
+    "over time. For each CFR section you are given its CURRENT text and its PRIOR "
+    "(superseded) text, with effective dates. Compare them and summarize what "
+    "changed — added, removed, or modified requirements — accurately and ONLY from "
+    "the provided text. Be specific about the difference; do not restate unchanged "
+    "content. Produce a JSON "
+    'object with exactly these keys: {"plain_english": "...", "legal_language": "..."}. '
+    "plain_english: a clear, accessible summary of what changed across the sections. "
+    "legal_language: a formal before/after analysis citing each section, quoting the "
+    "changed language and giving the effective dates. "
+    "Respond with ONLY the JSON object, no markdown fences."
+    + _SECURITY_CLAUSE
+)
+
+
+def _strip_prefix(text: str) -> str:
+    """Drop the parser's [cfr_ref]\\nheading\\n\\n context prefix from chunk text."""
+    if "\n\n" in text:
+        return text.split("\n\n", 1)[1]
+    if "\n" in text:
+        return text.split("\n", 1)[1]
+    return text
+
+
+def _segments(text: str) -> list[str]:
+    """Split text into sentence/clause-ish segments for diffing."""
+    segs = re.split(r"(?<=[.;:])\s+|\n+", text)
+    return [s.strip() for s in segs if s.strip()]
+
+
+def _text_diff(prior: str, current: str, max_items: int = 40) -> tuple[list[str], list[str]]:
+    """Return (added, removed) segments between prior and current text."""
+    import difflib
+    p, c = _segments(prior), _segments(current)
+    sm = difflib.SequenceMatcher(None, p, c)
+    added, removed = [], []
+    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+        if tag in ("replace", "delete"):
+            removed.extend(p[i1:i2])
+        if tag in ("replace", "insert"):
+            added.extend(c[j1:j2])
+    return added[:max_items], removed[:max_items]
+
+
+def generate_temporal(query: str, versions_map: dict, retrieved_chunks,
+                      model: str | None = None) -> GenerationResult | None:
+    """
+    Diff-oriented answer from current vs prior section text.
+
+    versions_map: { cfr_reference: {"active": [chunk...], "archived": [chunk...]} }.
+    For each section with both versions, a textual diff extracts the added/removed
+    segments and only those are sent to the model (so it summarizes a precise diff
+    rather than re-diffing two large blobs). Sections with no real diff are skipped.
+    Returns None if nothing actually changed (caller falls back to a normal answer).
+    """
+    blocks, cite_chunks = [], []
+    for ref, v in versions_map.items():
+        if not v.get("active") or not v.get("archived"):
+            continue
+        cur, pri = v["active"], v["archived"]
+        cur_text = "\n\n".join(_strip_prefix(c.chunk_text) for c in cur)
+        pri_text = "\n\n".join(_strip_prefix(c.chunk_text) for c in pri)
+        added, removed = _text_diff(pri_text, cur_text)
+        if not added and not removed:
+            continue  # versions are materially identical — not a real change
+        heading = cur[0].section_heading or ""
+        # The model reads the full prior/current text (it comprehends prose far
+        # better than a reorder-noisy raw diff); the diff above only gates whether
+        # there is a real change to describe at all.
+        blocks.append(
+            f"[{ref} — {heading}]\n"
+            f"CURRENT (as of {cur[0].effective_date}):\n{cur_text}\n\n"
+            f"PRIOR (as of {pri[0].effective_date}):\n{pri_text}"
+        )
+        cite_chunks.append(cur[0])
+
+    if not blocks:
+        return None
+
+    context = "\n\n---\n\n".join(blocks)
+    user_msg = f"{_frame_question(query)}\n\nSection versions:\n{context}"
+
+    active_model = model or TEMPORAL_MODEL
+    t0 = time.time()
+    resp = _client.messages.create(
+        model=active_model, max_tokens=2048,
+        system=_TEMPORAL_SYSTEM, messages=[{"role": "user", "content": user_msg}],
+    )
+    latency_ms = (time.time() - t0) * 1000
+
+    raw = resp.content[0].text.strip() if resp.content else ""
+    if raw.startswith("```"):
+        raw = raw.split("```")[1].lstrip("json").strip().rsplit("```", 1)[0].strip()
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        data = {"plain_english": raw, "legal_language": raw}
+
+    qr = QueryResponse(
+        plain_english=data.get("plain_english", ""),
+        legal_language=data.get("legal_language", ""),
+        citations=_citations_from_chunks(cite_chunks),
+        strategy_used="temporal",
+        not_found=False,
+    )
+    result = GenerationResult(qr, resp.usage.input_tokens, resp.usage.output_tokens, latency_ms)
+    result.confidence = compute_confidence(qr, retrieved_chunks)
     return result

@@ -65,15 +65,24 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
             use_hyde=request.use_hyde,
         )
 
-        # Step 2: Generate
-        yield sse("status", {"status": "generating"})
+        # Step 2: Generate. Temporal "what changed?" queries get a diff-oriented
+        # answer from current vs archived versions; if no section has recorded
+        # changes, fall back to a normal answer.
+        result = None
+        if rag_service.is_temporal(request.query):
+            yield sse("status", {"status": "comparing"})
+            result = await rag_service.run_temporal(
+                query=request.query, chunks=chunks, timing=timing,
+            )
 
-        result = await rag_service.run_generate(
-            query=request.query,
-            chunks=chunks,
-            timing=timing,
-            strategy=request.strategy,
-        )
+        if result is None:
+            yield sse("status", {"status": "generating"})
+            result = await rag_service.run_generate(
+                query=request.query,
+                chunks=chunks,
+                timing=timing,
+                strategy=request.strategy,
+            )
 
         # Step 2.5: Output content validation (Phase 8.5). Reject answers that
         # smuggle code/script; downgrade confidence for non-official URLs.
@@ -121,6 +130,7 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
             "strategy_used": result["strategy_used"],
             "latency_ms": result["latency_ms"],
             "confidence": conf,
+            "temporal": result.get("temporal", False),
             "created_at": saved["created_at"],
         }
 
