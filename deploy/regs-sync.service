@@ -1,0 +1,13 @@
+[Unit]
+Description=Federal Regulation RAG - incremental eCFR corpus sync
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/regs
+EnvironmentFile=/opt/regs/.env
+ExecStart=/opt/regs/venv/bin/python src/sync.py
+# Output is captured in the journal: journalctl -u regs-sync
+# Audit trail also persists to the sync_runs table.
+TimeoutStartSec=3600

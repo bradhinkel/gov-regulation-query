@@ -1,0 +1,14 @@
+[Unit]
+Description=Weekly Federal Regulation RAG eCFR sync
+
+[Timer]
+# Sundays at 03:30, jittered up to 30 min to avoid hammering the eCFR API.
+OnCalendar=Sun *-*-* 03:30:00
+RandomizedDelaySec=1800
+# If the box was off at the scheduled time, run on next boot. Combined with the
+# watermark-based incremental sync, a missed week (or months) is caught up in one
+# run — no full rebuild needed.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

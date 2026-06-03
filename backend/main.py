@@ -56,11 +56,12 @@ app.include_router(sources.router, tags=["sources"])
 
 @app.get("/health")
 async def health():
-    """Health check — validates DB connectivity."""
+    """Health check — DB connectivity + corpus freshness (Phase 9.6)."""
     try:
         pool = await db_service.get_pool()
         async with pool.acquire() as conn:
             await conn.fetchval("SELECT 1")
-        return {"status": "ok", "db": "connected"}
+        corpus = await db_service.get_sync_health()
+        return {"status": "ok", "db": "connected", "corpus": corpus}
     except Exception as exc:
         return {"status": "error", "db": str(exc)}

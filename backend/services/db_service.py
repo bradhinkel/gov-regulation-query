@@ -135,3 +135,46 @@ async def get_queries(
         for r in rows
     ]
     return items, total
+
+
+async def get_sync_health() -> dict:
+    """
+    Corpus freshness for /health (Phase 9.6): active size, per-title watermarks,
+    and the last incremental-sync run. Resilient if the sync tables don't exist
+    yet (returns what it can).
+    """
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        active = await conn.fetchval("SELECT count(*) FROM chunks WHERE status = 'active'")
+        try:
+            titles = await conn.fetch(
+                "SELECT title_number, last_synced_date, "
+                "(CURRENT_DATE - last_synced_date) AS days_old "
+                "FROM sync_state ORDER BY title_number"
+            )
+            last = await conn.fetchrow(
+                "SELECT run_at, status, titles_changed, sections_updated, sections_removed "
+                "FROM sync_runs ORDER BY id DESC LIMIT 1"
+            )
+        except asyncpg.exceptions.UndefinedTableError:
+            return {"active_chunks": active, "sync": None}
+
+    return {
+        "active_chunks": active,
+        "titles_tracked": len(titles),
+        "oldest_title_days": max((t["days_old"] for t in titles), default=None),
+        "title_as_of": {
+            str(t["title_number"]): t["last_synced_date"].isoformat() for t in titles
+        },
+        "last_sync": (
+            {
+                "run_at": last["run_at"].isoformat(),
+                "status": last["status"],
+                "titles_changed": last["titles_changed"],
+                "sections_updated": last["sections_updated"],
+                "sections_removed": last["sections_removed"],
+            }
+            if last
+            else None
+        ),
+    }
