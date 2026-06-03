@@ -1,0 +1,1807 @@
+{
+  "version": "1.0",
+  "source_system": "federal_regulations",
+  "num_questions": 200,
+  "questions": [
+    {
+      "question": "What labeling notice can a variety owner use on seeds or plants after filing a plant variety protection application?",
+      "ground_truth": "After filing an application and paying the prescribed fee, the owner or designee may label the variety or containers substantially as follows: 'Unauthorized Propagation Prohibited\u2014(Unauthorized Seed Multiplication Prohibited)\u2014U.S. Variety Protection Applied For.' Where applicable, 'PVPA 1994' or 'PVPA 1994\u2014Unauthorized Sales for Reproductive Purposes Prohibited' may be added to the notice.",
+      "ground_truth_reference": "7 CFR \u00a7 97.140",
+      "source_chunk_id": "a24fc35f-2a7b-4128-a132-179097d99cb8",
+      "cfr_reference": "7 CFR \u00a7 97.140",
+      "title_number": 7,
+      "id": "q001"
+    },
+    {
+      "question": "What actions must a hearing officer take after the posthearing brief submission deadline has passed?",
+      "ground_truth": "After the time for submission of posthearing briefs has expired, the hearing officer must either make an initial decision or final decision (if authorized to do so), or certify the entire record including recommended findings and proposed decision to the Secretary for a final decision. A copy of the initial decision, final decision, or certification must then be mailed to the applicant or recipient and other parties by the hearing clerk.",
+      "ground_truth_reference": "7 CFR \u00a7 15.136",
+      "source_chunk_id": "10cc8412-d338-4b6a-a91e-74b4883af9a7",
+      "cfr_reference": "7 CFR \u00a7 15.136",
+      "title_number": 7,
+      "id": "q002"
+    },
+    {
+      "question": "What is the term length for members of the board established under 7 CFR \u00a7 993, and when does their term end?",
+      "ground_truth": "The term of office for members and their respective alternates is two years, ending on May 31 of even numbered years, and any later date which may be necessary for the selection and qualification of their respective successors.",
+      "ground_truth_reference": "7 CFR \u00a7 993.25",
+      "source_chunk_id": "dcd1bc47-0e7f-48b4-bd92-ab9a557e02a8",
+      "cfr_reference": "7 CFR \u00a7 993.25",
+      "title_number": 7,
+      "id": "q003"
+    },
+    {
+      "question": "What are the minimum requirements that must be included in the annual EBT project status report submitted by the Summer EBT agency as part of the State plan?",
+      "ground_truth": "At a minimum, the annual status report must contain information on future EBT changes and procurement updates affecting present operations, and such other information the Secretary may require.",
+      "ground_truth_reference": "7 CFR \u00a7 292.11(3)",
+      "source_chunk_id": "7868e58f-347a-40cf-9d53-48679cff7791",
+      "cfr_reference": "7 CFR \u00a7 292.11",
+      "title_number": 7,
+      "id": "q004"
+    },
+    {
+      "question": "Under 7 CFR \u00a7 2.60, what is the Chief of the Forest Service authorized to do regarding cleanup standards in accordance with the Comprehensive Environmental Response, Compensation, and Liability Act?",
+      "ground_truth": "The Chief of the Forest Service is authorized to exercise the functions of the Secretary with respect to cleanup standards under Section 121 of the Act (42 U.S.C. 9621).",
+      "ground_truth_reference": "7 CFR \u00a7 2.60(xiv)",
+      "source_chunk_id": "a88b67c8-2f2c-4a3a-b1dd-d66348d6885e",
+      "cfr_reference": "7 CFR \u00a7 2.60",
+      "title_number": 7,
+      "id": "q005"
+    },
+    {
+      "question": "Where can a party obtain a copy of the hearing transcript, and what will it cost?",
+      "ground_truth": "Transcripts of hearings are made available to any person at the actual cost of duplication. During active proceedings, copies are kept on file in the office of the hearing clerk and available for examination during official business hours. After the proceeding is no longer active, transcripts remain available for examination by request and with reasonable notice to the hearing clerk.",
+      "ground_truth_reference": "7 CFR \u00a7 1200.12(a)-(b)",
+      "source_chunk_id": "905b5d68-259a-406f-b3dd-386898b53d13",
+      "cfr_reference": "7 CFR \u00a7 1200.12",
+      "title_number": 7,
+      "id": "q006"
+    },
+    {
+      "question": "Under 7 CFR \u00a7 1221.134, are Board representatives and employees personally liable for errors in judgment or mistakes made in their official capacity?",
+      "ground_truth": "No, representatives and employees of the Board are not held personally responsible for errors in judgment, mistakes, or other acts of commission or omission, except in cases involving dishonesty or willful misconduct.",
+      "ground_truth_reference": "7 CFR \u00a7 1221.134",
+      "source_chunk_id": "e1540fd9-5505-4784-b991-3cb1eb9ea24a",
+      "cfr_reference": "7 CFR \u00a7 1221.134",
+      "title_number": 7,
+      "id": "q007"
+    },
+    {
+      "question": "What are the consequences if a participant is found to have knowingly made a fraudulent representation in connection with an AMA determination?",
+      "ground_truth": "The participant must refund to NRCS all payments plus interest as determined by NRCS with respect to all NRCS contracts to which they are a party. Additionally, the participant's interest in all contracts will be terminated, and NRCS may determine the participant ineligible for future funding from any NRCS conservation programs.",
+      "ground_truth_reference": "7 CFR \u00a7 1465.35(b)(2) and (c)",
+      "source_chunk_id": "cfc47e65-b37e-4cde-8ba4-8023c2f5273e",
+      "cfr_reference": "7 CFR \u00a7 1465.35",
+      "title_number": 7,
+      "id": "q008"
+    },
+    {
+      "question": "When must an agency refer a debt over 120 days delinquent to Fiscal Service for centralized administrative offset?",
+      "ground_truth": "After the notice and review opportunity requirements of \u00a7 3.41 are met, an agency must refer debts over 120 days delinquent to Fiscal Service within 61 days after the date of the Notice of Intent to Collect by Administrative Offset. If the debtor requests review and the debt is upheld as more than 120 days delinquent, referral must occur within 30 days of the final decision.",
+      "ground_truth_reference": "7 CFR \u00a7 3.44(a)(1)",
+      "source_chunk_id": "50807637-9ced-4ee2-bd7c-ed2cb5183ee5",
+      "cfr_reference": "7 CFR \u00a7 3.44",
+      "title_number": 7,
+      "id": "q009"
+    },
+    {
+      "question": "What percentage range of advance payments can NRCS issue to historically underserved producers under EQIP?",
+      "ground_truth": "NRCS may issue advance payments of at least 50 percent and not to exceed 100 percent of the anticipated amount of the costs incurred for the purpose of purchasing materials or services to implement a conservation practice for historically underserved producers.",
+      "ground_truth_reference": "7 CFR \u00a7 1466.24(d)(1)",
+      "source_chunk_id": "15235942-4d6c-442d-a301-02e7b1636cd1",
+      "cfr_reference": "7 CFR \u00a7 1466.24",
+      "title_number": 7,
+      "id": "q010"
+    },
+    {
+      "question": "How often must a warehouse operator submit financial statements to maintain approval under this part?",
+      "ground_truth": "A warehouse operator must submit a current financial statement at the time of application and annually thereafter, as provided for in the applicable storage agreement.",
+      "ground_truth_reference": "7 CFR \u00a7 1423.6",
+      "source_chunk_id": "958c73b7-e692-4ae6-9bad-13c12dff4fb9",
+      "cfr_reference": "7 CFR \u00a7 1423.6",
+      "title_number": 7,
+      "id": "q011"
+    },
+    {
+      "question": "How are Board member votes weighted under 7 CFR \u00a7 1216.46, and what metric is used to determine this weighting?",
+      "ground_truth": "Board actions are weighted by the value of production as determined by a primary peanut-producing state's three-year running average of total gross farm income derived from all peanut sales. The at-large Board member's vote is weighted by the collective value of production from all minor peanut-producing states' three-year running average of total gross farm income derived from all peanut sales.",
+      "ground_truth_reference": "7 CFR \u00a7 1216.46(b)",
+      "source_chunk_id": "ae8d4b14-1a93-424a-92f6-4858ffa8ebec",
+      "cfr_reference": "7 CFR \u00a7 1216.46",
+      "title_number": 7,
+      "id": "q012"
+    },
+    {
+      "question": "What protections exist regarding proprietary information in reports submitted under 7 CFR \u00a7 930.70?",
+      "ground_truth": "Under no circumstances shall any information or reports be made available to Board members or any person designated by the Board or Secretary that would reveal the proprietary information of an individual handler. This requirement protects the confidentiality of handler-specific business information.",
+      "ground_truth_reference": "7 CFR \u00a7 930.70(c)",
+      "source_chunk_id": "1a724255-daa3-49ca-ab98-a3c8d41ab9f7",
+      "cfr_reference": "7 CFR \u00a7 930.70",
+      "title_number": 7,
+      "id": "q013"
+    },
+    {
+      "question": "What materials are acceptable for the product contact surfaces of a curd mill according to 7 CFR \u00a7 58.419?",
+      "ground_truth": "According to 7 CFR \u00a7 58.419, the product contact surfaces of the curd mill should be of stainless steel.",
+      "ground_truth_reference": "7 CFR \u00a7 58.419",
+      "source_chunk_id": "9fdec59f-e27b-4958-9f49-f91c3f8acb96",
+      "cfr_reference": "7 CFR \u00a7 58.419",
+      "title_number": 7,
+      "id": "q014"
+    },
+    {
+      "question": "Can a state court judgment or private creditor lien prevent a person from receiving a payment under this part?",
+      "ground_truth": "No, under 7 CFR \u00a7 1450.8(a), payments under this part will be allowed without regard to any claim or lien in favor of any creditor, except agencies of the U.S. Government. However, this is subject to part 1403 of the regulations.",
+      "ground_truth_reference": "7 CFR \u00a7 1450.8(a)",
+      "source_chunk_id": "8c1d3f24-fbe6-4f20-b692-4260af69359a",
+      "cfr_reference": "7 CFR \u00a7 1450.8",
+      "title_number": 7,
+      "id": "q015"
+    },
+    {
+      "question": "What is the definition of USDA Foods under the CSFP regulations?",
+      "ground_truth": "USDA Foods means nutritious foods purchased by USDA to supplement the diets of CSFP participants, also referred to as donated foods.",
+      "ground_truth_reference": "7 CFR \u00a7 247.1",
+      "source_chunk_id": "6a98cd20-bf35-4dea-8dc3-3d90fefd8967",
+      "cfr_reference": "7 CFR \u00a7 247.1",
+      "title_number": 7,
+      "id": "q016"
+    },
+    {
+      "question": "How long must a warehouse retain records related to tobacco sales, and from what point in time does this retention period begin?",
+      "ground_truth": "Each warehouse must keep records for a period of two years from the opening of the marketing season in which the tobacco is sold, as specified in 7 CFR \u00a7 29.9407(b).",
+      "ground_truth_reference": "7 CFR \u00a7 29.9407(b)",
+      "source_chunk_id": "90c41a5d-8496-4593-9d79-f5d0dc30d1d2",
+      "cfr_reference": "7 CFR \u00a7 29.9407",
+      "title_number": 7,
+      "id": "q017"
+    },
+    {
+      "question": "What are some of the purposes for which the Chief may allocate funds under the ACEP program?",
+      "ground_truth": "The Chief may allocate funds for encouraging enrollment by beginning farmers or ranchers, limited resource farmers or ranchers, Indian Tribes, and veteran farmers or ranchers; implementing landscape and related initiatives and special pilot programs for easement management and monitoring; agreements with other agencies and organizations to assist with program implementation; coordination of easement enrollment across State boundaries; coordination of easement plan or conservation plan development; or for other goals of the ACEP.",
+      "ground_truth_reference": "7 CFR \u00a7 1468.2(e)",
+      "source_chunk_id": "b12ecfd3-aa69-4969-8c6b-f3cf92daf3f4",
+      "cfr_reference": "7 CFR \u00a7 1468.2",
+      "title_number": 7,
+      "id": "q018"
+    },
+    {
+      "question": "What is the primary purpose of a riparian buffer according to the regulation?",
+      "ground_truth": "A riparian buffer is a strip or area of vegetation immediately adjacent and parallel to an eligible water body that is designed to remove nutrients, sediment, organic matter, pesticides, and other pollutants from surface runoff and subsurface flow through deposition, absorption, plant uptake, and other processes. It serves to reduce pollution, protect surface water and subsurface water quality, provide shade to reduce water temperature for improved aquatic organism habitat, and supply large woody debris for aquatic organisms and wildlife habitat.",
+      "ground_truth_reference": "7 CFR \u00a7 1410.2",
+      "source_chunk_id": "3d21252e-a09f-4b36-aa47-4a383bf47af6",
+      "cfr_reference": "7 CFR \u00a7 1410.2",
+      "title_number": 7,
+      "id": "q019"
+    },
+    {
+      "question": "What regulations govern the appeal process for determinations made under 7 CFR Part 1436?",
+      "ground_truth": "Appeals, reconsideration, or review of determinations made under Part 1436 must be in accordance with parts 11 and 780 of title 7 CFR, except for provisions that are determined rules of general applicability, which have no appeal rights.",
+      "ground_truth_reference": "7 CFR \u00a7 1436.18",
+      "source_chunk_id": "db66904e-7e69-47d3-adaf-aa7bfbe4a5a5",
+      "cfr_reference": "7 CFR \u00a7 1436.18",
+      "title_number": 7,
+      "id": "q020"
+    },
+    {
+      "question": "What are the key responsibilities of a site supervisor under 7 CFR \u00a7 225.2?",
+      "ground_truth": "A site supervisor is responsible for all administrative and management activities at the site, including maintaining documentation of meal deliveries, ensuring that all meals served are safe, and maintaining accurate point of service meal counts. Except for non-congregate meal service sites using delivery services, the site supervisor must be on site for the duration of the food service.",
+      "ground_truth_reference": "7 CFR \u00a7 225.2",
+      "source_chunk_id": "941e78b4-8230-4f4d-8790-fb2eb78229a1",
+      "cfr_reference": "7 CFR \u00a7 225.2",
+      "title_number": 7,
+      "id": "q021"
+    },
+    {
+      "question": "What is an Intermediate Bulk Container (IBC) and what are its specifications?",
+      "ground_truth": "An Intermediate Bulk Container (IBC) is a bulk container with a polyethylene inner bottle with a galvanized steel protective cage with a capacity of 275 and 330 gallons. It is reusable.",
+      "ground_truth_reference": "7 CFR \u00a7 1434.3",
+      "source_chunk_id": "2a901429-9b0d-49bf-8907-5cd22856513b",
+      "cfr_reference": "7 CFR \u00a7 1434.3",
+      "title_number": 7,
+      "id": "q022"
+    },
+    {
+      "question": "What certification statement must appear immediately below the signature line on a CACFP free and reduced-price meal application?",
+      "ground_truth": "The person signing must certify that all information furnished is true and correct, that the application is being made in connection with receipt of Federal funds, that Program officials may verify the information on the application, and that deliberate misrepresentation may subject the applicant to prosecution under applicable State and Federal criminal statutes.",
+      "ground_truth_reference": "7 CFR \u00a7 226.23(F)",
+      "source_chunk_id": "f95d66ac-1039-47ad-981b-1c73c3c95e6b",
+      "cfr_reference": "7 CFR \u00a7 226.23",
+      "title_number": 7,
+      "id": "q023"
+    },
+    {
+      "question": "What standard test method must be used to determine the Biobased Content of products participating in the BioPreferred Program?",
+      "ground_truth": "The Biobased Content must be determined using ASTM Method D6866, Standard Test Methods for Determining the Biobased Content of Solid, Liquid, and Gaseous Samples Using Radiocarbon Analysis.",
+      "ground_truth_reference": "7 CFR \u00a7 4270.2 \u2014 Definitions (Biobased content testing)",
+      "source_chunk_id": "2db84e12-9141-4692-8c63-21df441d1abe",
+      "cfr_reference": "7 CFR \u00a7 4270.2",
+      "title_number": 7,
+      "id": "q024"
+    },
+    {
+      "question": "What must the County Supervisor do if a borrower fails to provide an acceptable insurance policy?",
+      "ground_truth": "The County Supervisor must include in their report to the State Director an explanation of the efforts made by both the supervisor and borrower to obtain acceptable insurance, along with justification for accepting an inadequate policy or for not obtaining an insurance policy of any kind. Additionally, if adequate insurance becomes available, the supervisor must require the borrower to deliver an acceptable insurance policy to the County Office.",
+      "ground_truth_reference": "7 CFR \u00a7 1806.6(a)(1)(D) and (B)",
+      "source_chunk_id": "0a21d881-fc8b-4d6a-ba2a-8b9bbae4c7af",
+      "cfr_reference": "7 CFR \u00a7 1806.6",
+      "title_number": 7,
+      "id": "q025"
+    },
+    {
+      "question": "If a non-DOE entity files a submission that contains confidential information, how should it serve the official service list?",
+      "ground_truth": "If a filing arguably contains confidential information, a non-DOE person may serve copies with the confidential information deleted upon all persons on the official service list except DOE offices. DOE offices must be served both an original filing and one with deletions.",
+      "ground_truth_reference": "10 CFR \u00a7 205.195(b)(1)",
+      "source_chunk_id": "02e38051-2484-4f3c-a93d-333b8c502aac",
+      "cfr_reference": "10 CFR \u00a7 205.195",
+      "title_number": 10,
+      "id": "q026"
+    },
+    {
+      "question": "What is the key difference between random alcohol testing and random drug testing as defined in 10 CFR \u00a7 712.3?",
+      "ground_truth": "Both random alcohol testing and random drug testing are defined identically in their essential characteristics: they are both unscheduled, unannounced testing of randomly selected employees using a process designed to ensure nondiscriminatory selection. The only difference is the substance being tested for\u2014alcohol in one case and drugs in the other.",
+      "ground_truth_reference": "10 CFR \u00a7 712.3",
+      "source_chunk_id": "df459aa7-5066-4f32-9284-fa2d4925e2ce",
+      "cfr_reference": "10 CFR \u00a7 712.3",
+      "title_number": 10,
+      "id": "q027"
+    },
+    {
+      "question": "Can a freelance journalist be considered as working for a news organization for purposes of FOIA fee exemptions?",
+      "ground_truth": "Yes, a freelance journalist may be regarded as working for a news organization if the journalist can demonstrate a solid basis for expecting publication through that organization, even though the journalist is not actually employed by the news organization.",
+      "ground_truth_reference": "10 CFR \u00a7 1703.107",
+      "source_chunk_id": "22c5dbbf-92e4-4547-8e35-c0a69571b952",
+      "cfr_reference": "10 CFR \u00a7 1703.107",
+      "title_number": 10,
+      "id": "q028"
+    },
+    {
+      "question": "What information must the disbursing official provide to the NRC regarding debts collected through centralized administrative offset, and what information should NOT be disclosed?",
+      "ground_truth": "The disbursing official must advise the NRC of the names, mailing addresses, and taxpayer identifying numbers of debtors from whom past-due, legally enforceable debt was collected, as well as the amounts collected from each debtor. However, the disbursing official will not advise the NRC of the source of payment from which such amounts were collected.",
+      "ground_truth_reference": "10 CFR \u00a7 16.13(e)(3)",
+      "source_chunk_id": "6954ea3f-b15f-4696-a97f-9802d8602b94",
+      "cfr_reference": "10 CFR \u00a7 16.13",
+      "title_number": 10,
+      "id": "q029"
+    },
+    {
+      "question": "What are some of the considerations that the Secretary or designee may take into account when deciding whether to waive identified inventions under 10 CFR \u00a7 784.5?",
+      "ground_truth": "According to 10 CFR \u00a7 784.5(m), the Secretary or designee may consider such other factors as benefit to the U.S. economy, in addition to other specified criteria, when determining whether to grant a waiver of identified inventions.",
+      "ground_truth_reference": "10 CFR \u00a7 784.5(m)",
+      "source_chunk_id": "19c6693d-82ea-4b55-8156-e071f252280c",
+      "cfr_reference": "10 CFR \u00a7 784.5",
+      "title_number": 10,
+      "id": "q030"
+    },
+    {
+      "question": "Can a licensee store nuclear material that has been exempted under \u00a7 75.26 in the same storage area as nuclear material that is subject to Safeguards Agreements?",
+      "ground_truth": "No. According to 10 CFR \u00a7 75.27(d), licensees of facilities, licensees of locations, and possessors of nuclear material outside facilities shall not store nuclear material exempted under \u00a7 75.26 together with nuclear material subject to Safeguards Agreements. The exempted and subject materials must be stored separately.",
+      "ground_truth_reference": "10 CFR \u00a7 75.27(d)",
+      "source_chunk_id": "cfccd7e4-3d9e-4076-9326-4952288dc900",
+      "cfr_reference": "10 CFR \u00a7 75.27",
+      "title_number": 10,
+      "id": "q031"
+    },
+    {
+      "question": "Under 10 CFR \u00a7 51.22(e), what types of environmental review documents are NOT required when the Commission promulgates technical requirements and criteria for approving applications under parts 60 or 63?",
+      "ground_truth": "According to 10 CFR \u00a7 51.22(e), promulgation of technical requirements and criteria that the Commission will apply in approving or disapproving applications under part 60 or 63 shall not require an environmental impact statement, an environmental assessment, or any further environmental review under NEPA sections 102(2)(H) or (I).",
+      "ground_truth_reference": "10 CFR \u00a7 51.22(e)",
+      "source_chunk_id": "ca41d512-7b5c-4308-8c11-aa6d09966d2a",
+      "cfr_reference": "10 CFR \u00a7 51.22",
+      "title_number": 10,
+      "id": "q032"
+    },
+    {
+      "question": "When certifying compliance with January 1, 2023, energy conservation standards for central air conditioning heat pumps, what optional testing information must be reported regarding very low temperature performance?",
+      "ground_truth": "Manufacturers must report whether the optional 5 \u00b0F very low temperature heating mode test was used to characterize performance at temperatures below 17 \u00b0F, except for triple-capacity northern heat pumps for which the very low temperature test is required. This information must be documented as part of the certification compliance data.",
+      "ground_truth_reference": "10 CFR \u00a7 429.16",
+      "source_chunk_id": "eeb44584-9434-4c42-8170-f0a1559b2f2f",
+      "cfr_reference": "10 CFR \u00a7 429.16",
+      "title_number": 10,
+      "id": "q033"
+    },
+    {
+      "question": "What are the five key obligations that a general license holder for custody and long-term care of uranium or thorium byproduct materials disposal sites must fulfill?",
+      "ground_truth": "The general license holder must: (1) implement the long-term stewardship plan (LTSP) as described in the regulation; (2) care for the disposal site in accordance with the LTSP; (3) notify the Commission of any changes to the LTSP that do not conflict with regulatory requirements; (4) guarantee permanent right-of-entry to Commission representatives for periodic site inspections; and (5) notify the Commission prior to undertaking any significant construction, actions, or repairs related to the disposal site.",
+      "ground_truth_reference": "10 CFR \u00a7 40.28",
+      "source_chunk_id": "5153e7bc-5525-42e9-915a-bfae792213b4",
+      "cfr_reference": "10 CFR \u00a7 40.28",
+      "title_number": 10,
+      "id": "q034"
+    },
+    {
+      "question": "What is the deadline for filing a request for review of an adverse trustworthiness and reliability determination with the Chief Administrative Judge?",
+      "ground_truth": "A request for review must be filed within 15 days after receipt of the adverse determination by the person against whom the adverse determination has been made.",
+      "ground_truth_reference": "10 CFR \u00a7 2.336",
+      "source_chunk_id": "4b99282c-8ff0-4765-a208-b72c4fde5fdc",
+      "cfr_reference": "10 CFR \u00a7 2.336",
+      "title_number": 10,
+      "id": "q035"
+    },
+    {
+      "question": "Who is responsible for appointing the NRC Personnel Security Review Panel, and how many members must it consist of?",
+      "ground_truth": "The NRC Personnel Security Review Panel is appointed by the Deputy Executive Director for Materials, Waste, Research, State, Tribal, Compliance, Administration, and Human Capital Programs. The panel consists of three members, two of whom shall be selected from outside the security field.",
+      "ground_truth_reference": "10 CFR \u00a7 10.5",
+      "source_chunk_id": "e4a12a58-dafd-4d66-ae77-d931a557213e",
+      "cfr_reference": "10 CFR \u00a7 10.5",
+      "title_number": 10,
+      "id": "q036"
+    },
+    {
+      "question": "Under 10 CFR \u00a7 5.450, can a recipient institution operate separate athletic teams based on sex, and if so, what conditions must be met?",
+      "ground_truth": "Yes, a recipient may operate or sponsor separate teams for members of each sex, but only where selection is based upon competitive skill or the activity involved is a contact sport. Additionally, if a team is offered for one sex but not the other, and athletic opportunities for the excluded sex have previously been limited, members of the excluded sex must be allowed to try out for the team unless it is a contact sport.",
+      "ground_truth_reference": "10 CFR \u00a7 5.450(b)",
+      "source_chunk_id": "f97f16f8-8259-454b-8f41-4eac82dceb78",
+      "cfr_reference": "10 CFR \u00a7 5.450",
+      "title_number": 10,
+      "id": "q037"
+    },
+    {
+      "question": "What legal rights do States and Federally-recognized Indian Tribes have regarding participation in license reviews for high-level radioactive waste repositories?",
+      "ground_truth": "A State in which a repository for high-level radioactive waste is proposed to be located and any affected, Federally-recognized Indian Tribe shall have an unquestionable legal right to participate as a party in license review proceedings. Additionally, States and affected Indian Tribes may participate in license reviews as provided in subpart J of part 2 of this chapter.",
+      "ground_truth_reference": "10 CFR \u00a7 60.63(a)",
+      "source_chunk_id": "e8c2b8a0-1a45-42bd-a3bf-1fd0129bbbb9",
+      "cfr_reference": "10 CFR \u00a7 60.63",
+      "title_number": 10,
+      "id": "q038"
+    },
+    {
+      "question": "What information must an HHS-certified laboratory report to the MRO for a specimen that tests positive on confirmatory analysis?",
+      "ground_truth": "The laboratory must report the specimen as positive for the specific drug(s) or drug metabolite(s) identified. If the MRO requests numerical values, the laboratory shall provide them. The laboratory must report all positive test results along with any other findings such as adulteration, substitution, dilution, or invalidity for the same specimen.",
+      "ground_truth_reference": "10 CFR \u00a7 26.169(c), (c)(1), and (c)(2)",
+      "source_chunk_id": "d9ab40d1-98f1-49f1-86ec-db3fea9faa1c",
+      "cfr_reference": "10 CFR \u00a7 26.169",
+      "title_number": 10,
+      "id": "q039"
+    },
+    {
+      "question": "What is the OMB control number for the information collection requirements in 10 CFR Part 54?",
+      "ground_truth": "The OMB control number for the information collection requirements contained in 10 CFR Part 54 is 3150-0155, as approved by the Office of Management and Budget.",
+      "ground_truth_reference": "10 CFR \u00a7 54.9(a)",
+      "source_chunk_id": "dd561c1b-5e1a-46d0-815c-04126d5bf4b1",
+      "cfr_reference": "10 CFR \u00a7 54.9",
+      "title_number": 10,
+      "id": "q040"
+    },
+    {
+      "question": "What geochemical conditions are identified as potentially adverse to repository performance under 10 CFR \u00a7 960.4-2?",
+      "ground_truth": "Potentially adverse conditions include: (1) ground-water conditions in the host rock that could affect the solubility or chemical reactivity of the engineered-barrier system and compromise expected repository performance; (2) geochemical processes or conditions that could reduce the sorption of radionuclides or degrade rock strength; and (3) pre-waste-emplacement ground-water conditions in the host rock that are chemically oxidizing.",
+      "ground_truth_reference": "10 CFR \u00a7 960.4-2(c)",
+      "source_chunk_id": "49d5f35c-029d-49b9-a44a-6f100c587f10",
+      "cfr_reference": "10 CFR \u00a7 960.4-2",
+      "title_number": 10,
+      "id": "q041"
+    },
+    {
+      "question": "When a basic model for commercial HVAC equipment includes individual models with components listed in Table 5, which individual models must be tested to determine representations?",
+      "ground_truth": "Only the individual model(s) of a specific otherwise comparable model group distributed in commerce with the least number (which could be zero) of components listed in Table 5 must be tested to determine representations. Testing must be consistent with any component-specific test provisions specified in section 4 of appendix E1 to subpart F of 10 CFR part 431.",
+      "ground_truth_reference": "10 CFR \u00a7 429.43(a)(3)(iv)(A)(2)",
+      "source_chunk_id": "52cf3601-e78d-4928-9912-142b7c71b252",
+      "cfr_reference": "10 CFR \u00a7 429.43",
+      "title_number": 10,
+      "id": "q042"
+    },
+    {
+      "question": "Where can a regulated entity obtain copies of ASHRAE 90.1-2013, and which CFR sections does this standard apply to?",
+      "ground_truth": "ASHRAE 90.1-2013 can be obtained from the American Society of Heating Refrigerating and Air-Conditioning Engineers, Inc., located at 180 Technology Parkway NW, Peachtree Corners, GA 30092, or by contacting them at (404) 636-8400 or visiting www.ashrae.org. This standard is incorporated by reference and approved for use in 10 CFR \u00a7\u00a7 433.2, 433.100, and 433.101.",
+      "ground_truth_reference": "10 CFR \u00a7 433.3(b)(4)",
+      "source_chunk_id": "f7beb916-bf1d-485c-a715-8a7cf0826477",
+      "cfr_reference": "10 CFR \u00a7 433.3",
+      "title_number": 10,
+      "id": "q043"
+    },
+    {
+      "question": "What information must an agency provide to a requester when responding to a FOIA or MDR request that involves RD, FRD, or TFNI material?",
+      "ground_truth": "Upon receipt of the response from DOE or DOD, the agency must inform the requester of the results of the review, provide the name of the Denying Official identified for any RD, FRD, or TFNI that is withheld, and advise the requester of their appeal rights concerning the RD, FRD, or TFNI.",
+      "ground_truth_reference": "10 CFR \u00a7 1045.175(f)",
+      "source_chunk_id": "b7629d58-9da3-4246-94db-f10633605280",
+      "cfr_reference": "10 CFR \u00a7 1045.175",
+      "title_number": 10,
+      "id": "q044"
+    },
+    {
+      "question": "If an applicant withdraws their license application before the NRC issues a decision, must they still pay the application fee?",
+      "ground_truth": "Yes, the application fee is charged whether the Commission approves the application or not, and is also charged if the applicant withdraws the application. According to 10 CFR \u00a7 170.12(a), the fee is nonrefundable regardless of the outcome.",
+      "ground_truth_reference": "10 CFR \u00a7 170.12(a)",
+      "source_chunk_id": "af9fb128-89dd-4514-97a3-9728d7facff2",
+      "cfr_reference": "10 CFR \u00a7 170.12",
+      "title_number": 10,
+      "id": "q045"
+    },
+    {
+      "question": "What is the OMB control number for the information collection requirements approved under 10 CFR Part 53?",
+      "ground_truth": "The OMB control number for the information collection requirements contained in 10 CFR Part 53 is 3150-0274. This approval was obtained as required by the Paperwork Reduction Act.",
+      "ground_truth_reference": "10 CFR \u00a7 53.120(a)",
+      "source_chunk_id": "a9ae681e-9238-41f6-a99f-ac1339578798",
+      "cfr_reference": "10 CFR \u00a7 53.120",
+      "title_number": 10,
+      "id": "q046"
+    },
+    {
+      "question": "What approval is required before the NRC issues an information request to a licensee under 10 CFR Part 53, and are there any exceptions to this requirement?",
+      "ground_truth": "Before issuing an information request (except for requests to verify compliance with the current licensing basis), the NRC must prepare and obtain approval from the Executive Director for Operations or their designee for the reason or reasons justifying the request to ensure the burden on respondents is justified by the potential safety significance of the issue.",
+      "ground_truth_reference": "10 CFR \u00a7 53.1580",
+      "source_chunk_id": "155bbc68-d9c4-4dce-89f4-73b6b8b00936",
+      "cfr_reference": "10 CFR \u00a7 53.1580",
+      "title_number": 10,
+      "id": "q047"
+    },
+    {
+      "question": "What is the deadline for the OHA Director to issue a decision on an appeal of a dismissal by the Head of Field Element or EC Director?",
+      "ground_truth": "The OHA Director must issue a decision on the appeal and notify the parties of the decision by the 30th day after it is received.",
+      "ground_truth_reference": "10 CFR \u00a7 708.19",
+      "source_chunk_id": "d27bd313-1f3c-404e-a076-d6fc9ac9bf0d",
+      "cfr_reference": "10 CFR \u00a7 708.19",
+      "title_number": 10,
+      "id": "q048"
+    },
+    {
+      "question": "What is the timeframe within which a generally licensed reactor operator must notify the Commission of a felony conviction?",
+      "ground_truth": "A generally licensed reactor operator must notify the Commission within 30 days about a conviction for a felony.",
+      "ground_truth_reference": "10 CFR \u00a7 53.810(g)",
+      "source_chunk_id": "78ce7bfb-1087-4ce9-bb46-a1ba073a02ef",
+      "cfr_reference": "10 CFR \u00a7 53.810",
+      "title_number": 10,
+      "id": "q049"
+    },
+    {
+      "question": "What is the difference between an open motor and a partial electric motor according to the definitions in 10 CFR \u00a7 431.12?",
+      "ground_truth": "An open motor is an electric motor with ventilating openings that permit passage of external cooling air over and around the windings. A partial electric motor is an assembly of motor components that requires the addition of no more than two endshields, including bearings, to create a complete electric motor capable of operation.",
+      "ground_truth_reference": "10 CFR \u00a7 431.12",
+      "source_chunk_id": "a3f924b9-9079-414c-8df7-6ee780edce75",
+      "cfr_reference": "10 CFR \u00a7 431.12",
+      "title_number": 10,
+      "id": "q050"
+    },
+    {
+      "question": "What are the three acceptable methods for controlling life-limited aircraft parts to ensure they are not installed after reaching their life limit?",
+      "ground_truth": "The three acceptable methods are: (1) a record keeping system that documents the part number, serial number, and current life status, which must be updated each time the part is removed; (2) a tag or record attached to the part showing the part number, serial number, and current life status, which must be updated or replaced each time the part is removed; and (3) non-permanent marking on the part that legibly shows its current life status.",
+      "ground_truth_reference": "14 CFR \u00a7 43.10",
+      "source_chunk_id": "8562420a-d416-40c0-9a93-fe7f6d812b12",
+      "cfr_reference": "14 CFR \u00a7 43.10",
+      "title_number": 14,
+      "id": "q051"
+    },
+    {
+      "question": "What is the minimum climb performance requirement for a balloon during the first minute after takeoff, and at what weight must this requirement be demonstrated?",
+      "ground_truth": "Each balloon must be capable of climbing at least 300 feet in the first minute after takeoff with a steady rate of climb. This requirement must be demonstrated at the maximum weight with a weight tolerance of +5 percent, and compliance must be shown at each altitude and ambient temperature for which approval is sought.",
+      "ground_truth_reference": "14 CFR \u00a7 31.17",
+      "source_chunk_id": "722cb001-c5d0-4f18-931a-5a80322af735",
+      "cfr_reference": "14 CFR \u00a7 31.17",
+      "title_number": 14,
+      "id": "q052"
+    },
+    {
+      "question": "What are the requirements for testing a turbosupercharger during an endurance test under 14 CFR \u00a7 33.49?",
+      "ground_truth": "The turbosupercharger must be run on the bench for 50 hours at the limiting turbine wheel inlet gas temperature and rotational speed for rated maximum continuous power operation. Alternatively, this requirement is satisfied if the limiting temperature and speed are maintained during 50 hours of the rated maximum continuous power operation itself.",
+      "ground_truth_reference": "14 CFR \u00a7 33.49(vi)",
+      "source_chunk_id": "e87d4e3f-71f1-4816-bcba-ee0041ff861e",
+      "cfr_reference": "14 CFR \u00a7 33.49",
+      "title_number": 14,
+      "id": "q053"
+    },
+    {
+      "question": "What are the flightdeck security requirements for a foreign air carrier operating a passenger-carrying transport category airplane within the United States under 14 CFR \u00a7 129.28?",
+      "ground_truth": "The airplane must be equipped with a door between the passenger and pilot compartment that incorporates features to restrict unwanted entry into the flightdeck, and these features must be operable from the flightdeck only. This requirement applies after August 20, 2002, except for newly manufactured airplanes on non-revenue delivery flights.",
+      "ground_truth_reference": "14 CFR \u00a7 129.28(a)(1)",
+      "source_chunk_id": "a0752a2b-1534-4523-8a36-745407123481",
+      "cfr_reference": "14 CFR \u00a7 129.28",
+      "title_number": 14,
+      "id": "q054"
+    },
+    {
+      "question": "Under 14 CFR \u00a7 297.11, does the Department of Transportation exercise jurisdiction over foreign indirect air carriers of property for shipments originating in foreign countries?",
+      "ground_truth": "No, the Department declines to exercise jurisdiction over foreign indirect air carriers of property with respect to shipments that originate in a foreign country. However, the Department reserves the right to exercise jurisdiction over any foreign indirect air carrier of property at any time it finds that such action is in the public interest.",
+      "ground_truth_reference": "14 CFR \u00a7 297.11",
+      "source_chunk_id": "38d03bb2-850b-4807-97a7-76857715bd71",
+      "cfr_reference": "14 CFR \u00a7 297.11",
+      "title_number": 14,
+      "id": "q055"
+    },
+    {
+      "question": "Under 14 CFR \u00a7 302.11, when can an administrative law judge refer a motion to the DOT decisionmaker instead of ruling on it directly?",
+      "ground_truth": "An administrative law judge may refer a motion to the DOT decisionmaker for decision if the administrative law judge finds that a prompt decision by the DOT decisionmaker on that motion is essential to the proper conduct of the proceeding.",
+      "ground_truth_reference": "14 CFR \u00a7 302.11(g)",
+      "source_chunk_id": "0d87a4e5-eb3b-4fa6-b457-62a5d9cec7f8",
+      "cfr_reference": "14 CFR \u00a7 302.11",
+      "title_number": 14,
+      "id": "q056"
+    },
+    {
+      "question": "What is the maximum page length permitted for a brief submitted to the DOT decisionmaker under 14 CFR \u00a7 302.35, and what materials are excluded from this page count?",
+      "ground_truth": "Briefs shall not exceed fifty (50) pages, including pages in any appendix, table, chart, or other document physically attached to the brief. However, maps and the summary of the argument are excluded from this page count. A 'map' for this purpose means only pictorial representations of routes, flight paths, mileage, and similar ancillary data superimposed on geographic drawings with only explanatory text.",
+      "ground_truth_reference": "14 CFR \u00a7 302.35(3)",
+      "source_chunk_id": "0d8bdb7b-f127-49cb-993b-3df03d938ec3",
+      "cfr_reference": "14 CFR \u00a7 302.35",
+      "title_number": 14,
+      "id": "q057"
+    },
+    {
+      "question": "What is the maximum allowable corrective maintenance time for MLS equipment failures?",
+      "ground_truth": "According to 14 CFR \u00a7 171.323(d), the maximum corrective maintenance time for MLS equipment must not exceed 1.5 hours. This applies to correction of unscheduled failures of the monitor, transmitter, and associated antenna assemblies.",
+      "ground_truth_reference": "14 CFR \u00a7 171.323(d)",
+      "source_chunk_id": "bf19ad10-8e61-4939-b718-f7a089ffb50d",
+      "cfr_reference": "14 CFR \u00a7 171.323",
+      "title_number": 14,
+      "id": "q058"
+    },
+    {
+      "question": "What are the two categories of seats that qualify as exit seats under 14 CFR \u00a7 121.585?",
+      "ground_truth": "Exit seats include: (1) each seat having direct access to an exit, and (2) each seat in a row of seats through which passengers would have to pass to gain access to an exit, from the first seat inboard of the exit to the first aisle inboard of the exit.",
+      "ground_truth_reference": "14 CFR \u00a7 121.585(a)(1)(i)",
+      "source_chunk_id": "fe7fd593-5968-4e09-ac84-627837083c7a",
+      "cfr_reference": "14 CFR \u00a7 121.585",
+      "title_number": 14,
+      "id": "q059"
+    },
+    {
+      "question": "What are the two alternative pathways an applicant can use to satisfy the experience requirements for a mechanic certificate or rating?",
+      "ground_truth": "An applicant can satisfy experience requirements by either presenting an authenticated document from a certificated aviation maintenance technician school in accordance with \u00a7 147.21, or by providing documentary evidence satisfactory to the Administrator of at least 18 months of practical experience with appropriate procedures and equipment for a specific rating, or alternatively, at least 30 months of concurrent practical experience performing duties for both airframe and powerplant ratings.",
+      "ground_truth_reference": "14 CFR \u00a7 65.77",
+      "source_chunk_id": "d0891484-0a8a-453b-af22-992a5972e56f",
+      "cfr_reference": "14 CFR \u00a7 65.77",
+      "title_number": 14,
+      "id": "q060"
+    },
+    {
+      "question": "What certification must be included in an air carrier's December report on incidents involving animals during air transport?",
+      "ground_truth": "The December report must contain a certification signed by the carrier's authorized representative stating: 'I, the undersigned, do certify that this report has been prepared under my direction in accordance with the regulations in 14 CFR part 235. I affirm that, to the best of my knowledge and belief, this is a true, correct and complete report.'",
+      "ground_truth_reference": "14 CFR \u00a7 235.3",
+      "source_chunk_id": "5aac75cc-f945-4d08-94a5-18fc1d8d10c2",
+      "cfr_reference": "14 CFR \u00a7 235.3",
+      "title_number": 14,
+      "id": "q061"
+    },
+    {
+      "question": "Under 14 CFR \u00a7 7, which account categories are used to classify aircraft control personnel expenses?",
+      "ground_truth": "Aircraft control personnel are classified under account 26.2 and are allocated to account codes 64 and 61 according to the Chart of Profit and Loss Accounts.",
+      "ground_truth_reference": "14 CFR \u00a7 7, Section 7 - Chart of Profit and Loss Accounts, account 26.2",
+      "source_chunk_id": "cdd75b1f-7f2e-44e5-ac6c-65b9e707b91d",
+      "cfr_reference": "14 CFR \u00a7 7",
+      "title_number": 14,
+      "id": "q062"
+    },
+    {
+      "question": "What is the processing fee for an application for a Certificate of Public Convenience and Necessity for Interstate Air Transportation with scheduled service authority?",
+      "ground_truth": "According to 14 CFR \u00a7 389.25(a), the processing fee for an Application for Certificate of Public Convenience and Necessity Interstate Air Transportation\u2014Scheduled Service is $850.",
+      "ground_truth_reference": "14 CFR \u00a7 389.25(a)",
+      "source_chunk_id": "b8872351-4e50-49ae-8c24-b2e60e819f3f",
+      "cfr_reference": "14 CFR \u00a7 389.25",
+      "title_number": 14,
+      "id": "q063"
+    },
+    {
+      "question": "What are the key accessibility requirements for a crewmember interphone system in terms of flight crew stations and flight attendant stations?",
+      "ground_truth": "The crewmember interphone system must be accessible for immediate use from each of two flight crewmember stations in the pilot compartment. Additionally, it must be accessible for use from at least one normal flight attendant station in each passenger compartment, and must be capable of operation within 10 seconds by a flight attendant at each of those stations.",
+      "ground_truth_reference": "14 CFR \u00a7 135.150(b)(4), (5), and (6)",
+      "source_chunk_id": "1cb8f781-80d8-4f54-aa63-f7bc0d522e54",
+      "cfr_reference": "14 CFR \u00a7 135.150",
+      "title_number": 14,
+      "id": "q064"
+    },
+    {
+      "question": "What is the minimum cockpit voice recorder retention capacity required for a turbine engine-powered airplane manufactured after May 16, 2025, under 14 CFR \u00a7 121.359(i)(2)(i)?",
+      "ground_truth": "The cockpit voice recorder must retain at least the last 25 hours of recorded information using a recorder that meets the standards of TSO-C123c, or later revision, for airplanes manufactured on or after May 16, 2025.",
+      "ground_truth_reference": "14 CFR \u00a7 121.359(i)(2)(i)",
+      "source_chunk_id": "f1e00e14-6e36-4321-a387-0a63fe6a6fb7",
+      "cfr_reference": "14 CFR \u00a7 121.359",
+      "title_number": 14,
+      "id": "q065"
+    },
+    {
+      "question": "Under 14 CFR \u00a7 1252.103, what does 'age-related term' mean, and can you provide examples of what qualifies as an age-related term?",
+      "ground_truth": "An 'age-related term' means a word or words which necessarily imply a particular age or range of ages. Examples include 'children,' 'adult,' and 'older persons,' but the term 'student' is not considered an age-related term.",
+      "ground_truth_reference": "14 CFR \u00a7 1252.103(e)",
+      "source_chunk_id": "ffd614f2-6af3-47e0-a76a-fe1cbc12e36f",
+      "cfr_reference": "14 CFR \u00a7 1252.103",
+      "title_number": 14,
+      "id": "q066"
+    },
+    {
+      "question": "Which types of applicants are exempt from providing a net worth exhibit under 14 CFR \u00a7 14.11?",
+      "ground_truth": "Qualified tax-exempt organizations and cooperative associations are exempt from providing a detailed net worth exhibit with their application. All other applicants must provide this exhibit showing their net worth and that of any affiliates when the proceeding was initiated.",
+      "ground_truth_reference": "14 CFR \u00a7 14.11(a)",
+      "source_chunk_id": "3fe9748b-8f4a-4d26-a32f-10cf780dde8d",
+      "cfr_reference": "14 CFR \u00a7 14.11",
+      "title_number": 14,
+      "id": "q067"
+    },
+    {
+      "question": "What information must be included in a hazardous materials training record according to 14 CFR \u00a7 121.1007?",
+      "ground_truth": "Each record must contain: (1) the individual's name; (2) the most recent training completion date; (3) a description, copy or reference to training materials used; (4) the name and address of the organization providing the training; and (5) a copy of the certification issued showing that a test was completed satisfactorily.",
+      "ground_truth_reference": "14 CFR \u00a7 121.1007(c)",
+      "source_chunk_id": "a135f818-a39f-417a-9636-c06f6103f27a",
+      "cfr_reference": "14 CFR \u00a7 121.1007",
+      "title_number": 14,
+      "id": "q068"
+    },
+    {
+      "question": "What types of third parties must a claimant disclose compensation received from when submitting a claim under this regulation?",
+      "ground_truth": "According to 14 CFR \u00a7 1261.306(b), claimants must disclose compensation or damages received from insurers, employers, and persons whose conduct was a cause of the accident or incident. The regulation notes this list is not exhaustive and includes any other persons from whom the claimant may have received money or property related to the claimed injury, loss, or death.",
+      "ground_truth_reference": "14 CFR \u00a7 1261.306(b)",
+      "source_chunk_id": "adde1d7b-7d4b-4208-8cce-f46648384f7a",
+      "cfr_reference": "14 CFR \u00a7 1261.306",
+      "title_number": 14,
+      "id": "q069"
+    },
+    {
+      "question": "Who is authorized to file a request for indemnification under 14 CFR Part 15, and where should the request be submitted?",
+      "ground_truth": "A request for indemnification may be filed by a publisher described in \u00a7 15.101 or the publisher's duly authorized agent or legal representative. The request must be filed with the Chief Counsel, Federal Aviation Administration, located at 800 Independence Avenue SW., Washington, DC 20591.",
+      "ground_truth_reference": "14 CFR \u00a7 15.105",
+      "source_chunk_id": "5a1cbc79-bd81-49dd-924a-1f9c9c77513e",
+      "cfr_reference": "14 CFR \u00a7 15.105",
+      "title_number": 14,
+      "id": "q070"
+    },
+    {
+      "question": "What information must be included in a NOTAM issued under 14 CFR \u00a7 91.145 for an aerial demonstration or major sporting event?",
+      "ground_truth": "According to 14 CFR \u00a7 91.145(c), a NOTAM issued under this section must state the name of the aerial demonstration or sporting event, specify the effective dates and times, specify the geographic features or coordinates, and include any other restrictions or procedures governing flight operations in the designated airspace.",
+      "ground_truth_reference": "14 CFR \u00a7 91.145(c)",
+      "source_chunk_id": "40c2e806-8fe8-45a1-980b-4e008aa923d1",
+      "cfr_reference": "14 CFR \u00a7 91.145",
+      "title_number": 14,
+      "id": "q071"
+    },
+    {
+      "question": "Under what circumstance can an IRB waive the requirement for a signed informed consent form based on confidentiality concerns?",
+      "ground_truth": "An IRB may waive the requirement for a signed informed consent form if the only record linking the subject and the research would be the informed consent form itself, and the principal risk would be potential harm resulting from a breach of confidentiality.",
+      "ground_truth_reference": "14 CFR \u00a7 1230.117(c)(1)(i)",
+      "source_chunk_id": "232d61a2-70f9-468b-836f-aa1d7707a4d6",
+      "cfr_reference": "14 CFR \u00a7 1230.117",
+      "title_number": 14,
+      "id": "q072"
+    },
+    {
+      "question": "Under 14 CFR \u00a7 29.25(a), what are the three criteria that establish the maximum weight for a rotorcraft, and can an applicant choose to establish different maximum weights for different operating conditions?",
+      "ground_truth": "The maximum weight must not exceed: (1) the highest weight selected by the applicant, (2) the design maximum weight at which structural loading compliance is shown, or (3) the highest weight at which flight requirement compliance is shown. Yes, at the applicant's option, different maximum weights may be established for each altitude and practicably separable operating condition such as takeoff, enroute operation, and landing.",
+      "ground_truth_reference": "14 CFR \u00a7 29.25(a)",
+      "source_chunk_id": "86dfae3a-a7aa-4797-8415-9d93d04560d6",
+      "cfr_reference": "14 CFR \u00a7 29.25",
+      "title_number": 14,
+      "id": "q073"
+    },
+    {
+      "question": "What are the minimum visibility and ceiling requirements for a helicopter to proceed to an alternate airport under IFR conditions?",
+      "ground_truth": "At the estimated time of arrival and for 1 hour after, the ceiling must be at least 1,000 feet above airport elevation or 400 feet above the lowest applicable approach minima (whichever is higher), and visibility must be at least 2 statute miles.",
+      "ground_truth_reference": "14 CFR \u00a7 91.167",
+      "source_chunk_id": "aa09655c-619f-4bf6-860b-dc3247fc00c7",
+      "cfr_reference": "14 CFR \u00a7 91.167",
+      "title_number": 14,
+      "id": "q074"
+    },
+    {
+      "question": "What alternative procedures can an airport operator use instead of the standard notice and comment procedures in \u00a7\u00a7 161.303(b) and 161.309(b) when proposing Stage 3 restrictions?",
+      "ground_truth": "An airport operator may use the procedures in 14 CFR part 150 as an alternative means of providing adequate public notice and opportunity to comment on proposed Stage 3 restrictions, including submitted alternatives.",
+      "ground_truth_reference": "14 CFR \u00a7 161.321(a)",
+      "source_chunk_id": "7a14ec87-def0-48e9-a26d-ea71d9497b86",
+      "cfr_reference": "14 CFR \u00a7 161.321",
+      "title_number": 14,
+      "id": "q075"
+    },
+    {
+      "question": "What is the primary function of lactase enzyme preparation from Kluyveromyces lactis when used in food, and what are the minimum lactose reduction requirements for the resulting products?",
+      "ground_truth": "The lactase enzyme preparation is used to convert lactose to glucose and galactose in milk. When used according to current good manufacturing practice, it produces either lactase-treated milk (which contains less lactose than regular milk) or lactose-reduced milk (which contains at least 70 percent less lactose than regular milk).",
+      "ground_truth_reference": "21 CFR \u00a7 184.1388(c)(1) and (c)(2)",
+      "source_chunk_id": "9c54dbd0-c207-457b-9bf7-da0d68bfd89e",
+      "cfr_reference": "21 CFR \u00a7 184.1388",
+      "title_number": 21,
+      "id": "q076"
+    },
+    {
+      "question": "What is the maximum allowable level of sulfosuccinic acid 4-ester with polyethylene glycol dodecyl ether, disodium salt in emulsion polymerization, and what polymers can it be used with?",
+      "ground_truth": "Sulfosuccinic acid 4-ester with polyethylene glycol dodecyl ether, disodium salt must not exceed 5 percent by weight of total monomers used in the emulsion polymerization. It is permitted for use in polyvinyl acetate, acrylic, and vinyl/acrylic polymers intended for use as coatings for paper and paperboard.",
+      "ground_truth_reference": "21 CFR \u00a7 178.3400",
+      "source_chunk_id": "04437768-76e8-4104-8356-233e0e75005e",
+      "cfr_reference": "21 CFR \u00a7 178.3400",
+      "title_number": 21,
+      "id": "q077"
+    },
+    {
+      "question": "What are the acceptable lasalocid concentration levels for Type A medicated articles, and what minimum percentage of lasalocid activity must be derived from lasalocid A?",
+      "ground_truth": "Each pound of Type A medicated article must contain either 68 grams (15 percent), 90.7 grams (20 percent), or 150 grams (33.1 percent) lasalocid as lasalocid sodium activity. A minimum of 90 percent of the lasalocid activity must be derived from lasalocid A.",
+      "ground_truth_reference": "21 CFR \u00a7 558.311(a)",
+      "source_chunk_id": "dedfd04a-e5b3-40c2-9a85-28f6e6101698",
+      "cfr_reference": "21 CFR \u00a7 558.311",
+      "title_number": 21,
+      "id": "q078"
+    },
+    {
+      "question": "What is the intended use of a contact cooling system for aesthetic use, and what is its classification?",
+      "ground_truth": "A contact cooling system for aesthetic use is a device combining a cooling pad with a vacuum or mechanical massager intended for the disruption of adipocyte cells for non-invasive aesthetic use. It is classified as a Class II device subject to special controls, with requirements detailed in the FDA's Guidance for Industry and FDA Staff document on Contact Cooling Systems for Aesthetic Use.",
+      "ground_truth_reference": "21 CFR \u00a7 878.4340",
+      "source_chunk_id": "895e68e3-8991-40c8-86c9-7708c385eea6",
+      "cfr_reference": "21 CFR \u00a7 878.4340",
+      "title_number": 21,
+      "id": "q079"
+    },
+    {
+      "question": "What must the Administrator provide if they affirm an original withdrawal of an existing certification under 21 CFR \u00a7 1310.21?",
+      "ground_truth": "The Administrator must provide written reasons for any affirmation of the original withdrawal of the existing certification. This affirmation of the original withdrawal constitutes a final decision for purposes of judicial review under 21 U.S.C. 877.",
+      "ground_truth_reference": "21 CFR \u00a7 1310.21",
+      "source_chunk_id": "83ffc9d4-f3cc-4c45-9e3f-ac751f6aae63",
+      "cfr_reference": "21 CFR \u00a7 1310.21",
+      "title_number": 21,
+      "id": "q080"
+    },
+    {
+      "question": "What is the temporary tolerance limit for PCBs in paper food-packaging material used with finished animal feed, and does it apply if the packaging is separated from the feed by a functional barrier?",
+      "ground_truth": "The temporary tolerance limit for PCBs in paper food-packaging material intended for or used with finished animal feed is 10 parts per million. However, this tolerance does not apply to paper food-packaging material separated from the food by a functional barrier that is impermeable to migration of PCBs.",
+      "ground_truth_reference": "21 CFR \u00a7 509.30(3)",
+      "source_chunk_id": "70848ccb-92ff-43b6-bc44-88191508afc2",
+      "cfr_reference": "21 CFR \u00a7 509.30",
+      "title_number": 21,
+      "id": "q081"
+    },
+    {
+      "question": "What is the timeline for public disclosure of data and information submitted in a De Novo request that are not exempt under the Freedom of Information Act?",
+      "ground_truth": "Data and information in the De Novo file that are not exempt from release under the Freedom of Information Act are immediately available for public disclosure.",
+      "ground_truth_reference": "21 CFR \u00a7 860.5",
+      "source_chunk_id": "b60a2564-689d-4ef0-9fc3-58cc6180e305",
+      "cfr_reference": "21 CFR \u00a7 860.5",
+      "title_number": 21,
+      "id": "q082"
+    },
+    {
+      "question": "What is the maximum allowable concentration of paracoccus pigment astaxanthin color additive sources in finished feed?",
+      "ground_truth": "The maximum allowable concentration shall not exceed 80 mg/kg (72 grams per ton) of finished feed.",
+      "ground_truth_reference": "21 CFR \u00a7 73.352(c)",
+      "source_chunk_id": "719eb8d7-a45a-4e8f-a32d-e367111a1c08",
+      "cfr_reference": "21 CFR \u00a7 73.352",
+      "title_number": 21,
+      "id": "q083"
+    },
+    {
+      "question": "Under 21 CFR \u00a7 1300.01, what are the two main criteria that would cause a drug or hormonal substance with a chemical structure similar to anabolic steroids to be classified as an anabolic steroid?",
+      "ground_truth": "A drug or hormonal substance derived from or substantially similar to listed anabolic steroids is considered an anabolic steroid if either: (A) it was created or manufactured with the intent to promote muscle growth or produce pharmacological effects similar to testosterone, or (B) it has been or is intended to be marketed or promoted in any manner suggesting it will promote muscle growth or similar pharmacological effects to testosterone.",
+      "ground_truth_reference": "21 CFR \u00a7 1300.01(2)(i)",
+      "source_chunk_id": "bf9b4901-5683-4be9-bb31-24e82ee03d3e",
+      "cfr_reference": "21 CFR \u00a7 1300.01",
+      "title_number": 21,
+      "id": "q084"
+    },
+    {
+      "question": "What is the maximum weight percentage at which asphalt can be used as a component of internal sizing in paper and paperboard intended for contact with dry foods?",
+      "ground_truth": "Asphalt can be used at a level not to exceed 5% by weight of the finished dry paper and paperboard fibers. This use is limited to paper and paperboard intended for contact only with raw fruits, raw vegetables, and dry food of Type VIII as identified in table 1.",
+      "ground_truth_reference": "21 CFR \u00a7 176.170",
+      "source_chunk_id": "605b0942-a15c-41cf-861c-db86723c1f65",
+      "cfr_reference": "21 CFR \u00a7 176.170",
+      "title_number": 21,
+      "id": "q085"
+    },
+    {
+      "question": "Can a manufacturer use accelerated stability studies to establish an expiration date beyond what actual shelf life studies currently support?",
+      "ground_truth": "Yes, accelerated studies combined with basic stability information on components, drug products, and container-closure systems may be used to support a tentative expiration date when full shelf life studies are not available and are being conducted. However, stability studies must be conducted at appropriate intervals until the tentative expiration date is verified or the appropriate expiration date is determined.",
+      "ground_truth_reference": "21 CFR \u00a7 211.166",
+      "source_chunk_id": "9cc9258d-208f-4551-bab4-4d0a7d89e868",
+      "cfr_reference": "21 CFR \u00a7 211.166",
+      "title_number": 21,
+      "id": "q086"
+    },
+    {
+      "question": "What information must be included in an inventory record for drug samples held by a representative?",
+      "ground_truth": "The inventory record must identify all drug samples in a representative's stock by the proprietary or established name, dosage strength, and number of units.",
+      "ground_truth_reference": "21 CFR \u00a7 203.31(d)(1)",
+      "source_chunk_id": "379c4682-1d7d-49db-91a7-fb7993eb8c19",
+      "cfr_reference": "21 CFR \u00a7 203.31",
+      "title_number": 21,
+      "id": "q087"
+    },
+    {
+      "question": "What is the classification of a neurovascular mechanical thrombectomy device for acute ischemic stroke treatment, and what special controls apply?",
+      "ground_truth": "The device is classified as Class II with special controls. Special controls include demonstrations that patient-contacting components are biocompatible and that non-clinical performance testing shows the device performs as intended under anticipated conditions of use, including mechanical testing for tensile, torsional, and compressive forces; radial force evaluation; dimension verification; and testing demonstrating the device can be delivered to the target location and retrieve simulated thrombus.",
+      "ground_truth_reference": "21 CFR \u00a7 882.5600(b)",
+      "source_chunk_id": "05481416-d87b-4b8f-94d3-5b81d1c2f5ed",
+      "cfr_reference": "21 CFR \u00a7 882.5600",
+      "title_number": 21,
+      "id": "q088"
+    },
+    {
+      "question": "When evaluating the accuracy and usefulness of diagnostic information for a diagnostic radiopharmaceutical, what methods can be used to establish the actual clinical status if no reliable diagnostic standard is available?",
+      "ground_truth": "According to 21 CFR \u00a7 315.5(b), if no reliable diagnostic standard of demonstrated accuracy is available, the actual clinical status must be established in another manner, such as patient follow-up.",
+      "ground_truth_reference": "21 CFR \u00a7 315.5(b)",
+      "source_chunk_id": "662da7d7-09bd-46d8-95e3-c78af52c1730",
+      "cfr_reference": "21 CFR \u00a7 315.5",
+      "title_number": 21,
+      "id": "q089"
+    },
+    {
+      "question": "What specific dimensions must be included in the required content for a waterpipe tobacco product?",
+      "ground_truth": "According to 21 CFR \u00a7 1114.7(G)(1), waterpipe products must include height, width, and diameter measurements in the required content. Examples provided are height (e.g., 200.0 mm, 500.1 mm), width (e.g., 100.1 mm, 300.0 mm), and diameter (e.g., 100.1 mm, 300.0 mm).",
+      "ground_truth_reference": "21 CFR \u00a7 1114.7(G)(1)",
+      "source_chunk_id": "28b83f47-c6af-4c5f-b610-41d73a4f451b",
+      "cfr_reference": "21 CFR \u00a7 1114.7",
+      "title_number": 21,
+      "id": "q090"
+    },
+    {
+      "question": "What must the director of the center responsible for a hearing submit to the Dockets Management Staff before the notice of hearing is published, and does this include documents that are unfavorable to the director's position?",
+      "ground_truth": "Before the notice of hearing is published, the director must submit the relevant portions of the existing administrative record, a list of all persons whose views will be presented at the hearing, and all documents in the director's files containing factual information relating to the issues involved in the hearing. Yes, this includes documents that are both favorable and unfavorable to the director's position.",
+      "ground_truth_reference": "21 CFR \u00a7 13.25(a)",
+      "source_chunk_id": "027bc9d5-d508-41ff-83d1-107ad029dc11",
+      "cfr_reference": "21 CFR \u00a7 13.25",
+      "title_number": 21,
+      "id": "q091"
+    },
+    {
+      "question": "What are the extraction solvent requirements and limits that a polyphenylene sulfide resin coating must meet to be approved for food contact at temperatures not exceeding the boiling point of water?",
+      "ground_truth": "The finished cured coating must be extracted at reflux temperatures for 8 hours separately with distilled water, 50 percent ethanol in water, and 3 percent acetic acid, yielding total extractives not exceeding 0.02 milligram per square inch of surface in each solvent. Additionally, when extracted at reflux temperature for 8 hours with heptane, total extractives must not exceed 0.1 milligram per square inch of surface.",
+      "ground_truth_reference": "21 CFR \u00a7 177.2490(d)",
+      "source_chunk_id": "6ee0d2df-6d00-4b0f-b445-57432071270d",
+      "cfr_reference": "21 CFR \u00a7 177.2490",
+      "title_number": 21,
+      "id": "q092"
+    },
+    {
+      "question": "Under what circumstances can a pharmacy partially fill a prescription for a Schedule II controlled substance, and who is authorized to request a partial fill?",
+      "ground_truth": "A prescription for a Schedule II controlled substance may be partially filled if it is not prohibited by state law, the prescription is written and filled in accordance with the Act and state law, the partial fill is requested by the patient, someone acting on behalf of the patient (such as a parent, guardian, or caregiver with medical power of attorney), or the prescribing practitioner, and the total quantity dispensed in all partial fillings does not exceed the total quantity prescribed.",
+      "ground_truth_reference": "21 CFR \u00a7 1306.13(1)",
+      "source_chunk_id": "81b26d85-f09b-4baf-9b7e-93e0b531b72e",
+      "cfr_reference": "21 CFR \u00a7 1306.13",
+      "title_number": 21,
+      "id": "q093"
+    },
+    {
+      "question": "Under 21 CFR \u00a7 514.110, what documentation must an applicant provide regarding nonclinical laboratory studies included in a new animal drug application?",
+      "ground_truth": "The applicant must include, with respect to each nonclinical laboratory study contained in the application, either a statement that the study was conducted in compliance with the good laboratory practice regulations in 21 CFR Part 58, or if the study was not conducted in compliance with such regulations, a brief statement of the reasons for the noncompliance.",
+      "ground_truth_reference": "21 CFR \u00a7 514.110(8)",
+      "source_chunk_id": "f84b86d1-76e3-46b8-9cdd-6b66d1e687f9",
+      "cfr_reference": "21 CFR \u00a7 514.110",
+      "title_number": 21,
+      "id": "q094"
+    },
+    {
+      "question": "What is the intended use of an emergency airway needle device, and where does it puncture?",
+      "ground_truth": "An emergency airway needle is intended to puncture a patient's cricothyroid membrane to provide an emergency airway during upper airway obstruction.",
+      "ground_truth_reference": "21 CFR \u00a7 868.5090(a)",
+      "source_chunk_id": "a8fd15c2-14e2-47d7-94f5-6c7204fc884c",
+      "cfr_reference": "21 CFR \u00a7 868.5090",
+      "title_number": 21,
+      "id": "q095"
+    },
+    {
+      "question": "What information regarding drug interactions must be included in a patient package insert for oral contraceptives?",
+      "ground_truth": "The patient package insert must include a statement that identifies activities and drugs, foods, or other substances the patient should avoid because of their interactions with oral contraceptives, as specified under the precautions section of the regulation.",
+      "ground_truth_reference": "21 CFR \u00a7 310.501(10)(iv)",
+      "source_chunk_id": "86d94375-6cb6-4e7a-bfa4-7e3aa1462d90",
+      "cfr_reference": "21 CFR \u00a7 310.501",
+      "title_number": 21,
+      "id": "q096"
+    },
+    {
+      "question": "What are the three main design and construction requirements that a dietary supplement manufacturer's physical plant must meet according to 21 CFR \u00a7 111.20?",
+      "ground_truth": "The physical plant must be suitable in size, construction, and design to facilitate maintenance, cleaning, and sanitizing operations. It must have adequate space for the orderly placement of equipment and materials necessary for maintenance, cleaning, and sanitizing to prevent contamination and mixups. It must permit the use of proper precautions to reduce the potential for mixups or contamination of components, dietary supplements, or contact surfaces with microorganisms, chemicals, filth, or other extraneous material.",
+      "ground_truth_reference": "21 CFR \u00a7 111.20",
+      "source_chunk_id": "e808dcd2-0c0f-475f-b80a-3e34aad6536d",
+      "cfr_reference": "21 CFR \u00a7 111.20",
+      "title_number": 21,
+      "id": "q097"
+    },
+    {
+      "question": "Under 21 CFR \u00a7 213.3, what is the definition of 'acceptance criteria' and what elements must it include?",
+      "ground_truth": "Acceptance criteria means the product specifications and acceptance/rejection criteria, such as acceptable quality level and unacceptable quality level, with an associated sampling plan, that are necessary for making a decision to accept or reject a lot or batch or any other convenient subgroups of manufactured units.",
+      "ground_truth_reference": "21 CFR \u00a7 213.3(b)(1)",
+      "source_chunk_id": "1af2fbb8-dcf7-4f01-aab4-68c8b7d15aad",
+      "cfr_reference": "21 CFR \u00a7 213.3",
+      "title_number": 21,
+      "id": "q098"
+    },
+    {
+      "question": "Under 21 CFR \u00a7 201.80, what information must be included in the 'Labor and delivery' subsection of labeling if a drug is used during labor or delivery?",
+      "ground_truth": "The labeling must describe the available information about the effect of the drug on the mother and fetus, the duration of labor or delivery, the possibility that forceps delivery or other intervention or resuscitation of the newborn will be necessary, and the effect of the drug on the later growth, development, and functional maturation of the child. If any required information is unknown, the labeling must state that the information is unknown.",
+      "ground_truth_reference": "21 CFR \u00a7 201.80(7)",
+      "source_chunk_id": "c07ff1ff-78d5-475c-88db-ec699468229a",
+      "cfr_reference": "21 CFR \u00a7 201.80",
+      "title_number": 21,
+      "id": "q099"
+    },
+    {
+      "question": "What format must annual summaries be submitted in under the Right to Try Act, and where should they be directed?",
+      "ground_truth": "Annual summaries must be submitted in an electronic format that FDA can process, review, and archive. They must be sent directly to a designated point of contact for submissions made under section 561B of the Federal Food, Drug, and Cosmetic Act, not to a particular investigational new drug application. The FDA specifies the designated point of contact for submission on FDA's website.",
+      "ground_truth_reference": "21 CFR \u00a7 300.200(d)",
+      "source_chunk_id": "ac79a338-7ed1-421e-8a1c-d2eae40dab38",
+      "cfr_reference": "21 CFR \u00a7 300.200",
+      "title_number": 21,
+      "id": "q100"
+    },
+    {
+      "question": "When an agency finds that an employee was discriminated against, what relief must be provided according to 29 CFR \u00a7 1614.501(c)?",
+      "ground_truth": "The agency shall provide relief that includes, but is not limited to, nondiscriminatory placement with back pay computed according to 5 CFR 550.805, unless clear and convincing evidence demonstrates the personnel action would have been taken regardless of discrimination. Interest on back pay must be included in the computation where sovereign immunity has been waived.",
+      "ground_truth_reference": "29 CFR \u00a7 1614.501(c)(1)",
+      "source_chunk_id": "167d71bc-deb4-4f7c-8945-0c482b3c2010",
+      "cfr_reference": "29 CFR \u00a7 1614.501",
+      "title_number": 29,
+      "id": "q101"
+    },
+    {
+      "question": "What is the maximum duration of the pre-complaint processing period when an alternative dispute resolution procedure is used?",
+      "ground_truth": "The pre-complaint processing period shall be 90 days when an alternative dispute resolution procedure is used in accordance with paragraph (b)(2) of this section. If the claim has not been resolved before the 90th day, the notice described in paragraph (d) of this section shall be issued.",
+      "ground_truth_reference": "29 CFR \u00a7 1614.105",
+      "source_chunk_id": "5f9503e8-c666-4ac7-ae6a-0cec167d0b47",
+      "cfr_reference": "29 CFR \u00a7 1614.105",
+      "title_number": 29,
+      "id": "q102"
+    },
+    {
+      "question": "What is the maximum depth to which an employee can sink into grain when wearing a lifeline in a grain handling facility?",
+      "ground_truth": "According to 29 CFR \u00a7 1910.272(g)(2), the lifeline shall be positioned and of sufficient length to prevent the employee from sinking further than waist-deep in the grain. If the employer can demonstrate that this protection is not feasible or creates a greater hazard, they must provide an alternative means of protection that achieves the same waist-deep limitation.",
+      "ground_truth_reference": "29 CFR \u00a7 1910.272(g)(2)",
+      "source_chunk_id": "f31277c9-a139-43bf-80f8-f4bda8caeab0",
+      "cfr_reference": "29 CFR \u00a7 1910.272",
+      "title_number": 29,
+      "id": "q103"
+    },
+    {
+      "question": "How frequently must duct systems operating under pressure in indirect recirculating ovens be tested for tightness?",
+      "ground_truth": "Duct systems operating under pressure in indirect recirculating ovens must be tested for tightness during the initial starting of the oven and at intervals not farther apart than 6 months.",
+      "ground_truth_reference": "29 CFR \u00a7 1910.263(15)(iii)",
+      "source_chunk_id": "4c768a25-23a5-49d3-8d0a-92dd4f38965c",
+      "cfr_reference": "29 CFR \u00a7 1910.263",
+      "title_number": 29,
+      "id": "q104"
+    },
+    {
+      "question": "What are the two primary tests that a retail or service establishment must meet to qualify for the exemption under section 13(a)(2) of the Fair Labor Standards Act?",
+      "ground_truth": "First, more than 50 percent of the establishment's total annual dollar volume of sales must be derived from sales of goods or services made within the State where the establishment is located. Second, either the establishment must not be in an enterprise of the type described in section 3(s), or if it is in such an enterprise, it must have an annual volume of sales (exclusive of separately stated excise taxes at the retail level) of less than $250,000.",
+      "ground_truth_reference": "29 CFR \u00a7 779.337(a)(1) and (a)(2)",
+      "source_chunk_id": "ada41df0-9529-4ff2-928d-db559a49fea6",
+      "cfr_reference": "29 CFR \u00a7 779.337",
+      "title_number": 29,
+      "id": "q105"
+    },
+    {
+      "question": "What documentation must an employer maintain if they are using a selection procedure on an interim basis that lacks full validity evidence?",
+      "ground_truth": "The employer must maintain (1) substantial evidence of validity for the procedure, and (2) a report showing the date the validity study commenced, the estimated completion date, and a description of the data to be collected.",
+      "ground_truth_reference": "29 CFR \u00a7 1607.15(H)",
+      "source_chunk_id": "cc82c1bb-db1c-4de4-9b00-b6065c5fbdb0",
+      "cfr_reference": "29 CFR \u00a7 1607.15",
+      "title_number": 29,
+      "id": "q106"
+    },
+    {
+      "question": "What ANSI standard is incorporated by reference for compressed gas cylinder valve outlet and inlet connections, and which OSHA regulation does it apply to?",
+      "ground_truth": "ANSI B57.1-65 Compressed Gas Cylinder Valve Outlet and Inlet Connections is incorporated by reference and applies to 29 CFR \u00a7 1910.253(b)(1)(iii).",
+      "ground_truth_reference": "29 CFR \u00a7 1910.6(30)",
+      "source_chunk_id": "5339d8f5-0313-45e3-9fa5-de86693eac90",
+      "cfr_reference": "29 CFR \u00a7 1910.6",
+      "title_number": 29,
+      "id": "q107"
+    },
+    {
+      "question": "Can a party file an application for a subpoena ex parte, and who has the authority to sign and issue subpoenas on behalf of the Board?",
+      "ground_truth": "Yes, applications for subpoenas may be made ex parte. The Executive Secretary has the authority to sign and issue subpoenas on behalf of the Board or any Member thereof. Parties may file applications for subpoenas in writing with the Regional Director if made prior to hearing, or with the Hearing Officer if made at the hearing.",
+      "ground_truth_reference": "29 CFR \u00a7 102.66(f)",
+      "source_chunk_id": "20a5ba9c-f2e9-4d09-9766-7dea3c8fc059",
+      "cfr_reference": "29 CFR \u00a7 102.66",
+      "title_number": 29,
+      "id": "q108"
+    },
+    {
+      "question": "What happens to a case if an ALJ determines that a reviewing official is disqualified?",
+      "ground_truth": "If the ALJ determines that a reviewing official is disqualified, the ALJ shall dismiss the complaint without prejudice.",
+      "ground_truth_reference": "29 CFR \u00a7 22.16(f)(1)",
+      "source_chunk_id": "dcd8b55d-d916-4397-ae74-a85681516792",
+      "cfr_reference": "29 CFR \u00a7 22.16",
+      "title_number": 29,
+      "id": "q109"
+    },
+    {
+      "question": "What programs must an employer develop and implement before employees begin handling drums or containers at a hazardous waste site?",
+      "ground_truth": "Before employees start handling drums or containers, the employer must develop and implement a material handling program that meets the requirements of 29 CFR \u00a7 1910.120(j)(1)(ii) through (viii) and (xi), as well as (j)(3) and (j)(8).",
+      "ground_truth_reference": "29 CFR \u00a7 1910.120(c)(6)",
+      "source_chunk_id": "61d2b687-6cd7-451c-9291-e8e0ddc92e04",
+      "cfr_reference": "29 CFR \u00a7 1910.120",
+      "title_number": 29,
+      "id": "q110"
+    },
+    {
+      "question": "Under 29 CFR \u00a7 2590.702, if a group health plan delays an employee's enrollment eligibility whenever the employee is not actively at work on the first day after a 30-day waiting period, does this violate the regulation?",
+      "ground_truth": "Yes, such a plan violates 29 CFR \u00a7 2590.702(b) and (e)(2), which prohibit discrimination based on health factors. However, the plan would not violate the regulation if absences due to any health factor are considered as being actively at work.",
+      "ground_truth_reference": "29 CFR \u00a7 2590.702, Example 1",
+      "source_chunk_id": "76ebdfc6-9f56-4f9d-8499-1bf128082e05",
+      "cfr_reference": "29 CFR \u00a7 2590.702",
+      "title_number": 29,
+      "id": "q111"
+    },
+    {
+      "question": "When must an employer provide full facepiece respirators to employees under the cadmium standard?",
+      "ground_truth": "Employers must provide full facepiece respirators to employees when they experience eye irritation. This is specified as a requirement under the respirator selection provisions of the cadmium standard.",
+      "ground_truth_reference": "29 CFR \u00a7 1910.1027(l)(3)(i)(B)",
+      "source_chunk_id": "03ea51a4-d82f-4fba-b970-01e37aaa9836",
+      "cfr_reference": "29 CFR \u00a7 1910.1027",
+      "title_number": 29,
+      "id": "q112"
+    },
+    {
+      "question": "What is the scope of PBGC's jurisdiction following a plan partition, and does this jurisdiction extend to both the original and successor plans?",
+      "ground_truth": "Yes, PBGC continues to have jurisdiction over both the original plan and the successor plan after a partition in order to carry out the purposes, terms, and conditions of the partition order, section 4233 of ERISA, and the applicable regulations.",
+      "ground_truth_reference": "29 CFR \u00a7 4233.17(a)",
+      "source_chunk_id": "ea974837-5b03-4888-9448-9a342870e053",
+      "cfr_reference": "29 CFR \u00a7 4233.17",
+      "title_number": 29,
+      "id": "q113"
+    },
+    {
+      "question": "What were the revised compliance officer staffing benchmarks approved for South Carolina's OSHA State plan, and when were they approved?",
+      "ground_truth": "South Carolina's revised compliance staffing benchmarks of 17 safety and 12 health compliance officers were approved by the Assistant Secretary on January 17, 1986. These revised requirements were completed in September 1984 through a reassessment conducted jointly by South Carolina and OSHA.",
+      "ground_truth_reference": "29 CFR \u00a7 1952.1(c)",
+      "source_chunk_id": "d05b87ec-494b-496f-91e3-091f69c62914",
+      "cfr_reference": "29 CFR \u00a7 1952.1",
+      "title_number": 29,
+      "id": "q114"
+    },
+    {
+      "question": "How often must half-inch chains made of wrought iron that are in general use be annealed?",
+      "ground_truth": "Half-inch and smaller chains made of wrought iron that are in general use must be annealed at least once every six months in accordance with \u00a7 1919.36. However, the period between annealings shall not exceed two years in any case.",
+      "ground_truth_reference": "29 CFR \u00a7 1919.16(a)(1) and (a)(4)",
+      "source_chunk_id": "57e9287c-2e23-4703-96fc-10639c9b861d",
+      "cfr_reference": "29 CFR \u00a7 1919.16",
+      "title_number": 29,
+      "id": "q115"
+    },
+    {
+      "question": "Does charter bus service qualify as public transportation under 29 CFR \u00a7 1982.101?",
+      "ground_truth": "No, charter bus service does not qualify as public transportation under this regulation. The definition of public transportation explicitly excludes charter bus service, along with other services such as intercity rail, intercity bus service, school bus service, sightseeing service, courtesy shuttle service, and intra-terminal or intra-facility shuttle services.",
+      "ground_truth_reference": "29 CFR \u00a7 1982.101(h)",
+      "source_chunk_id": "ab19793c-6d34-410c-a935-528c99f400ae",
+      "cfr_reference": "29 CFR \u00a7 1982.101",
+      "title_number": 29,
+      "id": "q116"
+    },
+    {
+      "question": "Are railroad train crews and truck drivers who transport goods across state lines considered to be 'producing' goods under the Fair Labor Standards Act?",
+      "ground_truth": "No. Railroad train crews and truck drivers hauling goods from one state to another are not engaged in the 'production' of goods. Instead, they are covered by the Act only as employees 'engaged in commerce,' since their activities constitute the means by which interstate transit or movement of goods is accomplished by the carrier.",
+      "ground_truth_reference": "29 CFR \u00a7 776.16",
+      "source_chunk_id": "b5ed2e84-631d-4e82-b280-a437d87155a9",
+      "cfr_reference": "29 CFR \u00a7 776.16",
+      "title_number": 29,
+      "id": "q117"
+    },
+    {
+      "question": "What is the required minimum distance that open flame or spark-producing equipment must be maintained from a spraying area?",
+      "ground_truth": "According to 29 CFR \u00a7 1910.107(c)(2), there shall be no open flame or spark-producing equipment in any spraying area nor within 20 feet thereof, unless separated by a partition.",
+      "ground_truth_reference": "29 CFR \u00a7 1910.107(c)(2)",
+      "source_chunk_id": "cad1a2c3-bf93-41b4-a28b-81f8545ab73f",
+      "cfr_reference": "29 CFR \u00a7 1910.107",
+      "title_number": 29,
+      "id": "q118"
+    },
+    {
+      "question": "What is the foundational requirement for conducting a validity study under 29 CFR \u00a7 1607.14?",
+      "ground_truth": "Any validity study should be based upon a review of information about the job for which the selection procedure is to be used. The review should include a job analysis except as provided in section 14B(3) with respect to criterion-related validity. Any method of job analysis may be used if it provides the information required for the specific validation strategy used.",
+      "ground_truth_reference": "29 CFR \u00a7 1607.14(A)",
+      "source_chunk_id": "893e946d-9602-4e64-a588-a5ab5d316ee2",
+      "cfr_reference": "29 CFR \u00a7 1607.14",
+      "title_number": 29,
+      "id": "q119"
+    },
+    {
+      "question": "What design standards must be followed when designing an exhaust system for tank ventilation, and what additional data must be included in the design calculations?",
+      "ground_truth": "The exhaust system must be designed in accordance with American National Standard Fundamentals Governing the Design and Operation of Local Exhaust Systems, Z9.2-1960, or the manual Industrial Ventilation published by the American Conference of Governmental Industrial Hygienists 1970. Airflow and pressure loss data provided by the manufacturer of any air cleaning device must be included in the design calculations.",
+      "ground_truth_reference": "29 CFR \u00a7 1926.57(7)(iv)",
+      "source_chunk_id": "f4d6d9d7-e6cf-41a8-bcd0-6e1d08511371",
+      "cfr_reference": "29 CFR \u00a7 1926.57",
+      "title_number": 29,
+      "id": "q120"
+    },
+    {
+      "question": "What specific valuation information must a fiduciary disclose to participants regarding designated investment alternatives in a participant-directed plan?",
+      "ground_truth": "The fiduciary must disclose a statement of the value of a share or unit of each designated investment alternative as well as the date of the valuation. Additionally, the fiduciary must provide a list of the assets comprising the portfolio of each designated investment alternative that constitute plan assets and the value of each such asset or the proportion of the investment it comprises.",
+      "ground_truth_reference": "29 CFR \u00a7 2550.404a-5(d)(iii) and (iv)",
+      "source_chunk_id": "e4650691-ffb1-4749-84c6-a4ddbfd4ea9f",
+      "cfr_reference": "29 CFR \u00a7 2550.404",
+      "title_number": 29,
+      "id": "q121"
+    },
+    {
+      "question": "When a single crew is working on deenergized lines with the means of disconnection accessible, visible to, and under the sole control of the employee in charge of the clearance, which tagging requirements apply?",
+      "ground_truth": "When only one crew is working and the means of disconnection is accessible, visible to, and under the sole control of the employee in charge of the clearance, the employer does not need to use the tags required by paragraph (c) of this section. Additionally, paragraphs (c)(1), (c)(3), and (c)(5) do not apply.",
+      "ground_truth_reference": "29 CFR \u00a7 1926.961(b)(3)",
+      "source_chunk_id": "db8d5435-a20f-48b4-b02b-d2629336e26f",
+      "cfr_reference": "29 CFR \u00a7 1926.961",
+      "title_number": 29,
+      "id": "q122"
+    },
+    {
+      "question": "Does the handling of milk and cream at receiving stations fall under the definition of 'dairying' as a farming operation?",
+      "ground_truth": "No. According to 29 CFR \u00a7 780.111, the handling of milk and cream at receiving stations is explicitly not included in the definition of 'dairying' as a farming operation. The regulation specifies that dairying includes only the work of caring for and milking cows or goats, and putting the milk in containers, cooling it, and storing it where done on the farm.",
+      "ground_truth_reference": "29 CFR \u00a7 780.111",
+      "source_chunk_id": "ea5baed9-4fb5-4d68-8c65-af5b8d1c7a0e",
+      "cfr_reference": "29 CFR \u00a7 780.111",
+      "title_number": 29,
+      "id": "q123"
+    },
+    {
+      "question": "Can a contractor exclude their contributions to fringe benefits when computing an employee's regular or basic straight-time rate for overtime purposes?",
+      "ground_truth": "Yes, a contractor's contributions or costs for fringe benefits may be excluded in computing the regular or basic straight-time rate, provided that such exclusions do not reduce the regular or basic rate below the basic hourly rate contained in the wage determination. Additionally, a contractor may pay a cash equivalent of any fringe benefits found prevailing by the Secretary of Labor, which would also be excludable in computing the regular or basic rate under Federal overtime laws.",
+      "ground_truth_reference": "29 CFR \u00a7 5.32(a) and (c)(1)",
+      "source_chunk_id": "0057671a-234b-4fc2-8f9d-3b3a7b2e99c2",
+      "cfr_reference": "29 CFR \u00a7 5.32",
+      "title_number": 29,
+      "id": "q124"
+    },
+    {
+      "question": "What must the Secretary of Labor do when a petition indicates that a hearing could reveal economic conditions warranting action regarding minimum wage rates in American Samoa?",
+      "ground_truth": "The Secretary of Labor must publish notice of the hearing in the Federal Register, specifying the procedure to be followed. This action occurs when it appears probable that such a hearing is likely to reveal that economic conditions warrant action regarding minimum wage rates established under section 6(a)(3) of the Act.",
+      "ground_truth_reference": "29 CFR \u00a7 511.19",
+      "source_chunk_id": "7ba1d37f-1ba7-49c6-aca6-b87a59962e86",
+      "cfr_reference": "29 CFR \u00a7 511.19",
+      "title_number": 29,
+      "id": "q125"
+    },
+    {
+      "question": "How must an affected facility calculate compliance with particulate matter emission limits when using PM CEMS?",
+      "ground_truth": "Continuous compliance with the particulate matter emission limit must be determined based on a 30-day rolling average calculated using equation 19-19 in section 12.4.1 of EPA Reference Method 19, derived from 1-hour arithmetic average CEMS outlet data. The 30-day rolling average must include CEMS data during startup and shutdown periods as defined in the subpart.",
+      "ground_truth_reference": "40 CFR \u00a7 60.2165(n)(4) and (n)(5)",
+      "source_chunk_id": "e56b88ab-9a3e-4a4a-9023-b8f74071ef11",
+      "cfr_reference": "40 CFR \u00a7 60.2165",
+      "title_number": 40,
+      "id": "q126"
+    },
+    {
+      "question": "What records must a pesticide producer make available during an inspection by an EPA officer, and what access rights do inspectors have?",
+      "ground_truth": "Upon request by an authorized EPA officer or state official, pesticide producers must furnish or permit access to and copying of all records required to be maintained, including records held by independent testing facilities or laboratories that performed tests on behalf of the producer. This inspection must be conducted at all reasonable times and in accordance with procedures detailed in section 8(b) of the Act.",
+      "ground_truth_reference": "40 CFR \u00a7 169.3(a)",
+      "source_chunk_id": "68fe861b-8684-4647-9866-d9b90d3adde5",
+      "cfr_reference": "40 CFR \u00a7 169.3",
+      "title_number": 40,
+      "id": "q127"
+    },
+    {
+      "question": "How frequently must a facility demonstrate compliance with emissions averaging requirements after the initial compliance demonstration?",
+      "ground_truth": "After the initial compliance demonstration, facilities must demonstrate compliance on a monthly basis, determined at the end of every month (12 times per year). Compliance is determined using Equation 3a, 3b, or 3c to calculate the average weighted emission rate for each calendar month.",
+      "ground_truth_reference": "40 CFR \u00a7 63.7522(f)",
+      "source_chunk_id": "29dd60de-9a0b-4cfa-b606-05ce6c453bc3",
+      "cfr_reference": "40 CFR \u00a7 63.7522",
+      "title_number": 40,
+      "id": "q128"
+    },
+    {
+      "question": "What are the two acceptable methods for managing bypass lines in an emission capture system to prevent diversion of emissions to the atmosphere?",
+      "ground_truth": "The two acceptable methods are: (1) properly install, maintain, and operate a flow indicator that takes a reading at least once every 15 minutes at the entrance to the bypass line, or (2) secure the bypass line valve in the nondiverting position with a car-seal or lock-and-key type configuration.",
+      "ground_truth_reference": "40 CFR \u00a7 63.3557(b)",
+      "source_chunk_id": "6cff5432-a86e-4c3f-be8a-5fc4d3728d64",
+      "cfr_reference": "40 CFR \u00a7 63.3557",
+      "title_number": 40,
+      "id": "q129"
+    },
+    {
+      "question": "What is the required frequency for conducting leak inspections on comfort cooling appliances, and when can the inspection frequency be reduced?",
+      "ground_truth": "Leak inspections on comfort cooling appliances must be conducted once per calendar year until the owner or operator can demonstrate through leak rate calculations that the appliance has not leaked in excess of the applicable leak rate for one year. Once this demonstration is made, the inspection frequency can be reduced.",
+      "ground_truth_reference": "40 CFR \u00a7 82.157(g)(1)(iii)",
+      "source_chunk_id": "d78dab00-41f5-494b-a235-66169fa6f5ec",
+      "cfr_reference": "40 CFR \u00a7 82.157",
+      "title_number": 40,
+      "id": "q130"
+    },
+    {
+      "question": "What is the minimum mass emission rate of halogen atoms in organic compounds that would classify a process vent as halogenated?",
+      "ground_truth": "A process vent is considered halogenated if the mass emission rate of halogen atoms contained in organic compounds is equal to or greater than 0.45 kilogram per hour (0.99 pound per hour).",
+      "ground_truth_reference": "40 CFR \u00a7 65.64",
+      "source_chunk_id": "a3c979f2-ba9a-473a-a424-ba1d0a3d2afb",
+      "cfr_reference": "40 CFR \u00a7 65.64",
+      "title_number": 40,
+      "id": "q131"
+    },
+    {
+      "question": "For which sources are permits to operate required under 40 CFR \u00a7 49.10469?",
+      "ground_truth": "Permits to operate are required for sources that are not subject to 40 CFR Part 71. The specific requirements for these permits are detailed in 40 CFR \u00a7 49.139.",
+      "ground_truth_reference": "40 CFR \u00a7 49.10469",
+      "source_chunk_id": "04f9965c-9d9d-4478-b21f-9ce3c3bad3e0",
+      "cfr_reference": "40 CFR \u00a7 49.10469",
+      "title_number": 40,
+      "id": "q132"
+    },
+    {
+      "question": "What is the definition of a lead service line under subpart I of 40 CFR Part 141?",
+      "ground_truth": "A lead service line is a service line that is made of lead or where a portion of the service line is made of lead. A lead-lined galvanized service line is also defined as a lead service line.",
+      "ground_truth_reference": "40 CFR \u00a7 141.2",
+      "source_chunk_id": "783a70dc-750c-4bd1-a06b-c9cb1d0cc49d",
+      "cfr_reference": "40 CFR \u00a7 141.2",
+      "title_number": 40,
+      "id": "q133"
+    },
+    {
+      "question": "What is the maximum monthly average effluent limitation for ammonia (as N) that a facility generating 75 million pounds per year of finished products must achieve under BAT?",
+      "ground_truth": "The maximum monthly average effluent limitation for ammonia (as N) is 4.0 mg/L (ppm). This limitation applies to facilities generating more than 50 million pounds per year of finished products under 40 CFR \u00a7 432.83(b).",
+      "ground_truth_reference": "40 CFR \u00a7 432.83(b)",
+      "source_chunk_id": "48308f1f-55e6-4cf1-bc72-6a2cfedff018",
+      "cfr_reference": "40 CFR \u00a7 432.83",
+      "title_number": 40,
+      "id": "q134"
+    },
+    {
+      "question": "What is the timeline for notifying EPA if an owner or operator begins using an inactive phosphogypsum stack again for disposal or water management?",
+      "ground_truth": "The owner or operator must notify EPA in writing within 45 days if an inactive stack is once again used for the disposal of phosphogypsum or for water management, at which point the stack ceases to be in inactive status.",
+      "ground_truth_reference": "40 CFR \u00a7 61.203(d)",
+      "source_chunk_id": "61b7cc44-d502-4a51-ac67-d2859a22ed27",
+      "cfr_reference": "40 CFR \u00a7 61.203",
+      "title_number": 40,
+      "id": "q135"
+    },
+    {
+      "question": "Does participation in the CAIR NOx Ozone Season Trading Program exempt a facility from complying with other Clean Air Act requirements or State Implementation Plan provisions?",
+      "ground_truth": "No. According to 40 CFR \u00a7 97.306(g), no provision of the CAIR NOx Ozone Season Trading Program, a CAIR permit, or an exemption under this program shall be construed as exempting or excluding owners, operators, and the CAIR designated representative from compliance with any other provision of the applicable State implementation plan, federally enforceable permit, or the Clean Air Act.",
+      "ground_truth_reference": "40 CFR \u00a7 97.306(g)",
+      "source_chunk_id": "420495ae-d503-4889-a925-3ad4c9a489d9",
+      "cfr_reference": "40 CFR \u00a7 97.306",
+      "title_number": 40,
+      "id": "q136"
+    },
+    {
+      "question": "What is the classification for nitrogen dioxide in the Las Vegas Intrastate air quality control region according to the Nevada plan?",
+      "ground_truth": "According to 40 CFR \u00a7 52.1471, the classification for nitrogen dioxide in the Las Vegas Intrastate air quality control region is Class III.",
+      "ground_truth_reference": "40 CFR \u00a7 52.1471",
+      "source_chunk_id": "01d274b6-6691-4a61-b345-3df3a6b0fd5c",
+      "cfr_reference": "40 CFR \u00a7 52.1471",
+      "title_number": 40,
+      "id": "q137"
+    },
+    {
+      "question": "What information must a biointermediate producer report regarding the renewable fuel producers that receive their biointermediate batches?",
+      "ground_truth": "Biointermediate producers must report the EPA company registration number and EPA facility registration number for each renewable fuel producer or foreign renewable fuel producer that received each batch of biointermediate, as specified in 40 CFR \u00a7 80.1451(j)(xi).",
+      "ground_truth_reference": "40 CFR \u00a7 80.1451(j)(xi)",
+      "source_chunk_id": "48ea981d-0366-4709-b973-665d647d3057",
+      "cfr_reference": "40 CFR \u00a7 80.1451",
+      "title_number": 40,
+      "id": "q138"
+    },
+    {
+      "question": "What advance notice must an owner or operator provide to the Administrator before conducting a test by Method 25?",
+      "ground_truth": "The owner or operator must notify the Administrator 30 days in advance of any test by Method 25, as specified in 40 CFR \u00a7 60.395(d).",
+      "ground_truth_reference": "40 CFR \u00a7 60.395(d)",
+      "source_chunk_id": "63d0a041-3f74-4464-aa53-2a555f1f62a2",
+      "cfr_reference": "40 CFR \u00a7 60.395",
+      "title_number": 40,
+      "id": "q139"
+    },
+    {
+      "question": "What is the minimum required sampling frequency for sulfur content if 720-hour sampling demonstrates that the maximum fuel sulfur content exceeds half the applicable limit but does not exceed the applicable limit itself?",
+      "ground_truth": "According to 40 CFR \u00a7 60.4370(c)(2)(iii), if any sample result exceeds half the applicable limit but none exceeds the applicable limit, the owner or operator must follow the provisions of paragraph (c)(1)(iii) of this section, which establishes the sampling frequency requirements for that scenario.",
+      "ground_truth_reference": "40 CFR \u00a7 60.4370",
+      "source_chunk_id": "ac8b91a3-753c-4068-8e1b-3929cac4fd61",
+      "cfr_reference": "40 CFR \u00a7 60.4370",
+      "title_number": 40,
+      "id": "q140"
+    },
+    {
+      "question": "If two debtors are jointly and severally liable for a debt, can the EPA withhold collection action against one debtor while waiting for the other to pay their share?",
+      "ground_truth": "No. Under 40 CFR \u00a7 13.27, when two or more debtors are jointly and severally liable, collection action will not be withheld against one debtor until the other or others pay their proportionate share. This means the EPA can pursue collection against any or all of the jointly and severally liable debtors regardless of whether others have paid.",
+      "ground_truth_reference": "40 CFR \u00a7 13.27",
+      "source_chunk_id": "f99d24f7-b962-41b0-82c3-a3cdd4f2892b",
+      "cfr_reference": "40 CFR \u00a7 13.27",
+      "title_number": 40,
+      "id": "q141"
+    },
+    {
+      "question": "What happens to a certification plan that was approved by EPA before March 6, 2017 if the certifying authority submits a modified certification plan that EPA approves?",
+      "ground_truth": "According to 40 CFR \u00a7 171.5(d), where EPA has approved a certifying authority's modified certification plan, the certification plan approved by EPA before March 6, 2017 shall remain in effect as specified in EPA's approval of the modified certification plan.",
+      "ground_truth_reference": "40 CFR \u00a7 171.5(d)",
+      "source_chunk_id": "5ebe2591-7794-4470-82e8-d7bccd1515b5",
+      "cfr_reference": "40 CFR \u00a7 171.5",
+      "title_number": 40,
+      "id": "q142"
+    },
+    {
+      "question": "Are the reporting requirements under 40 CFR \u00a7 721.11766 applicable to quantities of the organic acid ester polymer after it has been completely reacted or cured?",
+      "ground_truth": "No. The regulation explicitly states that the requirements do not apply to quantities of the substance after they have been completely reacted (cured).",
+      "ground_truth_reference": "40 CFR \u00a7 721.11766(a)(1)",
+      "source_chunk_id": "eb8277f3-1d9b-4a0d-994a-f0c6c976f01c",
+      "cfr_reference": "40 CFR \u00a7 721.11766",
+      "title_number": 40,
+      "id": "q143"
+    },
+    {
+      "question": "What analytical methods are acceptable for determining stack gas moisture content under 40 CFR \u00a7 82.25?",
+      "ground_truth": "EPA Method 4 in appendix A-1 to 40 CFR part 60 is acceptable for measuring stack gas moisture. The regulation states that acceptable methods include but are not limited to EPA Method 4.",
+      "ground_truth_reference": "40 CFR \u00a7 82.25(D)",
+      "source_chunk_id": "b4404454-1841-41cf-9e55-dfbf8661a132",
+      "cfr_reference": "40 CFR \u00a7 82.25",
+      "title_number": 40,
+      "id": "q144"
+    },
+    {
+      "question": "How long must a manufacturer retain records related to a certification test used to obtain a certificate of compliance for a model line?",
+      "ground_truth": "A manufacturer must maintain records containing the information required by \u00a7 60.5479(a)(2) through (4) for at least 5 years with respect to that model line.",
+      "ground_truth_reference": "40 CFR \u00a7 60.5479(a)(1)",
+      "source_chunk_id": "05e9a9ab-32f6-4fda-a891-7ed698dd92a6",
+      "cfr_reference": "40 CFR \u00a7 60.5479",
+      "title_number": 40,
+      "id": "q145"
+    },
+    {
+      "question": "What recordkeeping requirements apply to stationary combustion turbines permitted to burn residual oil?",
+      "ground_truth": "Owners or operators of stationary combustion turbines permitted to burn non-uniform fuels such as residual oil must follow the monitoring, recordkeeping, and reporting requirements necessary to complete heat input-based calculations under the subpart, rather than simply maintaining purchase records.",
+      "ground_truth_reference": "40 CFR \u00a7 60.5520",
+      "source_chunk_id": "8b05acb3-058d-44f4-9153-5adbfa60e845",
+      "cfr_reference": "40 CFR \u00a7 60.5520",
+      "title_number": 40,
+      "id": "q146"
+    },
+    {
+      "question": "What types of supplemental information may the Administrator require from a source regarding its proposed offset plan?",
+      "ground_truth": "The Administrator may require supplemental information including: a description of measures to ensure the source will have sufficient allowances to offset excess emissions and prevent future excess emissions; a schedule of compliance with appropriate increments of progress for the proposed measures; and a schedule for submission of progress reports with supporting documentation describing actions taken and remaining under the compliance schedule.",
+      "ground_truth_reference": "40 CFR \u00a7 77.4(c)(1)(ii)",
+      "source_chunk_id": "f4d6f85e-4bfb-4a9e-bb4c-efab38750044",
+      "cfr_reference": "40 CFR \u00a7 77.4",
+      "title_number": 40,
+      "id": "q147"
+    },
+    {
+      "question": "At what concentration threshold must phenol, polymer with 4,4\u2032-bis(chloromethyl)-1,1\u2032-biphenyl be reported under hazard communication requirements according to 40 CFR \u00a7 721.11987?",
+      "ground_truth": "The concentration is set at 1.0% for purposes of \u00a7 721.72(e) hazard communication requirements. This means the substance must be reported in hazard communications when present at or above this threshold concentration.",
+      "ground_truth_reference": "40 CFR \u00a7 721.11987(a)(2)(i)",
+      "source_chunk_id": "79e65470-325d-42ae-8f3e-dd1f65435a8f",
+      "cfr_reference": "40 CFR \u00a7 721.11987",
+      "title_number": 40,
+      "id": "q148"
+    },
+    {
+      "question": "What is the key distinguishing characteristic of a bench-scale batch process in terms of its physical location and production capacity?",
+      "ground_truth": "A bench-scale batch process is a batch process capable of being located on a laboratory bench top and typically includes reagent feed vessels, a small reactor, and associated product separator, recovery, and holding equipment. These processes are only capable of producing small quantities of product.",
+      "ground_truth_reference": "40 CFR \u00a7 63.1251",
+      "source_chunk_id": "a4eae2dd-2af7-48cb-8a91-37da2b6068fc",
+      "cfr_reference": "40 CFR \u00a7 63.1251",
+      "title_number": 40,
+      "id": "q149"
+    },
+    {
+      "question": "What is the deadline for submitting the final report for the Drosophila sex-linked recessive lethal assay for tributyl phosphate to EPA?",
+      "ground_truth": "The final report for the Drosophila sex-linked recessive lethal assay shall be completed and submitted to EPA within 22 months after the effective date of the final rule.",
+      "ground_truth_reference": "40 CFR \u00a7 799.4360",
+      "source_chunk_id": "dae75dac-2df3-4b34-bb3b-78e7916eb48a",
+      "cfr_reference": "40 CFR \u00a7 799.4360",
+      "title_number": 40,
+      "id": "q150"
+    },
+    {
+      "question": "What is the minimum notice period that must elapse between when a carrier notifies suppliers and State Medicaid agencies of a final payment limit and when that limit can become effective?",
+      "ground_truth": "According to 42 CFR \u00a7 405.502(C), the effective date for a final payment limit may apply to services furnished at least 60 days after the date that the carrier notifies affected suppliers and State Medicaid agencies of the final limit.",
+      "ground_truth_reference": "42 CFR \u00a7 405.502(C)",
+      "source_chunk_id": "85e56b95-1e4a-4a0b-9f47-360a8b2463b1",
+      "cfr_reference": "42 CFR \u00a7 405.502",
+      "title_number": 42,
+      "id": "q151"
+    },
+    {
+      "question": "What types of immunotherapy cases trigger a DRG weighting factor adjustment under 42 CFR \u00a7 412.85?",
+      "ground_truth": "According to 42 CFR \u00a7 412.85(c), the DRG weighting factor for MS-DRG 018 is adjusted for cases involving expanded access use of immunotherapy, cases that are part of an applicable clinical trial, or cases where the immunotherapy product is not purchased in the usual manner, such as when provided at no cost.",
+      "ground_truth_reference": "42 CFR \u00a7 412.85(c)",
+      "source_chunk_id": "2f467039-3839-4d80-981a-092596f84559",
+      "cfr_reference": "42 CFR \u00a7 412.85",
+      "title_number": 42,
+      "id": "q152"
+    },
+    {
+      "question": "Which types of entities can have their Medicare payments withheld to recover Medicaid overpayments under 42 CFR \u00a7 405.377?",
+      "ground_truth": "Medicare payments may be withheld from: (1) institutional providers that have an agreement under section 1866 of the Act, and (2) physicians or suppliers that have accepted payment on the basis of an assignment under section 1842(b)(3)(B)(ii) of the Act. All such entities must have or have had an agreement with a Medicaid agency to furnish services under an approved Medicaid State plan.",
+      "ground_truth_reference": "42 CFR \u00a7 405.377(c)",
+      "source_chunk_id": "59d4391b-c3dc-4813-b8e8-909a7a92c02f",
+      "cfr_reference": "42 CFR \u00a7 405.377",
+      "title_number": 42,
+      "id": "q153"
+    },
+    {
+      "question": "What is the distinction between a transplant physician and a transplant surgeon according to the regulation?",
+      "ground_truth": "A transplant physician provides non-surgical care and treatment to transplant patients before and after transplant, while a transplant surgeon provides surgical care and treatment to transplant recipients. Both are physicians but differ in the type of care they provide.",
+      "ground_truth_reference": "42 CFR \u00a7 121.2",
+      "source_chunk_id": "e279aa5e-7e04-489a-84d1-03cfd4177bd5",
+      "cfr_reference": "42 CFR \u00a7 121.2",
+      "title_number": 42,
+      "id": "q154"
+    },
+    {
+      "question": "What is the deadline for an MA organization to notify CMS in writing if it does not intend to renew its contract?",
+      "ground_truth": "An MA organization must notify CMS in writing by the first Monday in June of the year in which the contract would end.",
+      "ground_truth_reference": "42 CFR \u00a7 422.506(a)(2)(i)",
+      "source_chunk_id": "25cf4b9f-e814-4771-8935-e52427f3f95b",
+      "cfr_reference": "42 CFR \u00a7 422.506",
+      "title_number": 42,
+      "id": "q155"
+    },
+    {
+      "question": "Under 42 CFR \u00a7 1001.952(v), what minimum frequency of emergency ambulance service use is required for an ambulance to qualify for the replenishing exception?",
+      "ground_truth": "According to 42 CFR \u00a7 1001.952(v), to qualify under the ambulance replenishing exception, the ambulance that is replenished must be used to provide emergency ambulance services an average of three times per week, as measured over a reasonable period of time.",
+      "ground_truth_reference": "42 CFR \u00a7 1001.952(v)",
+      "source_chunk_id": "762f4c94-160c-4c34-bd85-43ed713fd277",
+      "cfr_reference": "42 CFR \u00a7 1001.952",
+      "title_number": 42,
+      "id": "q156"
+    },
+    {
+      "question": "What standards must a Rural Emergency Hospital follow when locating an emergency generator in a newly constructed facility?",
+      "ground_truth": "The generator must be located in accordance with the location requirements found in the Health Care Facilities Code (NFPA 99 and its specified Tentative Interim Amendments), Life Safety Code (NFPA 101 and its specified Tentative Interim Amendments), and NFPA 110 when a new structure is built.",
+      "ground_truth_reference": "42 CFR \u00a7 485.542(e)(1)",
+      "source_chunk_id": "8015d3bc-6971-4650-94af-e503b743e513",
+      "cfr_reference": "42 CFR \u00a7 485.542",
+      "title_number": 42,
+      "id": "q157"
+    },
+    {
+      "question": "Under what conditions can patient safety work product be disclosed to permit equitable relief for reporters under section 922(f)(4)(A) of the Public Health Service Act?",
+      "ground_truth": "Patient safety work product can be disclosed to permit equitable relief under section 922(f)(4)(A) of the Public Health Service Act, provided that the court or administrative tribunal has issued a protective order to protect the confidentiality of the patient safety work product in the course of the proceeding.",
+      "ground_truth_reference": "42 CFR \u00a7 3.206(d)(2)",
+      "source_chunk_id": "24f08379-9789-4ad3-839e-32eafb9fd070",
+      "cfr_reference": "42 CFR \u00a7 3.206",
+      "title_number": 42,
+      "id": "q158"
+    },
+    {
+      "question": "Under 42 CFR \u00a7 1001.201, what factors may be considered when evaluating whether alternative sources of health care items or services are available from an individual or entity with a conviction relating to program or health care fraud?",
+      "ground_truth": "According to 42 CFR \u00a7 1001.201, when determining whether alternative sources of health care items or services are available, consideration may be given to additional cases being investigated or reports being issued by the appropriate law enforcement agency identifying program vulnerabilities or weaknesses, as well as the imposition of civil money penalties against others in similar circumstances.",
+      "ground_truth_reference": "42 CFR \u00a7 1001.201",
+      "source_chunk_id": "b66e256c-115f-4c6b-9525-215a60be01f2",
+      "cfr_reference": "42 CFR \u00a7 1001.201",
+      "title_number": 42,
+      "id": "q159"
+    },
+    {
+      "question": "What information must be included in a written notice of an expedited initial determination issued by a QIO?",
+      "ground_truth": "According to 42 CFR \u00a7 405.1208(d)(2), a written notice of expedited initial determination must contain: (i) the basis for the determination; (ii) a detailed rationale for the determination; (iii) a statement explaining the Medicare payment consequences and date of liability, if any; and (iv) a statement informing the beneficiary of their appeal rights and the timeframe for requesting an appeal.",
+      "ground_truth_reference": "42 CFR \u00a7 405.1208(d)(2)",
+      "source_chunk_id": "477c163e-8d19-4a09-879c-e25de52640c5",
+      "cfr_reference": "42 CFR \u00a7 405.1208",
+      "title_number": 42,
+      "id": "q160"
+    },
+    {
+      "question": "What types of criteria are prohibited in interstate agreements regarding disputed residency under 42 CFR \u00a7 435.403?",
+      "ground_truth": "Interstate agreements regarding disputed residency must not include criteria that result in loss of residency in both States or that are prohibited by paragraph (j) of this section. Additionally, agreements must contain a procedure for providing Medicaid to individuals pending resolution of the residency dispute.",
+      "ground_truth_reference": "42 CFR \u00a7 435.403",
+      "source_chunk_id": "48706d04-271f-4dac-bb3e-d6f85acb7193",
+      "cfr_reference": "42 CFR \u00a7 435.403",
+      "title_number": 42,
+      "id": "q161"
+    },
+    {
+      "question": "Does coverage provided by a PACE organization qualify as creditable coverage under 42 CFR \u00a7 423.56?",
+      "ground_truth": "Yes, coverage provided by a PACE organization is listed as creditable prescription drug coverage under 42 CFR \u00a7 423.56(10).",
+      "ground_truth_reference": "42 CFR \u00a7 423.56(10)",
+      "source_chunk_id": "53f4cc78-ef53-46cd-b72f-c98f2bb379de",
+      "cfr_reference": "42 CFR \u00a7 423.56",
+      "title_number": 42,
+      "id": "q162"
+    },
+    {
+      "question": "Can a QIC reopen its reconsideration decision after 180 calendar days from the date of the reconsideration, and if so, under what circumstances?",
+      "ground_truth": "Yes, a QIC may reopen its reconsideration after the 180 calendar day period if the reconsideration was procured by fraud or similar fault. In that case, the QIC may reopen at any time.",
+      "ground_truth_reference": "42 CFR \u00a7 405.980(d)(1)",
+      "source_chunk_id": "d3d85b90-22ae-4627-84f6-c534032ca2c8",
+      "cfr_reference": "42 CFR \u00a7 405.980",
+      "title_number": 42,
+      "id": "q163"
+    },
+    {
+      "question": "What is the timeframe within which a facility must return a resident's personal funds and provide a final accounting after the resident is discharged?",
+      "ground_truth": "According to 42 CFR \u00a7 483.10(v), a facility must convey the resident's funds and a final accounting within 30 days of discharge, eviction, or death of the resident.",
+      "ground_truth_reference": "42 CFR \u00a7 483.10(v)",
+      "source_chunk_id": "766e58ad-69db-4b8c-b39e-4ae9ba303da8",
+      "cfr_reference": "42 CFR \u00a7 483.10",
+      "title_number": 42,
+      "id": "q164"
+    },
+    {
+      "question": "At what Federal medical assistance percentage rate are CHIP expenditures reimbursed to states under 42 CFR \u00a7 457.606?",
+      "ground_truth": "CHIP expenditures are reimbursed at a rate equal to the enhanced Federal medical assistance percentage (FMAP) for each fiscal year, calculated in accordance with \u00a7 457.622.",
+      "ground_truth_reference": "42 CFR \u00a7 457.606",
+      "source_chunk_id": "81578966-d7da-44f0-8119-4ff20bf8cbc4",
+      "cfr_reference": "42 CFR \u00a7 457.606",
+      "title_number": 42,
+      "id": "q165"
+    },
+    {
+      "question": "What additional language requirements must a facility meet if a non-English or non-Spanish language is spoken as the usual language in 10 percent or more of households in the service area?",
+      "ground_truth": "The facility must translate the notice into that language and post the translated notice on signs that are substantially similar in size and legibility to, and posted with, the English and Spanish notices supplied by the Secretary.",
+      "ground_truth_reference": "42 CFR \u00a7 124.604(b)",
+      "source_chunk_id": "b12fde6e-ebd8-4035-813e-93116b291605",
+      "cfr_reference": "42 CFR \u00a7 124.604",
+      "title_number": 42,
+      "id": "q166"
+    },
+    {
+      "question": "What is the maximum validity period for a registration certificate under 42 CFR \u00a7 493.57?",
+      "ground_truth": "A registration certificate is valid for a period of no more than 2 years. However, it may be reissued if the laboratory is subject to subpart C of this part and compliance has not been determined by HHS before the expiration date of the registration certificate.",
+      "ground_truth_reference": "42 CFR \u00a7 493.57(d)",
+      "source_chunk_id": "2ec67d6a-0bf8-4966-9098-ceeaeb64e606",
+      "cfr_reference": "42 CFR \u00a7 493.57",
+      "title_number": 42,
+      "id": "q167"
+    },
+    {
+      "question": "Beyond the initial approval process, when does the Secretary have an opportunity to approve planning or design documents for a Self-Governance Tribe's construction project?",
+      "ground_truth": "The Secretary has an opportunity to approve planning or design documents prepared by a Self-Governance Tribe only if there is an amendment to the construction project agreement that results in a significant change in the original scope of work.",
+      "ground_truth_reference": "42 CFR \u00a7 137.361",
+      "source_chunk_id": "a309ace7-d0a1-4b73-bfea-8c1ad445d762",
+      "cfr_reference": "42 CFR \u00a7 137.361",
+      "title_number": 42,
+      "id": "q168"
+    },
+    {
+      "question": "What is the deadline for a manufacturer to submit a rebate reduction request due to a severe supply chain disruption caused by a natural disaster or other unexpected event?",
+      "ground_truth": "The manufacturer must submit the rebate reduction request within 60 calendar days from the first day that the natural disaster or other unique or unexpected event occurred or began. This timeline applies to events occurring on or after August 2, 2024.",
+      "ground_truth_reference": "42 CFR \u00a7 427.402(b)(2)",
+      "source_chunk_id": "01ab0776-cbc2-42e1-9f5e-98c41ad4d762",
+      "cfr_reference": "42 CFR \u00a7 427.402",
+      "title_number": 42,
+      "id": "q169"
+    },
+    {
+      "question": "Starting when are PDP sponsors and MA organizations required to offer the Medicare Prescription Payment Plan option to their enrollees?",
+      "ground_truth": "PDP sponsors and MA organizations must provide the Medicare Prescription Payment Plan option for plan years beginning on or after January 1, 2026, or for non-calendar year plans, for the portion of the plan year starting on January 1, 2026.",
+      "ground_truth_reference": "42 CFR \u00a7 423.137(a)",
+      "source_chunk_id": "f48b6f96-bcde-48f6-bf67-7c4f1b6935a6",
+      "cfr_reference": "42 CFR \u00a7 423.137",
+      "title_number": 42,
+      "id": "q170"
+    },
+    {
+      "question": "What documentation and data submission requirements must a Medicare Diabetes Prevention Program supplier fulfill regarding beneficiary identification and performance data?",
+      "ground_truth": "An MDPP supplier must submit a crosswalk file containing Medicare Beneficiary Identifiers for each MDPP beneficiary receiving services to CMS or its contractor. Additionally, the supplier must submit performance data for beneficiaries who attended ongoing maintenance sessions using data elements consistent with the CDC's DPRP standards for the core services period.",
+      "ground_truth_reference": "42 CFR \u00a7 424.205(13)-(14)",
+      "source_chunk_id": "7298165c-01d7-4501-878c-5576fc58c6ae",
+      "cfr_reference": "42 CFR \u00a7 424.205",
+      "title_number": 42,
+      "id": "q171"
+    },
+    {
+      "question": "Under 42 CFR \u00a7 423.104, what is the maximum number of specialty tiers that a Part D plan may maintain?",
+      "ground_truth": "A Part D plan may maintain up to two specialty tiers, as specified in section (d)(2)(iv)(D).",
+      "ground_truth_reference": "42 CFR \u00a7 423.104(d)(2)(iv)(D)",
+      "source_chunk_id": "593112fb-daca-4103-ba59-bfbabc32b6b2",
+      "cfr_reference": "42 CFR \u00a7 423.104",
+      "title_number": 42,
+      "id": "q172"
+    },
+    {
+      "question": "Under 42 CFR \u00a7 71.50, what activities are included within the definition of use for scientific research?",
+      "ground_truth": "Use for scientific research includes research projects following a defined protocol and standards as normally conducted at the university level, as well as safety testing, potency testing, and other activities related to the production of medical products.",
+      "ground_truth_reference": "42 CFR \u00a7 71.50",
+      "source_chunk_id": "86f5a8f5-8c08-46e0-82ff-f8c83a7389c7",
+      "cfr_reference": "42 CFR \u00a7 71.50",
+      "title_number": 42,
+      "id": "q173"
+    },
+    {
+      "question": "What types of entities are eligible to receive grants authorized by section 445 of the Act for Alzheimer's disease research?",
+      "ground_truth": "Public or private nonprofit entities, including university medical centers, are eligible to receive grants authorized by section 445 of the Act. These entities must conduct basic and clinical research (including multidisciplinary research) into, training in, and demonstration of advanced diagnostic, prevention, and treatment methods for Alzheimer's disease.",
+      "ground_truth_reference": "42 CFR \u00a7 52(i)",
+      "source_chunk_id": "de234d0f-23c1-4f6c-9b8e-9d12e2fc9918",
+      "cfr_reference": "42 CFR \u00a7 52",
+      "title_number": 42,
+      "id": "q174"
+    },
+    {
+      "question": "What radiation weighting factors does NIOSH use when calculating equivalent doses for dose reconstruction?",
+      "ground_truth": "NIOSH uses the current, standard radiation weighting factors from the International Commission on Radiological Protection when calculating equivalent doses for the occupational exposure matrix.",
+      "ground_truth_reference": "42 CFR \u00a7 82.10(j)",
+      "source_chunk_id": "d77b56fa-01b3-4a77-8eca-4c52806fafce",
+      "cfr_reference": "42 CFR \u00a7 82.10",
+      "title_number": 42,
+      "id": "q175"
+    },
+    {
+      "question": "What information about incidents and shipments must an applicant provide when renewing a special permit for hazardous materials transportation?",
+      "ground_truth": "The applicant must provide a statement regarding all operational, shipping, and incident experience of which they are aware since the special permit's issuance or most recent renewal. The statement must indicate the approximate number of shipments made or packages shipped, and the number of shipments or packages involved in any loss of contents, including loss by venting other than as authorized. If the applicant is aware of no incidents, they must certify this fact.",
+      "ground_truth_reference": "49 CFR \u00a7 107.109",
+      "source_chunk_id": "d62aee0e-5cf9-4665-ae36-91711f2c6a4c",
+      "cfr_reference": "49 CFR \u00a7 107.109",
+      "title_number": 49,
+      "id": "q176"
+    },
+    {
+      "question": "What four criteria must an activity meet to be classified as a covered task under 49 CFR \u00a7 195.501?",
+      "ground_truth": "According to 49 CFR \u00a7 195.501(b), a covered task must: (1) be performed on a pipeline facility; (2) be an operations or maintenance task; (3) be performed as a requirement of this part; and (4) affect the operation or integrity of the pipeline. The operator identifies which activities meet these criteria.",
+      "ground_truth_reference": "49 CFR \u00a7 195.501(b)",
+      "source_chunk_id": "01c819f9-bee6-46f3-8124-d99abc44e585",
+      "cfr_reference": "49 CFR \u00a7 195.501",
+      "title_number": 49,
+      "id": "q177"
+    },
+    {
+      "question": "What steps should be taken to establish an independent voting trust to avoid control violations?",
+      "ground_truth": "According to 49 CFR \u00a7 1013.1(a), the independent voting trust should be established before a controlling block of voting securities is purchased in order to avoid an unlawful control violation.",
+      "ground_truth_reference": "49 CFR \u00a7 1013.1(a)",
+      "source_chunk_id": "795041a0-9480-4ccd-a028-aa4a441a3ffe",
+      "cfr_reference": "49 CFR \u00a7 1013.1",
+      "title_number": 49,
+      "id": "q178"
+    },
+    {
+      "question": "Does unequal aggregate expenditure between male and female athletic teams automatically constitute noncompliance under 49 CFR \u00a7 25.450?",
+      "ground_truth": "No. Unequal aggregate expenditures for members of each sex or unequal expenditures for male and female teams will not automatically constitute noncompliance. However, the designated agency official may consider the failure to provide necessary funds for teams for one sex when assessing equality of opportunity for members of each sex.",
+      "ground_truth_reference": "49 CFR \u00a7 25.450(c)(2)",
+      "source_chunk_id": "0a8c4234-d359-4e6d-8915-be43bd99b2e5",
+      "cfr_reference": "49 CFR \u00a7 25.450",
+      "title_number": 49,
+      "id": "q179"
+    },
+    {
+      "question": "What is the requalification period for DOT-3AL cylinders made of aluminum alloy 6351-T6 that undergo eddy current examination combined with visual inspection for sustained load cracking?",
+      "ground_truth": "The requalification period is 5 years. Cylinders must undergo eddy current examination in accordance with Appendix C and visual inspection in accordance with CGA Pamphlet C-6.1, with condemnation required if any crack in the neck or shoulder is 2 thread lengths or more.",
+      "ground_truth_reference": "49 CFR \u00a7 180.209, Table 4 to Paragraph (m)",
+      "source_chunk_id": "fd84bdc4-2dd8-4e3d-9e80-0656e919aea3",
+      "cfr_reference": "49 CFR \u00a7 180.209",
+      "title_number": 49,
+      "id": "q180"
+    },
+    {
+      "question": "What must a railroad do after its inspection, testing, and maintenance program is approved by the FRA?",
+      "ground_truth": "After FRA approval, the railroad must adopt and comply with the program, and perform all inspections, tests, maintenance tasks, and procedures described in the program in accordance with the procedures, criteria, and intervals that the railroad identified as safety-critical.",
+      "ground_truth_reference": "49 CFR \u00a7 299.703",
+      "source_chunk_id": "952dff9d-9e63-4556-a016-6d5b2d51ade1",
+      "cfr_reference": "49 CFR \u00a7 299.703",
+      "title_number": 49,
+      "id": "q181"
+    },
+    {
+      "question": "What ambient temperature range must be maintained when conducting the overcharge test for electric vehicle REESS safety controls?",
+      "ground_truth": "The overcharge test must be conducted at ambient temperatures between 10 \u00b0C and 30 \u00b0C, as specified in section S12.1 of the standard.",
+      "ground_truth_reference": "49 CFR \u00a7 571.305, S12.1",
+      "source_chunk_id": "236c004f-09da-47fe-bc49-409729d65f16",
+      "cfr_reference": "49 CFR \u00a7 571.305",
+      "title_number": 49,
+      "id": "q182"
+    },
+    {
+      "question": "When both parties voluntarily consent to mediation, does the Board hold the underlying proceeding in abeyance and toll statutory deadlines?",
+      "ground_truth": "Yes. When both parties voluntarily consent to mediation, the Board may direct that a proceeding be held in abeyance pending the conclusion of mediation, and the period during which any proceeding is held in abeyance shall toll applicable statutory deadlines.",
+      "ground_truth_reference": "49 CFR \u00a7 1109.3",
+      "source_chunk_id": "51315591-70ed-4b63-96ec-605e8634b81b",
+      "cfr_reference": "49 CFR \u00a7 1109.3",
+      "title_number": 49,
+      "id": "q183"
+    },
+    {
+      "question": "For vehicles manufactured between September 1, 2001 and September 1, 2002, what percentage of vehicles must comply with S7 requirements under Standard No. 201?",
+      "ground_truth": "At least 70 percent of vehicles manufactured during this period must comply with S7 requirements. This compliance percentage is calculated based on either the manufacturer's average annual production from September 1, 1999 to September 1, 2002, or the manufacturer's production during the September 1, 2001 to September 1, 2002 period, whichever is applicable.",
+      "ground_truth_reference": "49 CFR \u00a7 571.201 S6.1.1.4",
+      "source_chunk_id": "b1dd1b56-e999-4a2b-bf33-fd898d2785df",
+      "cfr_reference": "49 CFR \u00a7 571.201",
+      "title_number": 49,
+      "id": "q184"
+    },
+    {
+      "question": "Can a manufacturer use test data from a complete sister vehicle instead of performing tests on a cab-complete vehicle for fuel consumption certification?",
+      "ground_truth": "Yes, manufacturers may submit test data from the complete sister vehicle instead of performing the test on the cab-complete vehicle for fuel consumption certification purposes, provided the cab-complete vehicles are tested using the same equivalent test weight and other dynamometer settings that apply for the complete sister vehicle.",
+      "ground_truth_reference": "49 CFR \u00a7 535.5(a)(6)(ii)(C)",
+      "source_chunk_id": "a9d1a4ba-df8a-4d33-bcc4-c234310eae52",
+      "cfr_reference": "49 CFR \u00a7 535.5",
+      "title_number": 49,
+      "id": "q185"
+    },
+    {
+      "question": "Can a transit agency designate key staff or committees to support the SMS Executive and other safety personnel in developing and implementing the SMS?",
+      "ground_truth": "Yes, according to 49 CFR \u00a7 673.23(5), a transit agency may designate key staff, groups of staff, or committees to support the Accountable Executive, Chief Safety Officer, Safety Committee, or SMS Executive in developing, implementing, and operating the transit agency's SMS.",
+      "ground_truth_reference": "49 CFR \u00a7 673.23(5)",
+      "source_chunk_id": "3bf79ea4-5444-4ce1-802c-90a5fe3eddfb",
+      "cfr_reference": "49 CFR \u00a7 673.23",
+      "title_number": 49,
+      "id": "q186"
+    },
+    {
+      "question": "According to 49 CFR \u00a7 393.5, what is the definition of an emergency brake system and what does it NOT include as a failure?",
+      "ground_truth": "An emergency brake system is a mechanism designed to stop a vehicle after a single failure occurs in the service brake system of a part designed to contain compressed air or brake fluid or vacuum. However, it does not include failure of a common valve, manifold brake fluid housing, or brake chamber housing.",
+      "ground_truth_reference": "49 CFR \u00a7 393.5",
+      "source_chunk_id": "66746d39-6794-4fe8-9c93-11457bee554f",
+      "cfr_reference": "49 CFR \u00a7 393.5",
+      "title_number": 49,
+      "id": "q187"
+    },
+    {
+      "question": "What old classification system is referenced in this regulation for comparing hazard classes, and what is the cutoff date for when this old system was in effect?",
+      "ground_truth": "The regulation references the classification system that was in effect prior to January 1, 1991. This old system used classifications such as Class A, Class B, and Class C explosives, along with blasting agents, which are compared to the current Division 1.1 through 1.6 classifications in the provided table.",
+      "ground_truth_reference": "49 CFR \u00a7 173.53",
+      "source_chunk_id": "13967c24-0c33-4f50-95fa-1677d9973c03",
+      "cfr_reference": "49 CFR \u00a7 173.53",
+      "title_number": 49,
+      "id": "q188"
+    },
+    {
+      "question": "When evaluating a person's prior safety conduct with a different railroad, what is the earliest date that a railroad may consider information about that person's prior safety conduct?",
+      "ground_truth": "According to 49 CFR \u00a7 246.113(g)(1), a railroad shall not consider information concerning prior safety conduct that occurred prior to July 22, 2024. Therefore, July 22, 2024 is the earliest date that prior safety conduct information may be considered.",
+      "ground_truth_reference": "49 CFR \u00a7 246.113(g)(1)",
+      "source_chunk_id": "3c0e85d2-dd3e-4ae0-a516-995cb5fd373a",
+      "cfr_reference": "49 CFR \u00a7 246.113",
+      "title_number": 49,
+      "id": "q189"
+    },
+    {
+      "question": "Does a passenger vessel that is rented or leased to and operated solely by consumers fall under the definition of 'passenger vessel' in 49 CFR \u00a7 39.3?",
+      "ground_truth": "No. According to 49 CFR \u00a7 39.3, the definition of 'passenger vessel' explicitly excludes boats or other craft rented or leased to and operated solely by consumers.",
+      "ground_truth_reference": "49 CFR \u00a7 39.3",
+      "source_chunk_id": "a86a3571-0719-4a21-825e-fce2bed946d5",
+      "cfr_reference": "49 CFR \u00a7 39.3",
+      "title_number": 49,
+      "id": "q190"
+    },
+    {
+      "question": "Under 49 CFR \u00a7 177.835, can a motor vehicle transporting Class 1 explosive materials also carry metal articles in the same load, and if so, what conditions must be met?",
+      "ground_truth": "Yes, a motor vehicle transporting Class 1 explosive materials may transport metal or other articles likely to damage explosives, but only if the different parts of the load are segregated or secured in place and separated by bulkheads or other suitable means to prevent damage to the explosive materials or their packages.",
+      "ground_truth_reference": "49 CFR \u00a7 177.835(i)",
+      "source_chunk_id": "e2d56e0c-3111-41dc-ba17-eec2b0286bc6",
+      "cfr_reference": "49 CFR \u00a7 177.835",
+      "title_number": 49,
+      "id": "q191"
+    },
+    {
+      "question": "Under 49 CFR \u00a7 176.3, what are the conditions under which a carrier is prohibited from transporting hazardous materials by vessel?",
+      "ground_truth": "A carrier may not transport by vessel any hazardous material that is not prepared for transportation in accordance with parts 172 and 173, or as authorized by subpart C of part 171. Additionally, a carrier may not transport by vessel any explosive or explosive composition described in \u00a7 173.54.",
+      "ground_truth_reference": "49 CFR \u00a7 176.3",
+      "source_chunk_id": "777da92a-0d93-42c8-a7e9-df6be80f0cf6",
+      "cfr_reference": "49 CFR \u00a7 176.3",
+      "title_number": 49,
+      "id": "q192"
+    },
+    {
+      "question": "How is Target RB1 located on a roll-bar according to Standard No. 201?",
+      "ground_truth": "Target RB1 is located on the roll-bar within a longitudinal vertical plane (Plane 30) positioned at the mid-sagittal plane of a dummy seated in any outboard designated seating position. The target is positioned at the location on the roll-bar that is closest to either CG-F2 or CG-R, as appropriate for the same dummy.",
+      "ground_truth_reference": "49 CFR \u00a7 571.201, S10.11(a)",
+      "source_chunk_id": "53da732a-e827-4261-b6a8-47019c651b4b",
+      "cfr_reference": "49 CFR \u00a7 571.201",
+      "title_number": 49,
+      "id": "q193"
+    },
+    {
+      "question": "What is the maximum capacity for an inner packaging containing a hazardous liquid material permitted under 49 CFR \u00a7 173.13(c)(1)(i)?",
+      "ground_truth": "The maximum capacity for an inner packaging is 1.2 L. However, the net quantity of liquid in any inner packaging may not exceed 1 L when measured at 20\u00b0C (68\u00b0F). Additionally, sufficient outage must be provided to ensure the inner packaging will not become liquid full at 55\u00b0C (130\u00b0F).",
+      "ground_truth_reference": "49 CFR \u00a7 173.13(c)(1)(i)",
+      "source_chunk_id": "74832c67-7a4b-4474-a177-797931c482af",
+      "cfr_reference": "49 CFR \u00a7 173.13",
+      "title_number": 49,
+      "id": "q194"
+    },
+    {
+      "question": "When testing a child restraint system on an aircraft passenger seat, what must the manufacturer do if no instructions are provided for orienting the restraint when the seat back angle is adjusted?",
+      "ground_truth": "If the manufacturer recommendations do not include instructions for orienting the restraint in aircraft when the restraint seat back angle is adjusted to any position, the manufacturer must position the restraint on the aircraft seat by following the instructions provided for orienting the restraint in motor vehicles.",
+      "ground_truth_reference": "49 CFR \u00a7 571.213",
+      "source_chunk_id": "171e30d4-dbbc-4b20-b9ec-22c5ddae5419",
+      "cfr_reference": "49 CFR \u00a7 571.213",
+      "title_number": 49,
+      "id": "q195"
+    },
+    {
+      "question": "Can a motor carrier transport Division 2.3 poisonous gas materials in the same motor vehicle with foodstuffs if the poisonous material is overpacked in a metal drum?",
+      "ground_truth": "Yes, a motor carrier may transport Division 2.3 poisonous gas or Division 6.1 poisonous materials in the same motor vehicle with foodstuffs, feed, or edible material if the poisonous material is packaged in accordance with the subchapter and is either overpacked in a metal drum as specified in \u00a7 173.25(c) or loaded into a closed unit load device with the foodstuffs loaded into another closed unit load device.",
+      "ground_truth_reference": "49 CFR \u00a7 177.841(e)(1)",
+      "source_chunk_id": "ea375326-654d-4fab-9995-f504f03a93cf",
+      "cfr_reference": "49 CFR \u00a7 177.841",
+      "title_number": 49,
+      "id": "q196"
+    },
+    {
+      "question": "What types of entities are eligible to apply to the Chief Counsel for a determination regarding whether a state or local requirement is preempted under 49 CFR \u00a7 107.202?",
+      "ground_truth": "Any person directly affected by a requirement of a state, political subdivision, or Indian tribe may apply, including the state or political subdivision itself or an Indian tribe. However, this does not apply to highway routing matters covered under 49 U.S.C. 5125(c).",
+      "ground_truth_reference": "49 CFR \u00a7 107.203(a)",
+      "source_chunk_id": "046a1fcf-365b-43a0-b17e-1eb43cb01b76",
+      "cfr_reference": "49 CFR \u00a7 107.203",
+      "title_number": 49,
+      "id": "q197"
+    },
+    {
+      "question": "During what hours must records be made available for inspection and copying by FRA representatives under 49 CFR \u00a7 214.533?",
+      "ground_truth": "Records must be available for inspection and copying during normal business hours by representatives of FRA and States participating under part 212 of this chapter.",
+      "ground_truth_reference": "49 CFR \u00a7 214.533",
+      "source_chunk_id": "4146da75-287d-48ef-b1d8-68fc7faeb546",
+      "cfr_reference": "49 CFR \u00a7 214.533",
+      "title_number": 49,
+      "id": "q198"
+    },
+    {
+      "question": "What are the font size and language requirements for the statement that must be provided to the first purchaser of a motor vehicle manufactured on or after September 1, 1990?",
+      "ground_truth": "The statement must be provided in writing in the English language and not less than 10 point type. It must be included in the owner's manual or, if there is no owner's manual, on a one-page document.",
+      "ground_truth_reference": "49 CFR \u00a7 575.6(a)(2)(i)",
+      "source_chunk_id": "729abb0e-dab1-4355-ad7e-ee663b64d57a",
+      "cfr_reference": "49 CFR \u00a7 575.6",
+      "title_number": 49,
+      "id": "q199"
+    },
+    {
+      "question": "What are the six categories of roadway work mentioned in 49 CFR \u00a7 671.39 for which redundant protections must be identified?",
+      "ground_truth": "The six categories include: (1) roadway workers moving from one track zone location to another; (2) roadway workers performing minor tasks; (3) roadway workers conducting visual inspections; (4) roadway workers using hand tools, machines, or equipment in conducting testing of track system components or non-visual inspections; (5) roadway workers using hand tools, machines, or equipment in performing maintenance, construction, or repairs; and (6) lone workers accessing the roadway or track zone or performing visual inspections or minor tasks.",
+      "ground_truth_reference": "49 CFR \u00a7 671.39(c)",
+      "source_chunk_id": "dbc431ac-464e-468e-a401-50a336a11f64",
+      "cfr_reference": "49 CFR \u00a7 671.39",
+      "title_number": 49,
+      "id": "q200"
+    }
+  ]
+}

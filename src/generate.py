@@ -308,6 +308,53 @@ def compute_confidence(response: QueryResponse, chunks: list) -> ConfidenceResul
 
 
 # ---------------------------------------------------------------------------
+# Phase 9.1 Task 3.4 — semantic grounding (replaces the regex citation_coverage,
+# which has ~0 correlation with faithfulness). One Haiku call scores what fraction
+# of the answer's claims are actually supported by the retrieved text.
+# ---------------------------------------------------------------------------
+
+_GROUNDING_SYSTEM = (
+    "You check whether each numbered claim is supported by the provided regulatory "
+    "context. A claim is supported if the context states or directly implies it. "
+    "Reply with ONLY a JSON array of 'yes'/'no', one per claim, in order. "
+    "No other text."
+)
+
+_SENTENCE_SPLIT = re.compile(r"(?<=[.;:])\s+")
+
+
+def semantic_grounding(answer_text: str, chunks: list, model: str | None = None,
+                       max_claims: int = 12) -> float:
+    """
+    Fraction of the answer's claims that are semantically supported by the
+    retrieved context (0..1). One LLM call. Returns 1.0 for an empty answer.
+    """
+    sentences = [s.strip() for s in _SENTENCE_SPLIT.split(answer_text or "") if len(s.strip()) > 25]
+    sentences = sentences[:max_claims]
+    if not sentences:
+        return 1.0
+    context = "\n\n".join(
+        f"[{getattr(c, 'cfr_reference', '') or ''}] {getattr(c, 'chunk_text', '')}"
+        for c in chunks
+    )[:12000]
+    claims = "\n".join(f"{i+1}. {s}" for i, s in enumerate(sentences))
+    user = f"Context:\n{context}\n\nClaims:\n{claims}"
+    try:
+        r = _client.messages.create(
+            model=model or GENERATION_MODEL, max_tokens=200,
+            system=_GROUNDING_SYSTEM, messages=[{"role": "user", "content": user}],
+        )
+        raw = (r.content[0].text if r.content else "").strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1].lstrip("json").strip().rsplit("```", 1)[0].strip()
+        verdicts = json.loads(raw)
+        yes = sum(1 for v in verdicts if str(v).strip().lower().startswith("y"))
+        return yes / len(verdicts) if verdicts else 1.0
+    except Exception:
+        return 1.0  # fail-open: don't penalize on scorer error
+
+
+# ---------------------------------------------------------------------------
 # Prompt templates
 # ---------------------------------------------------------------------------
 

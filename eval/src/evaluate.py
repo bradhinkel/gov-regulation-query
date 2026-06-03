@@ -38,7 +38,10 @@ from src.generate import generate
 EVAL_DATASET = os.path.join(PROJECT_ROOT, "eval", "data", "eval_dataset.json")
 RESULTS_DIR = os.path.join(PROJECT_ROOT, "eval", "results")
 
-JUDGE_MODEL = "claude-haiku-4-5-20251001"
+# Phase 9.1 finding: the single-call Haiku judge proved unreliable (it scored
+# verifiably-correct, ground-truth-matching answers 0.2-0.3; only ~0.28 rank
+# agreement with a Sonnet judge). Default the judge to a stronger model.
+JUDGE_MODEL = os.getenv("JUDGE_MODEL", "claude-sonnet-4-6")
 
 _anthropic = anthropic.Anthropic()
 

@@ -109,5 +109,14 @@ python eval/run_all.py --phase 5   # Top-k sweep
             intent 100%, staleness 0%, temporal coverage 75%, faithfulness ~0.72
             (strong on prose amendments; large enumerated list sections are the
             weak spot — generation model is configurable via TEMPORAL_MODEL).
-- [ ] Phase 9.1: Eval expansion (200+ Qs) & confidence reweighting (deferred)
+- [x] Phase 9.1: Eval expansion (200 Qs, 8 titles) & confidence calibration.
+      Added retrieval_concentration + grid search (eval/src/optimize_confidence.py).
+      Finding (docs/confidence_calibration_findings.md): no inference-time signal
+      predicts judge faithfulness (best ρ≈0.04); root causes — (1) the Haiku judge
+      was unreliable (0.28 agreement w/ Sonnet; scored correct answers 0.3), and
+      (2) even w/ a Sonnet judge, answered-question quality is uniformly high
+      (~0.90) so there's no gradient to predict. Decisions: concentration kept as
+      a diagnostic at weight 0 (it's negatively correlated); no spurious
+      reweighting; eval judge upgraded to Sonnet (JUDGE_MODEL). not_found remains
+      the validated confidence primitive.
 - [ ] Phase 9.1: Eval Expansion (200+ questions) & Confidence Reweighting
