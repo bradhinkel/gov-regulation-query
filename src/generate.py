@@ -102,6 +102,7 @@ class CFRCitation(BaseModel):
     section_heading: str | None = None
     agency: str | None = None
     source_id: str
+    effective_date: str | None = None   # eCFR edition date this text is current as of
 
     def citation_string(self) -> str:
         if self.section_heading:
@@ -330,6 +331,7 @@ def _citations_from_chunks(chunks) -> list[CFRCitation]:
                 section_heading=chunk.section_heading,
                 agency=getattr(chunk, "agency", None),
                 source_id=chunk.source_id,
+                effective_date=getattr(chunk, "effective_date", None),
             ))
     return citations
 

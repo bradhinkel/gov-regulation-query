@@ -24,6 +24,7 @@ class CitationOut(BaseModel):
     agency: Optional[str] = None
     source_id: str
     citation_string: Optional[str] = None
+    effective_date: Optional[str] = None   # eCFR edition date ("current as of")
 
 
 class ConfidenceOut(BaseModel):

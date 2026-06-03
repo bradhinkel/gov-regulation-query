@@ -9,10 +9,18 @@ export interface Citation {
   agency?: string;
   source_id: string;
   citation_string?: string;
+  effective_date?: string;
 }
 
 interface CitationListProps {
   citations: Citation[];
+}
+
+function formatAsOf(date?: string): string | null {
+  if (!date) return null;
+  const d = new Date(date + "T00:00:00");
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
 
 export default function CitationList({ citations }: CitationListProps) {
@@ -39,6 +47,11 @@ export default function CitationList({ citations }: CitationListProps) {
             )}
             {c.agency && (
               <p className="text-[var(--accent)] text-xs mt-0.5">{c.agency}</p>
+            )}
+            {formatAsOf(c.effective_date) && (
+              <p className="text-[var(--muted)] text-xs mt-0.5">
+                current as of {formatAsOf(c.effective_date)}
+              </p>
             )}
           </div>
         </li>

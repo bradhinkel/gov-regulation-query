@@ -176,6 +176,7 @@ async def history(page: int = 1, page_size: int = 20):
                     agency=c.get("agency"),
                     source_id=c.get("source_id", ""),
                     citation_string=c.get("citation_string"),
+                    effective_date=c.get("effective_date"),
                 )
                 for c in item["citations"]
             ],
