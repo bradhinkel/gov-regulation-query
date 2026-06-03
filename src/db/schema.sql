@@ -55,20 +55,21 @@ CREATE TABLE chunks (
     chunk_text      TEXT            NOT NULL,
     chunk_index     INTEGER         NOT NULL DEFAULT 0,
 
-    -- Embedding (voyage-law-2 = 1024 dimensions, legal-domain fine-tuned)
-    embedding       vector(1024),
+    -- Embedding (OpenAI text-embedding-3-small = 1536 dimensions)
+    embedding       vector(1536),
 
     -- Timestamps
     created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
     ingested_at     TIMESTAMPTZ     NOT NULL DEFAULT NOW()
 );
 
--- Retrieval index (cosine similarity)
--- IMPORTANT: only build after initial ingest when row count is known;
--- adjust `lists` to ~sqrt(num_rows) for optimal performance.
--- At ~40K chunks: lists=200 is appropriate.
--- CREATE INDEX idx_chunks_embedding ON chunks
---     USING ivfflat (embedding vector_cosine_ops) WITH (lists = 200);
+-- Retrieval index (cosine similarity) — HNSW (Phase 8.6).
+-- Build AFTER the initial bulk ingest; building on an empty/small table then
+-- bulk-loading is much slower than loading first and indexing once.
+-- HNSW gives strong recall at 250K+ vectors without the VACUUM/lists tuning
+-- that ivfflat needs. Query-time recall/latency trade-off: SET hnsw.ef_search.
+CREATE INDEX idx_chunks_embedding_hnsw ON chunks
+    USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64);
 
 -- Metadata indexes
 CREATE INDEX idx_chunks_source_system   ON chunks(source_system);

@@ -39,6 +39,7 @@ Usage:
         print(chunk.cfr_reference, len(chunk.chunk_text))
 """
 
+import json
 import os
 import re
 import time
@@ -85,14 +86,77 @@ def _get_latest_date(title_number: int) -> str:
     return date.today().isoformat()
 
 
-def _fetch_title_xml(title_number: int, as_of_date: str | None = None) -> bytes:
-    """Fetch the full title XML from the eCFR API."""
+def _get_with_retry(url: str, params: dict | None = None, timeout: int = 180,
+                    max_attempts: int = 5) -> bytes:
+    """
+    GET a URL with exponential backoff on 5xx / timeout / transport errors.
+
+    The eCFR endpoints generate XML on the fly and intermittently return 5xx
+    (commonly 504) under load, especially for large titles. Genuine 4xx client
+    errors (other than 429) are not retried.
+    """
+    for attempt in range(1, max_attempts + 1):
+        try:
+            resp = httpx.get(url, params=params, timeout=timeout, follow_redirects=True)
+            if resp.status_code >= 500:
+                raise httpx.HTTPStatusError(
+                    f"server error {resp.status_code}", request=resp.request, response=resp
+                )
+            resp.raise_for_status()
+            return resp.content
+        except (httpx.HTTPStatusError, httpx.TransportError, httpx.TimeoutException) as exc:
+            status = getattr(getattr(exc, "response", None), "status_code", None)
+            if status is not None and 400 <= status < 500 and status != 429:
+                raise
+            if attempt == max_attempts:
+                raise
+            time.sleep(min(60, 5 * 2 ** (attempt - 1)))  # 5, 10, 20, 40, 60s
+
+
+def _fetch_title_xml(title_number: int, as_of_date: str | None = None) -> tuple[bytes, str]:
+    """Fetch the full title XML from the eCFR API (with retry)."""
     if as_of_date is None:
         as_of_date = _get_latest_date(title_number)
     url = f"{ECFR_API_BASE}/full/{as_of_date}/title-{title_number}.xml"
-    resp = httpx.get(url, timeout=120, follow_redirects=True)
-    resp.raise_for_status()
-    return resp.content, as_of_date
+    return _get_with_retry(url), as_of_date
+
+
+def _list_parts(title_number: int, as_of_date: str) -> list[str]:
+    """Enumerate all PART identifiers for a title from the structure API."""
+    url = f"{ECFR_API_BASE}/structure/{as_of_date}/title-{title_number}.json"
+    structure = json.loads(_get_with_retry(url, timeout=60))
+    parts: list[str] = []
+
+    def collect(node: dict) -> None:
+        if node.get("type") == "part":
+            ident = node.get("identifier")
+            if ident is not None:
+                parts.append(str(ident))
+        for child in node.get("children") or []:
+            collect(child)
+
+    collect(structure)
+    return parts
+
+
+def _fetch_title_parts(title_number: int, as_of_date: str | None = None) -> tuple[list[bytes], str]:
+    """
+    Fallback for oversized titles (e.g. 40/EPA) whose full-title XML consistently
+    times out: fetch each PART separately via ?part=N and return one XML blob per
+    part. Per-part XML is rooted at the DIV5 PART element (no parent CHAPTER), so
+    agency may be unavailable for these titles.
+    """
+    if as_of_date is None:
+        as_of_date = _get_latest_date(title_number)
+    parts = _list_parts(title_number, as_of_date)
+    base = f"{ECFR_API_BASE}/full/{as_of_date}/title-{title_number}.xml"
+    blobs: list[bytes] = []
+    for p in parts:
+        try:
+            blobs.append(_get_with_retry(base, params={"part": p}))
+        except Exception as exc:  # noqa: BLE001 — skip a stubborn part, keep going
+            print(f"  [warn] title {title_number} part {p} fetch failed, skipping: {exc}")
+    return blobs, as_of_date
 
 
 def _element_text(el) -> str:
@@ -165,19 +229,27 @@ class ECFRXMLParser(BaseParser):
             source: integer CFR title number (e.g., 7) or path to local XML file
         """
         if isinstance(source, int):
-            xml_bytes, as_of_date = _fetch_title_xml(source)
             title_number = source
+            try:
+                xml_bytes, as_of_date = _fetch_title_xml(source)
+                roots = [etree.fromstring(xml_bytes)]
+            except (httpx.HTTPStatusError, httpx.TransportError, httpx.TimeoutException) as exc:
+                # Oversized title (e.g. 40/EPA): the full-title endpoint times out
+                # even with retries. Fall back to fetching part-by-part.
+                print(f"  [info] title {source} full fetch failed ({exc}); "
+                      "falling back to per-part fetch")
+                blobs, as_of_date = _fetch_title_parts(source)
+                roots = [etree.fromstring(b) for b in blobs]
         else:
             with open(source, "rb") as f:
-                xml_bytes = f.read()
+                roots = [etree.fromstring(f.read())]
             as_of_date = date.today().isoformat()
             title_number = None
 
-        root = etree.fromstring(xml_bytes)
-        yield from self._parse_root(root, title_number, as_of_date)
+        yield from self._parse_roots(roots, title_number, as_of_date)
 
-    def _parse_root(
-        self, root, title_number: int | None, effective_date: str
+    def _parse_roots(
+        self, roots: list, title_number: int | None, effective_date: str
     ) -> Iterator[ChunkWithMetadata]:
         source_id = f"cfr_title_{title_number}" if title_number else "cfr_local"
         chunk_index = 0
@@ -299,7 +371,10 @@ class ECFRXMLParser(BaseParser):
             for child in el:
                 yield from walk(child, new_ctx)
 
-        yield from walk(root, {})
+        # chunk_index runs continuously across all roots (one full title, whether
+        # fetched whole or assembled from per-part blobs).
+        for root in roots:
+            yield from walk(root, {})
 
 
 def _infer_agency(part_head: str, chapter_head: str) -> str | None:
