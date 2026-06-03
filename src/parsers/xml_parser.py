@@ -71,16 +71,22 @@ _SECTION_RE = re.compile(r"§\s*([\d.]+(?:-\d+)?)")
 
 
 def _get_latest_date(title_number: int) -> str:
-    """Return the most recent available date for a title from the eCFR versions API."""
-    url = f"{ECFR_API_BASE}/versions/title-{title_number}.json"
+    """
+    Return the latest issue date for a title from the eCFR titles API.
+
+    NOTE: do NOT use /versions/title-N.json content_versions — that list is capped
+    (~1000 entries) and is NOT sorted by date, so content_versions[-1] returns an
+    arbitrary, often stale date (e.g. 2019 for a title current to 2026). The
+    authoritative current date is titles.json -> latest_issue_date.
+    """
     try:
-        resp = httpx.get(url, timeout=30)
+        resp = httpx.get(f"{ECFR_API_BASE}/titles.json", timeout=30)
         resp.raise_for_status()
-        data = resp.json()
-        # content_versions is a list sorted by date desc
-        versions = data.get("content_versions", [])
-        if versions:
-            return versions[-1].get("date", date.today().isoformat())
+        for t in resp.json().get("titles", []):
+            if t.get("number") == title_number:
+                latest = t.get("latest_issue_date")
+                if latest:
+                    return latest
     except Exception:
         pass
     return date.today().isoformat()
@@ -137,6 +143,36 @@ def _list_parts(title_number: int, as_of_date: str) -> list[str]:
 
     collect(structure)
     return parts
+
+
+def _part_agency_map(title_number: int, as_of_date: str) -> dict[str, str]:
+    """
+    Map part identifier -> agency from the structure API.
+
+    Agency is a CHAPTER-level attribute (label_description). Deriving it from the
+    structure API is reliable for every title, including oversized ones fetched
+    per-part where the chapter wrapper is absent from the section XML.
+    """
+    url = f"{ECFR_API_BASE}/structure/{as_of_date}/title-{title_number}.json"
+    mapping: dict[str, str] = {}
+    try:
+        structure = json.loads(_get_with_retry(url, timeout=60))
+    except Exception as exc:  # noqa: BLE001 — fall back to head-regex agency
+        print(f"  [warn] title {title_number} structure fetch failed, agency from XML head only: {exc}")
+        return mapping
+
+    def walk(node: dict, agency: str | None) -> None:
+        if node.get("type") == "chapter":
+            agency = (node.get("label_description") or "").strip() or agency
+        if node.get("type") == "part":
+            ident = node.get("identifier")
+            if ident is not None and agency:
+                mapping[str(ident)] = agency
+        for child in node.get("children") or []:
+            walk(child, agency)
+
+    walk(structure, None)
+    return mapping
 
 
 def _fetch_title_parts(title_number: int, as_of_date: str | None = None) -> tuple[list[bytes], str]:
@@ -240,17 +276,23 @@ class ECFRXMLParser(BaseParser):
                       "falling back to per-part fetch")
                 blobs, as_of_date = _fetch_title_parts(source)
                 roots = [etree.fromstring(b) for b in blobs]
+            # Authoritative agency per part from the structure API (reliable even
+            # for per-part titles where the chapter wrapper is absent from the XML).
+            agency_map = _part_agency_map(source, as_of_date)
         else:
             with open(source, "rb") as f:
                 roots = [etree.fromstring(f.read())]
             as_of_date = date.today().isoformat()
             title_number = None
+            agency_map = {}
 
-        yield from self._parse_roots(roots, title_number, as_of_date)
+        yield from self._parse_roots(roots, title_number, as_of_date, agency_map)
 
     def _parse_roots(
-        self, roots: list, title_number: int | None, effective_date: str
+        self, roots: list, title_number: int | None, effective_date: str,
+        agency_map: dict[str, str] | None = None,
     ) -> Iterator[ChunkWithMetadata]:
+        agency_map = agency_map or {}
         source_id = f"cfr_title_{title_number}" if title_number else "cfr_local"
         chunk_index = 0
 
@@ -331,7 +373,7 @@ class ECFRXMLParser(BaseParser):
                         subpart=new_ctx.get("subpart_id"),
                         section_number=section_number,
                         section_heading=section_heading or None,
-                        agency=new_ctx.get("agency"),
+                        agency=agency_map.get(new_ctx.get("part_number")) or new_ctx.get("agency"),
                         cfr_reference=cfr_ref,
                         effective_date=effective_date,
                         chunk_text=context_prefix + text,
