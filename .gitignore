@@ -22,3 +22,6 @@ eval/results/*.json
 .vscode/
 .idea/
 *.swp
+
+# Windows download metadata
+*.Zone.Identifier

@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import QueryForm from "./components/QueryForm";
-import ResponsePanel from "./components/ResponsePanel";
-import StatusBanner from "./components/StatusBanner";
-import PrintButton from "./components/PrintButton";
-import PrintableResult from "./components/PrintableResult";
+import { useEffect, useRef, useState } from "react";
+import type { QueryResult, SourceTitle } from "./lib/types";
+import { corpusUpdatedDate } from "./lib/cfr";
+import Masthead from "./components/Masthead";
+import HomeView from "./components/HomeView";
+import Loader from "./components/Loader";
+import ResultView from "./components/ResultView";
+import { CompactQuery, OffTopic, NotFound, ErrorState } from "./components/StateCard";
 import AboutModal from "./components/AboutModal";
-import { Citation } from "./components/CitationList";
+import PrintableResult from "./components/PrintableResult";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
 
@@ -22,35 +23,7 @@ type Status =
   | "off_topic"
   | "error";
 
-interface Confidence {
-  score: number;
-  tier: string;
-  retrieval_score: number;
-  citation_coverage: number;
-  verified_citations: string[];
-  unverified_citations: string[];
-}
-
-interface QueryResult {
-  id: string;
-  query: string;
-  plain_english: string;
-  legal_language: string;
-  citations: Citation[];
-  not_found: boolean;
-  strategy_used: string;
-  latency_ms: number;
-  confidence: Confidence | null;
-  temporal?: boolean;
-  created_at: string;
-}
-
-interface SourceTitle {
-  source_id: string;
-  title_number?: number;
-  agency?: string;
-  chunk_count: number;
-}
+const LOADING_STATUSES: Status[] = ["classifying", "retrieving", "comparing", "generating"];
 
 export default function Home() {
   const [status, setStatus] = useState<Status>("idle");
@@ -59,6 +32,12 @@ export default function Home() {
   const [result, setResult] = useState<QueryResult | null>(null);
   const [sources, setSources] = useState<SourceTitle[]>([]);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [temporal, setTemporal] = useState(false);
+
+  // Remember the last submitted query + filter so the compact bar / states can echo it
+  const [lastQuery, setLastQuery] = useState("");
+  const [titleFilter, setTitleFilter] = useState<number | null>(null);
+  const lastStrategy = useRef<string>("sequential");
 
   useEffect(() => {
     fetch(`${API_URL}/sources`)
@@ -67,14 +46,19 @@ export default function Home() {
       .catch(() => {});
   }, []);
 
-  const handleQuery = async (
+  const runQuery = async (
     query: string,
-    options: { titleNumber?: number; strategy?: string }
+    options: { titleNumber: number | null; strategy: string }
   ) => {
+    setLastQuery(query);
+    setTitleFilter(options.titleNumber);
+    lastStrategy.current = options.strategy;
     setStatus("classifying");
     setError(undefined);
     setOffTopic(undefined);
     setResult(null);
+    setTemporal(false);
+    window.scrollTo({ top: 0 });
 
     try {
       const response = await fetch(`${API_URL}/query`, {
@@ -82,7 +66,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query,
-          title_number: options.titleNumber || null,
+          title_number: options.titleNumber,
           strategy: options.strategy || null,
         }),
       });
@@ -110,9 +94,12 @@ export default function Home() {
           } else if (line.startsWith("data: ")) {
             const data = JSON.parse(line.slice(6));
             if (currentEvent === "status") {
-              setStatus(data.status as Status);
+              const s = data.status as Status;
+              if (s === "comparing") setTemporal(true);
+              setStatus(s);
             } else if (currentEvent === "result") {
-              setResult(data);
+              setResult(data as QueryResult);
+              setTemporal(Boolean((data as QueryResult).temporal));
               setStatus("done");
             } else if (currentEvent === "off_topic") {
               setOffTopic(data.message);
@@ -130,112 +117,91 @@ export default function Home() {
     }
   };
 
-  // Aggregate chunk counts per unique title for the subtitle
-  const titleCount = new Set(sources.map((s) => s.title_number).filter(Boolean)).size;
-  const totalChunks = sources.reduce((sum, s) => sum + s.chunk_count, 0);
+  const goHome = () => {
+    setStatus("idle");
+    setResult(null);
+    setError(undefined);
+    setOffTopic(undefined);
+    window.scrollTo({ top: 0 });
+  };
 
-  return (
-    <main className="min-h-screen px-4 py-10 max-w-3xl mx-auto space-y-8">
-      <header className="space-y-1">
-        <div className="flex items-baseline justify-between">
-          <h1 className="text-2xl font-bold text-[var(--accent)] tracking-wide">
-            Federal Regulation Query
-          </h1>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setAboutOpen(true)}
-              className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-            >
-              About
-            </button>
-            <Link
-              href="/history"
-              className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-            >
-              Query history →
-            </Link>
-          </div>
-        </div>
-        <p className="text-sm text-[var(--muted)]">
-          {titleCount > 0
-            ? `${titleCount} CFR title${titleCount !== 1 ? "s" : ""} indexed — ${totalChunks.toLocaleString()} sections`
-            : "Search the Code of Federal Regulations"}
-        </p>
-      </header>
+  const refilter = (titleNumber: number | null) => {
+    if (!lastQuery) return;
+    runQuery(lastQuery, { titleNumber, strategy: lastStrategy.current });
+  };
 
-      <QueryForm
-        onSubmit={handleQuery}
-        isLoading={
-          status === "classifying" ||
-          status === "retrieving" ||
-          status === "comparing" ||
-          status === "generating"
-        }
-        sources={sources}
+  // Masthead coverage figures (live from /sources, with sensible fallbacks)
+  const titleCount =
+    new Set(sources.map((s) => s.title_number).filter((n) => n != null)).size || 8;
+  const sectionCount = sources.reduce((sum, s) => sum + s.chunk_count, 0) || 265641;
+  const corpusDate = corpusUpdatedDate(sources);
+
+  let body: React.ReactNode;
+  if (LOADING_STATUSES.includes(status)) {
+    body = (
+      <Loader
+        query={lastQuery}
+        status={status as "classifying" | "retrieving" | "comparing" | "generating"}
+        temporal={temporal}
       />
-
-      <StatusBanner status={status} error={error} offTopic={offTopic} />
-
-      {result && status === "done" && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs text-[var(--muted)] truncate">
-              &ldquo;{result.query}&rdquo;
-            </p>
-            <div className="flex items-center gap-3 flex-shrink-0">
-              {result.temporal && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
-                  border border-purple-800 bg-purple-900/40 text-purple-300">
-                  Change comparison
-                </span>
-              )}
-              {result.confidence && !result.not_found && (
-                <ConfidenceBadge confidence={result.confidence} />
-              )}
-              {!result.not_found && <PrintButton />}
-            </div>
-          </div>
-          <ResponsePanel
+    );
+  } else if (status === "off_topic") {
+    body = (
+      <>
+        <CompactQuery query={lastQuery} onNew={goHome} />
+        <OffTopic message={offTopic} />
+      </>
+    );
+  } else if (status === "error") {
+    body = (
+      <>
+        <CompactQuery query={lastQuery} onNew={goHome} />
+        <ErrorState message={error} />
+      </>
+    );
+  } else if (status === "done" && result) {
+    if (result.not_found) {
+      body = (
+        <>
+          <CompactQuery query={result.query} onNew={goHome} />
+          <NotFound />
+        </>
+      );
+    } else {
+      body = (
+        <>
+          <ResultView
+            data={result}
+            corpusDate={corpusDate}
+            titleFilter={titleFilter}
+            onNew={goHome}
+            onRefilter={refilter}
+          />
+          <PrintableResult
+            query={result.query}
             plainEnglish={result.plain_english}
             legalLanguage={result.legal_language}
             citations={result.citations}
-            notFound={result.not_found}
-            strategyUsed={result.strategy_used}
-            latencyMs={result.latency_ms}
+            createdAt={result.created_at}
+            corpusDate={corpusDate}
           />
-          {!result.not_found && (
-            <PrintableResult
-              query={result.query}
-              plainEnglish={result.plain_english}
-              legalLanguage={result.legal_language}
-              citations={result.citations}
-              createdAt={result.created_at}
-            />
-          )}
-        </div>
-      )}
-
-      <AboutModal open={aboutOpen} onClose={() => setAboutOpen(false)} />
-    </main>
-  );
-}
-
-function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
-  const tierColors: Record<string, string> = {
-    high:      "bg-green-900/40 text-green-400 border-green-800",
-    medium:    "bg-yellow-900/40 text-yellow-400 border-yellow-800",
-    low:       "bg-red-900/40 text-red-400 border-red-800",
-    not_found: "bg-gray-800 text-gray-500 border-gray-700",
-  };
-  const color = tierColors[confidence.tier] ?? tierColors.low;
-  const pct = Math.round(confidence.score * 100);
+        </>
+      );
+    }
+  } else {
+    body = <HomeView onSearch={runQuery} />;
+  }
 
   return (
-    <span
-      className={`text-xs px-2 py-0.5 rounded-full border font-medium ${color}`}
-      title={`Retrieval: ${Math.round(confidence.retrieval_score * 100)}%  Citation coverage: ${Math.round(confidence.citation_coverage * 100)}%`}
-    >
-      {confidence.tier === "not_found" ? "not found" : `${confidence.tier} confidence · ${pct}%`}
-    </span>
+    <main className="shell">
+      <Masthead
+        titleCount={titleCount}
+        sectionCount={sectionCount}
+        onAbout={() => setAboutOpen(true)}
+        onHome={goHome}
+      />
+      {body}
+      {aboutOpen && <AboutModal onClose={() => setAboutOpen(false)} />}
+    </main>
   );
 }

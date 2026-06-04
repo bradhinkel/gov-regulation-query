@@ -1,19 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* ============================================================
    Federal Regulation Query — redesign
    "Official Record": editorial, authoritative, trust-forward
-   Ported from design/styles.css (source of truth for visual values).
-   Fonts are supplied by next/font via the --font-* variables set on <html>.
    ============================================================ */
 
 :root {
-  /* fonts — backed by next/font variables (see layout.tsx) */
-  --font-serif: var(--font-spectral), 'Spectral', Georgia, 'Times New Roman', serif;
-  --font-sans: var(--font-public-sans), 'Public Sans', system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* fonts */
+  --font-serif: 'Spectral', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Public Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
 
   /* dark palette (default) — deep ink navy */
   --bg: #0a0e16;
@@ -173,7 +167,7 @@ a { color: var(--accent); text-decoration: none; }
   align-items: center;
   gap: 9px;
 }
-.eyebrow .tick { color: var(--verified); display: inline-flex; }
+.eyebrow .tick { color: var(--verified); }
 
 /* ---------- composer ---------- */
 .composer {
@@ -253,7 +247,6 @@ a { color: var(--accent); text-decoration: none; }
 }
 .btn-search:hover { filter: brightness(1.06); transform: translateY(-1px); }
 .btn-search:active { transform: translateY(0); }
-.btn-search:disabled { opacity: 0.55; cursor: not-allowed; filter: none; transform: none; }
 .btn-search svg { width: 16px; height: 16px; }
 
 /* ---------- example chips ---------- */
@@ -478,8 +471,6 @@ button.trust-chip.grounded:hover { border-color: var(--verified); background: rg
   background: var(--accent-dim); padding: 1px 6px; border-radius: 5px;
   white-space: nowrap; font-weight: 500;
 }
-.prose strong { font-weight: 700; color: var(--text); }
-.prose em { font-style: italic; }
 
 /* verbatim statute quote — the gold "this is the actual law" treatment */
 .verbatim {
@@ -615,7 +606,7 @@ button.trust-chip.grounded:hover { border-color: var(--verified); background: rg
 .loader { padding: 6px 0; }
 .loader-head {
   font-family: var(--font-serif); font-size: 19px; color: var(--text-2);
-  margin-bottom: 26px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 26px; display: flex; align-items: center; gap: 12px;
 }
 .loader-head .q { color: var(--text); }
 .pipeline { display: flex; flex-direction: column; gap: 2px; }
@@ -669,9 +660,6 @@ button.trust-chip.grounded:hover { border-color: var(--verified); background: rg
 .statecard.offtopic { background: var(--amber-dim); border: 1px solid rgba(214,164,65,.3); }
 .statecard.offtopic .si { background: rgba(214,164,65,.16); color: var(--amber); }
 .statecard.offtopic .st { color: var(--amber); }
-.statecard.error { background: var(--red-dim); border: 1px solid rgba(227,106,125,.3); }
-.statecard.error .si { background: rgba(227,106,125,.16); color: var(--red); }
-.statecard.error .st { color: var(--red); }
 .statecard.notfound { background: var(--surface); border: 1px solid var(--border); flex-direction: column; align-items: center; text-align: center; padding: 50px 28px; }
 .statecard.notfound .si { background: var(--surface-2); color: var(--text-3); width: 46px; height: 46px; }
 .statecard.notfound .sd { margin: 0 auto; }
@@ -707,7 +695,7 @@ button.trust-chip.grounded:hover { border-color: var(--verified); background: rg
 }
 .modal-x:hover { background: var(--surface-hi); color: var(--text); }
 .modal-body { padding: 16px 24px 24px; }
-.modal-summary { font-family: var(--font-serif); font-size: 15.5px; line-height: 1.66; color: var(--text-2); margin: 0; }
+.modal-summary { font-family: var(--font-serif); font-size: 15.5px; line-height: 1.66; color: var(--text-2); }
 .modal-stats { display: flex; gap: 10px; margin: 20px 0; }
 .modal-stat { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 14px 15px; }
 .modal-stat .v { font-family: var(--font-mono); font-size: 19px; font-weight: 600; color: var(--accent); }
@@ -760,7 +748,6 @@ button.trust-chip.grounded:hover { border-color: var(--verified); background: rg
   max-width: 74ch;
 }
 .composer-note svg { width: 14px; height: 14px; flex: none; color: var(--muted); margin-top: 1px; }
-.composer-note a { color: var(--accent); }
 
 /* subtle entrance — never animate opacity from 0 (preview pauses anims at load,
    which would hold content invisible). Transform-only, fully safe. */
@@ -770,36 +757,4 @@ button.trust-chip.grounded:hover { border-color: var(--verified); background: rg
 @media (prefers-reduced-motion: reduce) {
   .fade-in { animation: none; }
   .pstep .spin { animation: none; }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────
-   Print / Save-as-PDF conventions
-   - `.no-print`   : hidden when printing
-   - `.print-only` : hidden on screen; the ONLY thing rendered when printing
-   ───────────────────────────────────────────────────────────────────────── */
-.print-only { display: none; }
-
-@media print {
-  body * { visibility: hidden; }
-  .print-only, .print-only * { visibility: visible; }
-  .print-only { display: block; position: absolute; left: 0; top: 0; width: 100%; }
-  .no-print { display: none !important; }
-
-  body { background: #fff !important; color: #000 !important; }
-  @page { margin: 0.75in; }
-
-  .printable-doc { color: #000; font-size: 11pt; line-height: 1.45; }
-  .printable-doc h1 { font-size: 18pt; margin: 0 0 0.25rem; }
-  .printable-doc h2 {
-    font-size: 12.5pt; margin: 1.1rem 0 0.35rem;
-    border-bottom: 1px solid #999; padding-bottom: 2px;
-  }
-  .printable-doc .pd-question { font-size: 10.5pt; color: #333; margin-bottom: 0.5rem; }
-  .printable-doc .pd-body { white-space: pre-wrap; margin: 0; }
-  .printable-doc .pd-citations { padding-left: 1.25rem; }
-  .printable-doc .pd-citations li { margin-bottom: 0.4rem; }
-  .printable-doc .pd-footer {
-    margin-top: 1.5rem; padding-top: 0.5rem; border-top: 1px solid #ccc;
-    font-size: 8.5pt; color: #555;
-  }
 }

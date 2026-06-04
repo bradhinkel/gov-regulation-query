@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Ico } from "../components/Icons";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
 
@@ -23,11 +24,10 @@ interface HistoryItem {
   created_at: string;
 }
 
-const TIER_COLORS: Record<string, string> = {
-  high:      "text-green-400",
-  medium:    "text-yellow-400",
-  low:       "text-red-400",
-  not_found: "text-gray-500",
+const TIER_CLASS: Record<string, string> = {
+  high: "conf-high",
+  medium: "conf-medium",
+  low: "conf-low",
 };
 
 export default function HistoryPage() {
@@ -47,57 +47,114 @@ export default function HistoryPage() {
   }, []);
 
   return (
-    <main className="min-h-screen px-4 py-10 max-w-3xl mx-auto space-y-6">
-      <header className="flex items-baseline justify-between">
-        <h1 className="text-2xl font-bold text-[var(--accent)]">Query History</h1>
-        <Link
-          href="/"
-          className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-        >
-          ← Back
-        </Link>
+    <main className="shell">
+      <header className="masthead">
+        <div className="brand">
+          <Link href="/" className="brand-seal" style={{ textDecoration: "none" }}>
+            <Ico name="seal" />
+            <span className="wordmark">
+              Federal <span className="reg">Regulation</span> Query
+            </span>
+          </Link>
+          <div className="coverage">Query history</div>
+        </div>
+        <nav className="nav">
+          <Link href="/">← Back to search</Link>
+        </nav>
       </header>
 
-      {loading && (
-        <p className="text-[var(--muted)] text-sm">Loading…</p>
-      )}
+      <div className="fade-in">
+        <div className="trustbar" style={{ marginBottom: 22 }}>
+          <h1 className="answer-q">Query history</h1>
+          {total > 0 && (
+            <div className="trust-chips">
+              <span className="trust-chip">
+                <b>{total}</b> total queries
+              </span>
+            </div>
+          )}
+        </div>
 
-      {!loading && items.length === 0 && (
-        <p className="text-[var(--muted)] text-sm italic">No queries yet.</p>
-      )}
+        {loading && <p style={{ color: "var(--text-3)", fontSize: 14 }}>Loading…</p>}
 
-      {total > 0 && (
-        <p className="text-xs text-[var(--muted)]">{total} total queries</p>
-      )}
-
-      <div className="space-y-4">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 space-y-2"
-          >
-            <p className="text-sm font-medium text-[var(--foreground)]">
-              &ldquo;{item.query}&rdquo;
-            </p>
-            {item.not_found ? (
-              <p className="text-xs text-[var(--muted)] italic">Not found in indexed regulations</p>
-            ) : (
-              <p className="text-xs text-[var(--foreground)] line-clamp-3 leading-relaxed">
-                {item.plain_english}
-              </p>
-            )}
-            <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
-              <span>{new Date(item.created_at).toLocaleString()}</span>
-              <span>{item.citations.length} citation{item.citations.length !== 1 ? "s" : ""}</span>
-              <span>{item.latency_ms}ms</span>
-              {item.confidence && !item.not_found && (
-                <span className={TIER_COLORS[item.confidence.tier] ?? "text-gray-400"}>
-                  {item.confidence.tier} · {Math.round(item.confidence.score * 100)}%
-                </span>
-              )}
+        {!loading && items.length === 0 && (
+          <div className="statecard notfound">
+            <span className="si">
+              <Ico name="empty" style={{ width: 22, height: 22 }} />
+            </span>
+            <div>
+              <div className="st">No queries yet</div>
+              <div className="sd">Answered questions will appear here.</div>
             </div>
           </div>
-        ))}
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="panel"
+              style={{ padding: "18px 20px", boxShadow: "none" }}
+            >
+              <p
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: 17,
+                  color: "var(--text)",
+                  margin: "0 0 8px",
+                }}
+              >
+                {item.query}
+              </p>
+              {item.not_found ? (
+                <p style={{ fontSize: 13, color: "var(--text-3)", fontStyle: "italic", margin: 0 }}>
+                  Not found in indexed regulations
+                </p>
+              ) : (
+                <p
+                  style={{
+                    fontSize: 13.5,
+                    color: "var(--text-2)",
+                    lineHeight: 1.55,
+                    margin: 0,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {item.plain_english}
+                </p>
+              )}
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: 14,
+                  marginTop: 12,
+                  fontSize: 11.5,
+                  color: "var(--text-3)",
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                <span>{new Date(item.created_at).toLocaleString()}</span>
+                <span>
+                  {item.citations.length} citation{item.citations.length !== 1 ? "s" : ""}
+                </span>
+                <span>{item.latency_ms} ms</span>
+                {item.confidence && !item.not_found && (
+                  <span
+                    className={"trust-chip " + (TIER_CLASS[item.confidence.tier] ?? "")}
+                    style={{ padding: "3px 9px", fontSize: 11 }}
+                  >
+                    {item.confidence.tier} confidence
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );
