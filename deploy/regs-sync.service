@@ -8,6 +8,11 @@ Type=oneshot
 WorkingDirectory=/opt/regs
 EnvironmentFile=/opt/regs/.env
 ExecStart=/opt/regs/venv/bin/python src/sync.py
+# Phase 10 Part A: after the corpus sync, maintain the eval library (retire /
+# re-reference / top-up) and score the stable core. '-' prefix: an eval failure
+# (or a cost-cap abort, exit 2) must not mark the sync itself failed.
+ExecStart=-/opt/regs/venv/bin/python eval/src/library.py refresh
+ExecStart=-/opt/regs/venv/bin/python eval/src/run_library_eval.py --scope core
 # Output is captured in the journal: journalctl -u regs-sync
-# Audit trail also persists to the sync_runs table.
-TimeoutStartSec=3600
+# Audit trail also persists to the sync_runs + eval_runs tables.
+TimeoutStartSec=10800

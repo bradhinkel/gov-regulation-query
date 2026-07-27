@@ -1,0 +1,12 @@
+[Unit]
+Description=Monthly full eval-library run
+
+[Timer]
+# First Sunday cadence isn't needed — the 1st at 04:30, after any weekly sync
+# window, jittered to be polite to the APIs.
+OnCalendar=*-*-01 04:30:00
+RandomizedDelaySec=1800
+Persistent=true
+
+[Install]
+WantedBy=timers.target

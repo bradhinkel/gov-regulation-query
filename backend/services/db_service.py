@@ -137,6 +137,50 @@ async def get_queries(
     return items, total
 
 
+async def get_eval_health() -> Optional[dict]:
+    """
+    Latest eval-library run + the stable-core trend (Phase 10 Part A).
+    composite_core is the longitudinal quality score; delta compares the two
+    most recent runs that scored the core. None if the eval tables don't exist
+    or no run has happened yet.
+    """
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        try:
+            rows = await conn.fetch(
+                "SELECT id, run_at, scope, status, num_questions, num_core, "
+                "composite_all, composite_core "
+                "FROM eval_runs ORDER BY id DESC LIMIT 10"
+            )
+        except asyncpg.exceptions.UndefinedTableError:
+            return None
+    if not rows:
+        return None
+    latest = rows[0]
+    cored = [r for r in rows if r["composite_core"] is not None]
+    delta = (
+        round(cored[0]["composite_core"] - cored[1]["composite_core"], 4)
+        if len(cored) >= 2 else None
+    )
+    return {
+        "last_run": {
+            "id": latest["id"],
+            "run_at": latest["run_at"].isoformat(),
+            "scope": latest["scope"],
+            "status": latest["status"],
+            "num_questions": latest["num_questions"],
+            "num_core": latest["num_core"],
+            "composite_all": latest["composite_all"],
+            "composite_core": latest["composite_core"],
+        },
+        "core_trend": {
+            "latest": cored[0]["composite_core"] if cored else None,
+            "previous": cored[1]["composite_core"] if len(cored) >= 2 else None,
+            "delta": delta,
+        },
+    }
+
+
 async def get_sync_health() -> dict:
     """
     Corpus freshness for /health (Phase 9.6): active size, per-title watermarks,

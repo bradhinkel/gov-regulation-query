@@ -73,6 +73,13 @@ are fetched part-by-part automatically (see _fetch_title_parts in xml_parser.py)
 python eval/src/evaluate.py --config eval/configs/baseline.yaml
 python eval/run_all.py --phase 2   # Chunk size sweep
 python eval/run_all.py --phase 5   # Top-k sweep
+
+# Phase 10 Part A — DB-backed self-maintaining eval library:
+python eval/src/library.py seed              # build library to quotas (~160 Qs)
+python eval/src/library.py status            # stratum coverage + stable-core size
+python eval/src/library.py refresh           # post-sync retire/re-reference/top-up
+python eval/src/run_library_eval.py --scope core   # weekly trend run
+python eval/src/run_library_eval.py --scope full   # monthly full run
 ```
 
 ## Phase checklist
@@ -120,3 +127,56 @@ python eval/run_all.py --phase 5   # Top-k sweep
       reweighting; eval judge upgraded to Sonnet (JUDGE_MODEL). not_found remains
       the validated confidence primitive.
 - [ ] Phase 9.1: Eval Expansion (200+ questions) & Confidence Reweighting
+- [x] Phase 10: Frontend redesign — "Official Record" (trust-forward UI). Cosmetic
+      only; backend/retrieval/routing unchanged. Per design/ handoff bundle.
+      - Three self-hosted typefaces via next/font/local (frontend/app/fonts/):
+        Spectral (display+prose), Public Sans (UI), IBM Plex Mono (citation refs).
+        Self-hosted to avoid flaky build-time Google Fonts fetches under WSL2.
+      - Dark default + full light theme via data-theme; tokens in app/globals.css.
+      - New components (app/components/): Masthead, HomeView, ResultView,
+        CitationsRail, Prose, Loader, StateCard, AboutModal, Field, Icons. Replaced
+        QueryForm/StatusBanner/ResponsePanel/CitationList/PrintButton.
+      - app/lib/parseAnswer.ts parses backend markdown answers into a block model and
+        lifts inline `"quote" (CFR cite)` into gold "Verbatim statute" blocks (legal
+        register). NOTE: depends on the generate.py output format — see memory
+        frontend-answer-parser-coupling.
+      - Trust trio at top (Grounded→scroll/pulse rail · Current-as-of · qualitative
+        confidence, % hidden by default); citations grouped by title, link to ecfr.gov.
+      - app/lib/cfr.ts: full 8-title name map (fixes "Title N" bug), ecfr URL builder,
+        formatAgency (ALL-CAPS eCFR agency → "Agency · Department").
+      - Provenance footer + printable PDF add dynamic "corpus updated as of <date>"
+        (from /sources latest_date). Site favicon app/icon.svg (BH mark recolored).
+      - Deployed to droplet via rsync app/ → build → restart regs-frontend. Prod API
+        URL is /api (frontend/.env.production.local), nginx proxies /api/ → :8002.
+        Live at regs.bradhinkel.com.
+- [~] Phase 10 (Revised) Part A: unified grounding judge + self-maintaining eval
+      library (docs/Phase 10 (Revised)*.docx supersedes the original draft).
+      - src/judge.py: ONE judge for offline eval + (Part B) inline escalation.
+        JUDGE_MODEL (Sonnet) rubric: grounding 1–5, completeness 1–5,
+        correctness 0–1 vs reference (offline only), justification. Never raises;
+        caller decides fail-open/closed.
+      - scripts/migrate_eval_library.sql: eval_questions (anchored to
+        cfr_reference + effective_date; status active|retired; times_refreshed>0
+        or origin!='generated' ⇒ out of stable core), eval_runs, eval_results.
+      - eval/src/library.py seed|refresh|status. Strata per title: definition,
+        numeric_standard, procedure, penalty, enumerated_list (Phase 9.7 weak
+        spot), adversarial (variance source Phase 9.1 lacked) + global negatives
+        (out-of-corpus, must yield not_found). Stratum SQL predicates are
+        section-level aggregates (chunks are ~1.5K-char splits — row-level
+        length/count predicates never match). refresh: retire on removed
+        sections, regenerate ground truth on amended ones (question survives,
+        leaves core), top-up to quota. Questions must be self-contained (no
+        "this section" deixis — retrieval can't resolve it).
+      - eval/src/run_library_eval.py --scope core|full: production pipeline →
+        judge; composite = 0.4·correctness + 0.4·grounding + 0.2·completeness;
+        negatives score 1.0 iff not_found; EVAL_TOKEN_BUDGET cap (default 3M,
+        exit 2 + status aborted_cost_cap, partial results kept). Persists
+        eval_runs/eval_results; reports grounding_std (Part B calibration
+        precondition).
+      - /health now has an "eval" block: last run + stable-core trend delta
+        (db_service.get_eval_health). regs-sync.service appends library refresh
+        + weekly core run ('-' prefixed); deploy/regs-eval-full.{service,timer}
+        runs the full library monthly on the 1st.
+      - Smoke-tested on local DB (title 7, --scale 0.1: 8 Qs, 2 runs, refresh
+        re-reference verified). PENDING: full seed at scale 1.0 (~160 Qs, one-off
+        LLM authoring cost), droplet deploy (migration + rsync + timer enable).

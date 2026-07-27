@@ -1,0 +1,12 @@
+[Unit]
+Description=Federal Regulation RAG - monthly full eval-library run (Phase 10 Part A)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/regs
+EnvironmentFile=/opt/regs/.env
+ExecStart=/opt/regs/venv/bin/python eval/src/run_library_eval.py --scope full
+# Results persist to eval_runs / eval_results; surfaced in /health.
+TimeoutStartSec=10800
