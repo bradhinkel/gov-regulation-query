@@ -25,6 +25,22 @@ import anthropic
 JUDGE_MODEL = os.getenv("JUDGE_MODEL", "claude-sonnet-4-6")
 JUDGE_MAX_TOKENS = 512
 
+# Structured output schema — guarantees a parseable verdict (assistant prefill
+# is not supported on the 4.6+ model family; output_config.format is the
+# replacement). Range checks beyond enum aren't supported in the schema
+# subset, so correctness is clamped client-side in _parse_verdict.
+_VERDICT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "grounding": {"type": "integer", "enum": [1, 2, 3, 4, 5]},
+        "completeness": {"type": "integer", "enum": [1, 2, 3, 4, 5]},
+        "correctness": {"anyOf": [{"type": "number"}, {"type": "null"}]},
+        "justification": {"type": "string"},
+    },
+    "required": ["grounding", "completeness", "correctness", "justification"],
+    "additionalProperties": False,
+}
+
 _client = anthropic.Anthropic()
 
 _JUDGE_SYSTEM = """\
@@ -130,6 +146,10 @@ def judge_grounding(
                 max_tokens=JUDGE_MAX_TOKENS,
                 temperature=0,
                 system=_JUDGE_SYSTEM,
+                # extra_body: installed SDK predates the typed output_config kwarg;
+                # the API accepts it regardless.
+                extra_body={"output_config": {"format": {"type": "json_schema",
+                                                         "schema": _VERDICT_SCHEMA}}},
                 messages=[{"role": "user", "content": "\n\n".join(sections)}],
             )
             in_tok += r.usage.input_tokens
