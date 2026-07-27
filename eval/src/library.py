@@ -371,6 +371,7 @@ def cmd_refresh(dry_run: bool, top_up: bool = True):
         for qid, question, ref, _old_eff, new_eff in changed:
             if dry_run:
                 print(f"  [dry-run] would re-reference: {ref}")
+                refreshed += 1
                 continue
             text, _heading, eff = _section_text(conn, ref)
             data = _llm_json(_REFRESH_SYSTEM, _REFRESH_PROMPT.format(
