@@ -149,7 +149,7 @@ python eval/src/run_library_eval.py --scope full   # monthly full run
       - Deployed to droplet via rsync app/ → build → restart regs-frontend. Prod API
         URL is /api (frontend/.env.production.local), nginx proxies /api/ → :8002.
         Live at regs.bradhinkel.com.
-- [~] Phase 10 (Revised) Part A: unified grounding judge + self-maintaining eval
+- [x] Phase 10 (Revised) Part A: unified grounding judge + self-maintaining eval
       library (docs/Phase 10 (Revised)*.docx supersedes the original draft).
       - src/judge.py: ONE judge for offline eval + (Part B) inline escalation.
         JUDGE_MODEL (Sonnet) rubric: grounding 1–5, completeness 1–5,
@@ -177,6 +177,14 @@ python eval/src/run_library_eval.py --scope full   # monthly full run
         (db_service.get_eval_health). regs-sync.service appends library refresh
         + weekly core run ('-' prefixed); deploy/regs-eval-full.{service,timer}
         runs the full library monthly on the 1st.
-      - Smoke-tested on local DB (title 7, --scale 0.1: 8 Qs, 2 runs, refresh
-        re-reference verified). PENDING: full seed at scale 1.0 (~160 Qs, one-off
-        LLM authoring cost), droplet deploy (migration + rsync + timer enable).
+      - COMPLETE (2026-07-27): full seed at scale 1.0 on laptop AND droplet
+        (160 active Qs, 159 stable core, all 8 titles × 6 strata + 16 negatives).
+        First full runs: local composite 0.888 (grounding_std 0.092), droplet
+        0.849. Droplet deployed: migration applied, judge/library rsynced,
+        regs-eval-full.timer enabled (monthly, 1st), regs-sync weekly core run
+        active, /health eval block live. Cost baseline: full 160-Q run ≈ 1.42M
+        in / 123K out tokens (Haiku gen + Sonnet judge) ≈ $3–4 per run.
+      - NEXT (Part B, steps 2–3 of docx): inline quality via selective judge
+        escalation + quality payload + poor-result capture/triage/promotion.
+        Calibration precondition check first: per-stratum grounding_std
+        (adversarial/enumerated_list) before re-fitting confidence weights.
