@@ -184,7 +184,42 @@ python eval/src/run_library_eval.py --scope full   # monthly full run
         regs-eval-full.timer enabled (monthly, 1st), regs-sync weekly core run
         active, /health eval block live. Cost baseline: full 160-Q run ≈ 1.42M
         in / 123K out tokens (Haiku gen + Sonnet judge) ≈ $3–4 per run.
-      - NEXT (Part B, steps 2–3 of docx): inline quality via selective judge
-        escalation + quality payload + poor-result capture/triage/promotion.
-        Calibration precondition check first: per-stratum grounding_std
-        (adversarial/enumerated_list) before re-fitting confidence weights.
+      - Per-stratum grounding finding (run 3): variance lives almost entirely
+        in adversarial (std 0.185, n=29) + definition (0.074); other four
+        strata saturate at 1.0. enumerated_list weakness is completeness, not
+        grounding. Per-stratum grounding mean/std now in every run's report.
+- [x] Phase 10 (Revised) Part B: inline quality, poor-result tracking, improvement
+      loop. DEPLOYED to droplet 2026-07-28 (migration + backend + frontend).
+      - src/escalation.py: ambiguous band (composite within ESCALATION_MARGIN
+        of a tier boundary, or high retrieval + low citation_coverage) → inline
+        judge (src/judge.py, no reference); judge tier wins on disagreement;
+        Phase 8.5 output-check downgrade runs last and always wins. Margin 0.06
+        validated on real droplet traffic (scripts/replay_escalation.py):
+        14.6% escalation rate (0.08→22%, 0.10→39%; target <25%).
+      - Grounding gate (eval/src/eval_grounding_gate.py): 100% system catch on
+        40 seeded ungrounded answers (20 mismatch + 20 mutation) where system
+        catch = det-low OR (in-band AND judge downgrade). Judge-only catch is
+        70% on subtle numeric/polarity mutations — the deterministic citation
+        check + band are load-bearing for those. ≥90% target PASSED.
+      - Route: 'verifying' SSE stage; quality payload (judge grounding 1-5,
+        tier, justification, agreement, tier_overridden) in response; POST
+        /feedback (thumbs up/down). scripts/migrate_part_b.sql: queries gains
+        escalated/judge_grounding/judge_agreement/security_downgrade/quality/
+        feedback/triage columns + poor_results view (low grounding | security
+        downgrade | thumbs-down | in-scope not_found; untriaged = queue).
+      - eval/src/triage.py list|show|classify|dismiss|promote|closure —
+        promote inserts origin='regression' eval_questions anchored to the
+        query's citations; closed = composite ≥0.7 on a later scheduled run.
+      - /health "quality" block: escalation rate, judge agreement, feedback per
+        100 queries, poor-result queue depth, regression closure.
+      - Frontend: verifying loader stage, "· verified" confidence chip with
+        judge justification, grounding-verified note, thumbs feedback row.
+      - NOT done (conditional per docx B.2): re-fitting confidence weights
+        against judge grounding. Variance precondition is only met in the
+        adversarial stratum (std 0.185, n=29) — thin; grow the adversarial
+        quota first if calibration is wanted. The 9.1 no-spurious-reweighting
+        decision stands; not_found remains the confidence primitive.
+      - PENDING: local dev DB migration needs superuser (queries table is
+        postgres-owned): sudo -u postgres psql regulation_rag -f
+        scripts/migrate_part_b.sql — until then the local backend can't
+        persist queries (droplet unaffected).
