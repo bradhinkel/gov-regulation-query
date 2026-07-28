@@ -20,6 +20,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.query import retrieve, fetch_section_versions
 from src.generate import generate, classify_intent, is_temporal_query, generate_temporal
+from src.escalation import escalation_reason, run_escalation
 
 # Defaults driven by eval results (Phase 4 winner: top_k=10, sequential Haiku)
 _DEFAULT_SOURCE_SYSTEM = os.getenv("RAG_SOURCE_SYSTEM", "federal_regulations")
@@ -113,6 +114,28 @@ def _to_result_dict(gen_result, timing: dict, temporal: bool = False) -> dict:
             "unverified_citations": conf.unverified_citations,
         } if conf else None,
     }
+
+
+def needs_escalation(result: dict) -> str | None:
+    """
+    Phase 10 Part B: is this answer in the ambiguous band? Returns the reason
+    string (for the quality payload) or None. Sync and cheap — pure arithmetic
+    on the already-computed confidence components.
+    """
+    if result.get("not_found"):
+        return None
+    return escalation_reason(result.get("confidence"))
+
+
+async def run_escalate(query: str, result: dict, chunks: list, reason: str) -> dict:
+    """
+    Phase 10 Part B: inline judge call for an in-band answer (~2-4s). Returns
+    the quality payload; runs the synchronous Anthropic call in a thread pool.
+    """
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(
+        None, lambda: run_escalation(query, result, chunks, reason)
+    )
 
 
 def is_temporal(query: str) -> bool:

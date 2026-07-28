@@ -55,6 +55,8 @@ async def save_query(
     source_system: str = "federal_regulations",
     not_found: bool = False,
     confidence: Optional[dict] = None,
+    quality: Optional[dict] = None,
+    security_downgrade: bool = False,
 ) -> dict:
     pool = await get_pool()
     item_id = str(uuid.uuid4())
@@ -65,12 +67,19 @@ async def save_query(
             """
             INSERT INTO queries
                 (id, query_text, source_system, plain_english, legal_language,
-                 citations, llm_strategy, latency_ms, not_found, confidence, created_at)
-            VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8, $9, $10::jsonb, $11)
+                 citations, llm_strategy, latency_ms, not_found, confidence, created_at,
+                 escalated, judge_grounding, judge_agreement, security_downgrade, quality)
+            VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8, $9, $10::jsonb, $11,
+                    $12, $13, $14, $15, $16::jsonb)
             """,
             item_id, query_text, source_system, plain_english, legal_language,
             json.dumps(citations), llm_strategy, latency_ms,
             not_found, json.dumps(confidence) if confidence else None, now,
+            bool(quality and quality.get("escalated")),
+            quality.get("judge_grounding") if quality else None,
+            quality.get("agreement") if quality else None,
+            security_downgrade,
+            json.dumps(quality) if quality else None,
         )
 
     return {
@@ -135,6 +144,83 @@ async def get_queries(
         for r in rows
     ]
     return items, total
+
+
+async def set_feedback(query_id: str, vote: int) -> bool:
+    """
+    Record user thumbs feedback (+1 / -1) on a persisted query (Phase 10 B.4).
+    Returns False if the query id doesn't exist.
+    """
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        status = await conn.execute(
+            "UPDATE queries SET feedback = $2, feedback_at = NOW() WHERE id = $1",
+            uuid.UUID(query_id), vote,
+        )
+    return status.endswith("1")
+
+
+async def get_quality_health(days: int = 30) -> Optional[dict]:
+    """
+    Phase 10 Part B metrics for /health: escalation rate, composite-judge
+    agreement, feedback capture, poor-result queue depth, regression closure.
+    None if the Part B migration hasn't been applied.
+    """
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        try:
+            row = await conn.fetchrow(
+                """
+                SELECT count(*)                                   AS queries,
+                       count(*) FILTER (WHERE escalated)          AS escalated,
+                       count(*) FILTER (WHERE escalated
+                                        AND judge_agreement)      AS agreed,
+                       count(*) FILTER (WHERE escalated
+                                        AND judge_agreement IS NOT NULL) AS judged,
+                       count(*) FILTER (WHERE feedback IS NOT NULL) AS feedback_n,
+                       count(*) FILTER (WHERE feedback = -1)      AS thumbs_down,
+                       count(*) FILTER (WHERE security_downgrade) AS security_downgrades
+                FROM queries
+                WHERE created_at > NOW() - make_interval(days => $1)
+                """, days,
+            )
+            queue_depth = await conn.fetchval(
+                "SELECT count(*) FROM poor_results WHERE triage_status IS NULL"
+            )
+            regression = await conn.fetchrow(
+                """
+                SELECT count(*) AS promoted,
+                       count(*) FILTER (WHERE latest.composite >= 0.7) AS passing
+                FROM eval_questions q
+                LEFT JOIN LATERAL (
+                    SELECT r.composite FROM eval_results r
+                    WHERE r.question_id = q.id ORDER BY r.id DESC LIMIT 1
+                ) latest ON TRUE
+                WHERE q.origin = 'regression' AND q.status = 'active'
+                """
+            )
+        except asyncpg.exceptions.UndefinedColumnError:
+            return None
+        except asyncpg.exceptions.UndefinedTableError:
+            return None
+
+    n = row["queries"] or 0
+    return {
+        "window_days": days,
+        "queries": n,
+        "escalation_rate": round(row["escalated"] / n, 4) if n else None,
+        "judge_agreement_rate": (
+            round(row["agreed"] / row["judged"], 4) if row["judged"] else None
+        ),
+        "feedback_per_100": round(100 * row["feedback_n"] / n, 2) if n else None,
+        "thumbs_down": row["thumbs_down"],
+        "security_downgrades": row["security_downgrades"],
+        "poor_result_queue": queue_depth,
+        "regression_cases": {
+            "promoted": regression["promoted"],
+            "passing_latest_run": regression["passing"],
+        },
+    }
 
 
 async def get_eval_health() -> Optional[dict]:

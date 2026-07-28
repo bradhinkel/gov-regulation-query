@@ -21,6 +21,19 @@ export interface Confidence {
   unverified_citations?: string[];
 }
 
+// Phase 10 Part B — inline judge escalation payload (escalated answers only).
+export interface Quality {
+  escalated: boolean;
+  escalation_reason?: string | null;
+  judge_grounding?: number | null; // 1..5
+  judge_tier?: string | null;
+  judge_justification?: string | null;
+  judge_error?: string | null;
+  deterministic_tier?: string | null;
+  agreement?: boolean | null;
+  tier_overridden?: boolean;
+}
+
 export interface QueryResult {
   id: string;
   query: string;
@@ -31,6 +44,8 @@ export interface QueryResult {
   strategy_used: string;
   latency_ms: number;
   confidence: Confidence | null;
+  quality?: Quality | null;
+  security_downgrade?: boolean;
   temporal?: boolean;
   created_at: string;
 }

@@ -2,10 +2,15 @@
 backend/routes/query.py — POST /query and GET /history endpoints.
 
 POST /query returns Server-Sent Events:
-  event: status     — {"status": "classifying"|"retrieving"|"generating"}
+  event: status     — {"status": "classifying"|"retrieving"|"generating"|
+                       "comparing"|"verifying"}
   event: off_topic  — {"tier": "off_topic", "message": "..."}   (Phase 8.5 gate)
-  event: result     — full QueryResponse JSON
+  event: result     — full QueryResponse JSON (Part B: + quality payload)
   event: error      — {"error": "message"}
+
+POST /feedback records thumbs up/down on a delivered answer (Phase 10 B.4).
+"verifying" fires while the inline grounding judge checks an answer whose
+deterministic confidence landed in the ambiguous band (Phase 10 B.1).
 
 Status events fire at the correct point in the pipeline:
   "classifying" → before anything (intent gate)
@@ -23,7 +28,8 @@ from fastapi.responses import StreamingResponse
 from typing import AsyncIterator
 
 from backend.models.schemas import (
-    QueryRequest, QueryResponse, QueryHistoryResponse, CitationOut, ConfidenceOut
+    QueryRequest, QueryResponse, QueryHistoryResponse, CitationOut, ConfidenceOut,
+    FeedbackRequest,
 )
 from backend.services import rag_service, db_service
 from backend.rate_limit import limiter, QUERY_RATE_LIMITS
@@ -84,8 +90,25 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
                 strategy=request.strategy,
             )
 
+        # Step 2.4: Selective inline judge escalation (Phase 10 Part B). Only
+        # answers in the ambiguous band pay for a judge call; on disagreement
+        # the judge's tier wins (downgrade unsupported claims, upgrade grounded
+        # paraphrase the citation regex under-scored).
+        quality = None
+        reason = rag_service.needs_escalation(result)
+        if reason:
+            yield sse("status", {"status": "verifying"})
+            quality = await rag_service.run_escalate(
+                request.query, result, chunks, reason
+            )
+            if quality["tier_overridden"] and result.get("confidence"):
+                result["confidence"]["tier"] = quality["judge_tier"]
+
         # Step 2.5: Output content validation (Phase 8.5). Reject answers that
         # smuggle code/script; downgrade confidence for non-official URLs.
+        # Runs LAST and wins — a security downgrade is never overridden upward
+        # by the judge.
+        security_downgrade = False
         if not result["not_found"]:
             verdict = check_output(
                 f"{result['plain_english']}\n{result['legal_language']}"
@@ -98,8 +121,9 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
                 return
             if verdict["downgrade"] and result.get("confidence"):
                 result["confidence"]["tier"] = "low"
+                security_downgrade = True
 
-        # Persist to DB
+        # Persist to DB (Part B: judge fields, agreement, downgrade flag)
         saved = await db_service.save_query(
             query_text=request.query,
             plain_english=result["plain_english"],
@@ -109,6 +133,8 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
             latency_ms=result["latency_ms"],
             not_found=result["not_found"],
             confidence=result["confidence"],
+            quality=quality,
+            security_downgrade=security_downgrade,
         )
 
         # Build citation_string for each citation
@@ -130,6 +156,8 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
             "strategy_used": result["strategy_used"],
             "latency_ms": result["latency_ms"],
             "confidence": conf,
+            "quality": quality,
+            "security_downgrade": security_downgrade,
             "temporal": result.get("temporal", False),
             "created_at": saved["created_at"],
         }
@@ -163,6 +191,26 @@ async def query_endpoint(request: Request, payload: QueryRequest):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@router.post("/feedback")
+@limiter.limit(QUERY_RATE_LIMITS)
+async def feedback_endpoint(request: Request, payload: FeedbackRequest):
+    """
+    Record thumbs up/down on a delivered answer (Phase 10 B.4). Thumbs-down
+    rows enter the poor-result queue for triage.
+    """
+    if payload.vote not in ("up", "down"):
+        raise HTTPException(status_code=400, detail="vote must be 'up' or 'down'")
+    try:
+        found = await db_service.set_feedback(
+            payload.id, 1 if payload.vote == "up" else -1
+        )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="invalid query id")
+    if not found:
+        raise HTTPException(status_code=404, detail="query not found")
+    return {"ok": True}
 
 
 @router.get("/history", response_model=QueryHistoryResponse)

@@ -133,6 +133,7 @@ def aggregate(results: list[dict]) -> dict:
     by_stratum: dict[str, list] = {}
     by_title: dict[str, list] = {}
     groundings = []
+    g_by_stratum: dict[str, list] = {}
     for r in results:
         by_stratum.setdefault(r["q"]["question_type"], []).append(r["composite"])
         if r["q"]["anchor_title"]:
@@ -140,10 +141,16 @@ def aggregate(results: list[dict]) -> dict:
         g = r["scores"].get("grounding")
         if g is not None:
             groundings.append((g - 1) / 4)
+            g_by_stratum.setdefault(r["q"]["question_type"], []).append((g - 1) / 4)
+
+    def _std(vals: list) -> float | None:
+        return round(statistics.pstdev(vals), 4) if len(vals) > 1 else None
 
     negatives = [r for r in results if r["q"]["question_type"] == "negative"]
     return {
-        "per_stratum": {s: {"n": len(v), "composite": _mean(v)}
+        "per_stratum": {s: {"n": len(v), "composite": _mean(v),
+                            "grounding_mean": _mean(g_by_stratum.get(s, [])),
+                            "grounding_std": _std(g_by_stratum.get(s, []))}
                         for s, v in sorted(by_stratum.items())},
         "per_title": {t: {"n": len(v), "composite": _mean(v)}
                       for t, v in sorted(by_title.items(), key=lambda kv: int(kv[0]))},
@@ -229,7 +236,8 @@ def run(scope: str, limit: int | None, top_k: int, budget: int) -> int:
         print(f"\n[eval] run #{run_id} ({status})  composite_all={composite_all}  "
               f"composite_core={composite_core} (n={num_core})")
         for s, v in scores["per_stratum"].items():
-            print(f"    {s:<18} n={v['n']:<3} composite={v['composite']}")
+            print(f"    {s:<18} n={v['n']:<3} composite={v['composite']}  "
+                  f"grounding={v['grounding_mean']} ±{v['grounding_std']}")
         print(f"    negatives: not_found_accuracy={agg['negatives']['not_found_accuracy']}  "
               f"grounding_std={agg['grounding_std']}  judge_errors={agg['judge_errors']}")
         print(f"    tokens: in={in_tok} out={out_tok}")

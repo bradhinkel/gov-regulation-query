@@ -19,11 +19,18 @@ type Status =
   | "retrieving"
   | "comparing"
   | "generating"
+  | "verifying"
   | "done"
   | "off_topic"
   | "error";
 
-const LOADING_STATUSES: Status[] = ["classifying", "retrieving", "comparing", "generating"];
+const LOADING_STATUSES: Status[] = [
+  "classifying",
+  "retrieving",
+  "comparing",
+  "generating",
+  "verifying",
+];
 
 export default function Home() {
   const [status, setStatus] = useState<Status>("idle");
@@ -141,7 +148,7 @@ export default function Home() {
     body = (
       <Loader
         query={lastQuery}
-        status={status as "classifying" | "retrieving" | "comparing" | "generating"}
+        status={status as "classifying" | "retrieving" | "comparing" | "generating" | "verifying"}
         temporal={temporal}
       />
     );

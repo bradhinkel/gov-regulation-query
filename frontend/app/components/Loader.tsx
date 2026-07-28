@@ -2,7 +2,7 @@
 
 import { Ico } from "./Icons";
 
-type LoadStatus = "classifying" | "retrieving" | "comparing" | "generating";
+type LoadStatus = "classifying" | "retrieving" | "comparing" | "generating" | "verifying";
 
 interface LoaderProps {
   query: string;
@@ -33,11 +33,21 @@ const BASE_STEPS: Step[] = [
     label: "Generating grounded answer",
     sub: "Synthesizing three registers with verbatim quotes",
   },
+  {
+    key: "verifying",
+    label: "Verifying grounding",
+    sub: "An independent judge is checking each claim against the retrieved text",
+  },
 ];
 
 export default function Loader({ query, status, temporal }: LoaderProps) {
-  // The temporal "compare" stage only appears for "what changed?" queries.
-  const steps = BASE_STEPS.filter((s) => s.key !== "comparing" || temporal || status === "comparing");
+  // The temporal "compare" stage only appears for "what changed?" queries; the
+  // "verifying" stage only appears once the grounding judge actually escalates.
+  const steps = BASE_STEPS.filter(
+    (s) =>
+      (s.key !== "comparing" || temporal || status === "comparing") &&
+      (s.key !== "verifying" || status === "verifying")
+  );
   const activeIdx = Math.max(
     0,
     steps.findIndex((s) => s.key === status)

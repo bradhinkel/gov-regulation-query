@@ -63,6 +63,8 @@ async def health():
             await conn.fetchval("SELECT 1")
         corpus = await db_service.get_sync_health()
         eval_health = await db_service.get_eval_health()
-        return {"status": "ok", "db": "connected", "corpus": corpus, "eval": eval_health}
+        quality = await db_service.get_quality_health()
+        return {"status": "ok", "db": "connected", "corpus": corpus,
+                "eval": eval_health, "quality": quality}
     except Exception as exc:
         return {"status": "error", "db": str(exc)}

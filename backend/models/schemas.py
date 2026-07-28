@@ -37,6 +37,24 @@ class ConfidenceOut(BaseModel):
     unverified_citations: list[str] = []
 
 
+class QualityOut(BaseModel):
+    """Phase 10 Part B — inline judge escalation payload (escalated answers only)."""
+    escalated: bool
+    escalation_reason: Optional[str] = None
+    judge_grounding: Optional[int] = None       # 1-5
+    judge_tier: Optional[str] = None
+    judge_justification: Optional[str] = None   # the "why this confidence" text
+    judge_error: Optional[str] = None
+    deterministic_tier: Optional[str] = None
+    agreement: Optional[bool] = None
+    tier_overridden: bool = False
+
+
+class FeedbackRequest(BaseModel):
+    id: str                                     # query id from the result payload
+    vote: str                                   # "up" | "down"
+
+
 class QueryResponse(BaseModel):
     id: str
     query: str
@@ -47,6 +65,8 @@ class QueryResponse(BaseModel):
     strategy_used: str
     latency_ms: int
     confidence: Optional[ConfidenceOut] = None
+    quality: Optional[QualityOut] = None
+    security_downgrade: bool = False
     created_at: str
 
 

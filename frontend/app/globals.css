@@ -754,6 +754,14 @@ button.trust-chip.grounded:hover { border-color: var(--verified); background: rg
 .provenance b { color: var(--text-2); font-weight: 600; }
 .provenance a { color: var(--accent); }
 
+/* Phase 10 Part B — thumbs feedback under the answer */
+.feedback-row {
+  display: flex; gap: 10px; align-items: center;
+  margin-top: 18px; font-size: 12.5px; color: var(--text-3);
+}
+.feedback-row .btn-edit { padding: 4px 14px; }
+.feedback-thanks { color: var(--text-2); }
+
 .composer-note {
   display: flex; gap: 9px; align-items: flex-start;
   margin-top: 13px; font-size: 12px; line-height: 1.5; color: var(--text-3);

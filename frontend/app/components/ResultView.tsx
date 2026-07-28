@@ -42,6 +42,7 @@ export default function ResultView({
   const legalBlocks = useMemo(() => parseAnswer(data.legal_language, "legal"), [data.legal_language]);
 
   const conf = data.confidence;
+  const q = data.quality;
   const tier = conf?.tier ?? "medium";
   const confLabel = CONF_LABEL[tier] ?? "Confidence";
   const fresh = formatShortMonth(latestCitationDate(data.citations));
@@ -106,12 +107,17 @@ export default function ResultView({
           {conf && (
             <span
               className={"trust-chip conf-" + tier}
-              title={`Retrieval ${Math.round(conf.retrieval_score * 100)}% · Citation coverage ${Math.round(
-                conf.citation_coverage * 100
-              )}%`}
+              title={
+                q?.judge_grounding != null
+                  ? `Verified by grounding judge (${q.judge_grounding}/5): ${q.judge_justification ?? ""}`
+                  : `Retrieval ${Math.round(conf.retrieval_score * 100)}% · Citation coverage ${Math.round(
+                      conf.citation_coverage * 100
+                    )}%`
+              }
             >
               <Ico name="shield" />
               {confLabel}
+              {q?.judge_grounding != null && <> · verified</>}
             </span>
           )}
           <button className="btn-print" onClick={() => window.print()}>
@@ -145,7 +151,56 @@ export default function ResultView({
         <CitationsRail citations={data.citations} />
       </div>
 
+      {q?.judge_justification && (
+        <div className="provenance no-print">
+          <Ico name="shieldcheck" />
+          <span>
+            <b>Grounding verified</b> ({q.judge_grounding}/5): {q.judge_justification}
+          </span>
+        </div>
+      )}
+
+      <FeedbackRow queryId={data.id} />
       <Provenance corpusDate={corpusDate} retrievedAt={data.created_at} />
+    </div>
+  );
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
+
+function FeedbackRow({ queryId }: { queryId: string }) {
+  const [sent, setSent] = useState<"up" | "down" | null>(null);
+
+  const vote = async (v: "up" | "down") => {
+    setSent(v); // optimistic — the signal is advisory, not transactional
+    try {
+      await fetch(`${API_URL}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: queryId, vote: v }),
+      });
+    } catch {
+      /* ignore — feedback is best-effort */
+    }
+  };
+
+  return (
+    <div className="feedback-row no-print">
+      {sent ? (
+        <span className="feedback-thanks">
+          Thank you — your feedback improves future answers.
+        </span>
+      ) : (
+        <>
+          <span>Was this answer helpful?</span>
+          <button className="btn-edit" onClick={() => vote("up")} aria-label="Helpful">
+            Yes
+          </button>
+          <button className="btn-edit" onClick={() => vote("down")} aria-label="Not helpful">
+            No
+          </button>
+        </>
+      )}
     </div>
   );
 }
