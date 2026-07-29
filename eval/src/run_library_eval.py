@@ -75,6 +75,18 @@ def load_questions(conn, scope: str, limit: int | None) -> list[dict]:
     return [dict(zip(cols, r)) for r in rows]
 
 
+def _confidence_payload(gen) -> dict | None:
+    """Inference-time confidence components, persisted per result so the
+    calibration fit (optimize_confidence.py --from-db) has its inputs."""
+    c = gen.confidence
+    if not c:
+        return None
+    return {"score": c.score, "tier": c.tier,
+            "retrieval_score": c.retrieval_score,
+            "citation_coverage": c.citation_coverage,
+            "retrieval_concentration": c.retrieval_concentration}
+
+
 def evaluate_question(q: dict, top_k: int) -> dict:
     """Run one question through the production pipeline and score it."""
     chunks, timing = retrieve(q["question"], top_k=top_k)
@@ -89,7 +101,8 @@ def evaluate_question(q: dict, top_k: int) -> dict:
             "composite": composite, "not_found": qr.not_found, "tokens": tokens,
             "plain_english": None if qr.not_found else qr.plain_english,
             "scores": {"negative_pass": composite == 1.0,
-                       "confidence_tier": gen.confidence.tier if gen.confidence else None},
+                       "confidence_tier": gen.confidence.tier if gen.confidence else None,
+                       "confidence": _confidence_payload(gen)},
         }
 
     ret = retrieval_metrics(chunks, q.get("ground_truth_reference") or "", top_k)
@@ -98,7 +111,8 @@ def evaluate_question(q: dict, top_k: int) -> dict:
             "composite": 0.0, "not_found": True, "tokens": tokens,
             "plain_english": None,
             "scores": {"retrieval": ret, "judge_error": None,
-                       "confidence_tier": gen.confidence.tier if gen.confidence else None},
+                       "confidence_tier": gen.confidence.tier if gen.confidence else None,
+                       "confidence": _confidence_payload(gen)},
         }
 
     verdict = judge_grounding(
@@ -124,6 +138,7 @@ def evaluate_question(q: dict, top_k: int) -> dict:
             "correctness": verdict.correctness, "justification": verdict.justification,
             "judge_error": verdict.error, "retrieval": ret,
             "confidence_tier": gen.confidence.tier if gen.confidence else None,
+            "confidence": _confidence_payload(gen),
         },
     }
 

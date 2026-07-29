@@ -49,6 +49,7 @@ What to do with the results:
 
 import json
 import argparse
+import os
 from pathlib import Path
 from collections import defaultdict
 
@@ -115,6 +116,62 @@ def load_eval_results(path: str) -> tuple[list[dict], int]:
         flat.append(rec)
 
     return flat, n_not_found
+
+
+def load_from_db(run_ids: list[int] | None) -> tuple[list[dict], int]:
+    """
+    Phase 10 B.2 (conditional task): load fit records from the eval library —
+    inference-time confidence components paired with the unified judge's
+    grounding score as ground truth (grounding_norm, 0..1, replaces the old
+    faithfulness target).
+
+    Requires eval runs made after run_library_eval started persisting
+    scores->'confidence' (the components). Uses the LATEST result per question
+    (so pooled runs don't double-count); negatives, not_found, and judge
+    errors are excluded.
+    """
+    import psycopg
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    run_filter = "AND r.run_id = ANY(%(runs)s)" if run_ids else ""
+    with psycopg.connect(os.getenv("DATABASE_URL")) as conn:
+        rows = conn.execute(
+            f"""
+            SELECT DISTINCT ON (r.question_id)
+                   r.question_id::text, q.question_type, r.not_found, r.scores
+            FROM eval_results r
+            JOIN eval_questions q ON q.id = r.question_id
+            WHERE q.question_type != 'negative' {run_filter}
+            ORDER BY r.question_id, r.id DESC
+            """,
+            {"runs": run_ids},
+        ).fetchall()
+
+    records, skipped = [], 0
+    strata: dict[str, int] = defaultdict(int)
+    for qid, qtype, not_found, scores in rows:
+        s = json.loads(scores) if isinstance(scores, str) else (scores or {})
+        conf = s.get("confidence")
+        g = s.get("grounding")
+        if not_found or not conf or g is None:
+            skipped += 1
+            continue
+        records.append({
+            "question_id": qid,
+            "question_type": qtype,
+            "retrieval_score": conf["retrieval_score"],
+            "citation_coverage": conf["citation_coverage"],
+            "retrieval_concentration": conf["retrieval_concentration"],
+            "faithfulness": (g - 1) / 4,          # judge grounding_norm is the target
+            "legal_accuracy": 0.0,
+            "tier": conf["tier"],
+            "not_found": False,
+        })
+        strata[qtype] += 1
+
+    print("  stratum mix:", dict(sorted(strata.items())))
+    return records, skipped
 
 
 def validate_fields(records: list[dict]) -> None:
@@ -356,8 +413,17 @@ def main() -> None:
         epilog=__doc__,
     )
     parser.add_argument(
-        "--eval-results", required=True,
+        "--eval-results",
         help="Path to JSON eval results file produced by evaluate.py",
+    )
+    parser.add_argument(
+        "--from-db", action="store_true",
+        help="Phase 10 B.2: load records from eval_results/eval_questions with "
+             "the unified judge's grounding score as the fit target",
+    )
+    parser.add_argument(
+        "--runs", type=int, nargs="+",
+        help="With --from-db: restrict to specific eval run ids",
     )
     parser.add_argument(
         "--step", type=float, default=0.05,
@@ -387,9 +453,21 @@ def main() -> None:
     args = parser.parse_args()
 
     # ── Load ──────────────────────────────────────────────────────────────────
-    print(f"Loading eval results from: {args.eval_results}")
-    records, n_not_found = load_eval_results(args.eval_results)
-    print(f"  {len(records)} usable records loaded ({n_not_found} not_found excluded)")
+    if args.from_db:
+        print("Loading eval results from the DB library "
+              f"(target = judge grounding{', runs ' + str(args.runs) if args.runs else ''})")
+        records, n_not_found = load_from_db(args.runs)
+    elif args.eval_results:
+        print(f"Loading eval results from: {args.eval_results}")
+        records, n_not_found = load_eval_results(args.eval_results)
+    else:
+        parser.error("provide --eval-results PATH or --from-db")
+    print(f"  {len(records)} usable records loaded ({n_not_found} excluded)")
+
+    if not records:
+        print("No usable records — with --from-db this needs an eval run made "
+              "after run_library_eval began persisting scores->'confidence'.")
+        raise SystemExit(1)
 
     if len(records) < 30:
         print(f"\nWARNING: Only {len(records)} usable records. Phase 9.1 targets 200+.")
