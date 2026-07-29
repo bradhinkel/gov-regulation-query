@@ -220,6 +220,7 @@ python eval/src/run_library_eval.py --scope full   # monthly full run
         quota first if calibration is wanted. The 9.1 no-spurious-reweighting
         decision stands; not_found remains the confidence primitive.
       - PENDING: local dev DB migration needs superuser (queries table is
-        postgres-owned): sudo -u postgres psql regulation_rag -f
-        scripts/migrate_part_b.sql — until then the local backend can't
-        persist queries (droplet unaffected).
+        postgres-owned): sudo -u postgres psql regulation_rag <
+        scripts/migrate_part_b.sql   (stdin redirect, NOT -f: the postgres OS
+        user can't read files under /home/bradhinkel). Until then the local
+        backend can't persist queries (droplet unaffected).
