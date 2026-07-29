@@ -55,7 +55,12 @@ CORE_SQL = "status = 'active' AND times_refreshed = 0 AND origin = 'generated'"
 
 
 def load_questions(conn, scope: str, limit: int | None) -> list[dict]:
-    where = CORE_SQL if scope == "core" else "status = 'active'"
+    # calibration: just the origin='calibration' hard batch (Phase 10 B.2) —
+    # cheap targeted runs to accumulate/verify grounding variance.
+    where = {
+        "core": CORE_SQL,
+        "calibration": "status = 'active' AND origin = 'calibration'",
+    }.get(scope, "status = 'active'")
     rows = conn.execute(
         f"""
         SELECT id::text, question, question_type, ground_truth, ground_truth_reference,
@@ -248,7 +253,7 @@ def run(scope: str, limit: int | None, top_k: int, budget: int) -> int:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="Run the Phase 10 Part A library eval")
-    ap.add_argument("--scope", choices=("core", "full"), default="core")
+    ap.add_argument("--scope", choices=("core", "full", "calibration"), default="core")
     ap.add_argument("--limit", type=int, help="cap question count (smoke tests)")
     ap.add_argument("--top-k", type=int, default=TOP_K)
     ap.add_argument("--budget", type=int, default=TOKEN_BUDGET,

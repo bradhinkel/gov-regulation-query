@@ -95,6 +95,46 @@ STRATA: dict[str, dict] = {
     },
 }
 
+# Phase 10 B.2 calibration batch — extra-hard adversarial substrata seeded with
+# origin='calibration'. Deliberately OUTSIDE the stable core (core requires
+# origin='generated') so the longitudinal composite_core trend is untouched;
+# included in scope-full and scope-calibration eval runs, where the judge
+# produces the grounding-score variance that confidence calibration needs.
+# Three distinct hardness axes so grounding spreads across 2-4, not just 1-vs-5.
+CALIBRATION_STRATA = {
+    "adv_synthesis": {
+        "quota": 2,
+        "sql": r"sum(length(chunk_text)) > 4000",
+        "instruction": "Ask a HARD question whose complete answer requires "
+                       "synthesizing MULTIPLE distinct provisions of this section "
+                       "(different paragraphs, conditions, and exceptions taken "
+                       "together). Phrase it as a layperson describing a concrete "
+                       "situation, avoiding the section's distinctive terminology. "
+                       "The ground truth must weave the provisions together — an "
+                       "answer citing only one paragraph is incomplete.",
+    },
+    "adv_near_miss": {
+        "quota": 2,
+        "sql": r"sum(regexp_count(chunk_text, '§')) >= 3",
+        "instruction": "Ask a HARD question that hinges on a provision this section "
+                       "only CROSS-REFERENCES (a '§' pointer to another section). "
+                       "The section's own text should look relevant but answer only "
+                       "partially. The ground truth must state what THIS section "
+                       "establishes and explicitly note which cross-referenced "
+                       "section carries the operative detail.",
+    },
+    "adv_scope": {
+        "quota": 2,
+        "sql": r"sum(regexp_count(lower(chunk_text), "
+               r"'except|does not apply|unless|other than')) >= 2",
+        "instruction": "Ask a HARD scope-boundary question: a layperson asking "
+                       "whether the rule applies to a case this section explicitly "
+                       "excludes, conditions, or carves out ('except', 'does not "
+                       "apply', 'unless'). The ground truth must state the boundary "
+                       "correctly — who or what is in scope, and who or what is out.",
+    },
+}
+
 NEGATIVE_QUOTA = 16  # global, not per-title
 # Regulatory areas in CFR titles the corpus does NOT include (corpus:
 # 7, 10, 14, 21, 29, 40, 42, 49). Questions here must yield not_found.
@@ -239,9 +279,10 @@ def _insert_question(conn, q: dict, dry_run: bool):
     conn.commit()
 
 
-def _fill_stratum(conn, title: int, stratum: str, needed: int, dry_run: bool) -> int:
+def _fill_stratum(conn, title: int, stratum: str, needed: int, dry_run: bool,
+                  spec: dict | None = None, origin: str = "generated") -> int:
     """Generate up to `needed` questions for (title, stratum). Returns count added."""
-    spec = STRATA[stratum]
+    spec = spec or STRATA[stratum]
     candidates = _candidate_sections(conn, title, spec["sql"], needed * 3)
     added = 0
     for ref in candidates:
@@ -263,7 +304,7 @@ def _fill_stratum(conn, title: int, stratum: str, needed: int, dry_run: bool) ->
             "anchor_cfr_reference": ref,
             "anchor_title": title,
             "anchor_effective_date": eff,
-            "origin": "generated",
+            "origin": origin,
         }, dry_run)
         added += 1
         print(f"    + {stratum} [{ref}] {data['question'][:70]}")
@@ -319,6 +360,32 @@ def cmd_seed(titles: list[int] | None, scale: float, dry_run: bool):
             print("[seed] Negatives (out-of-corpus)")
             total += _fill_negatives(conn, neg_quota - neg_have, dry_run)
         print(f"[seed] Done — {total} questions added")
+    finally:
+        conn.close()
+
+
+def cmd_seed_calibration(titles: list[int] | None, dry_run: bool):
+    """
+    Phase 10 B.2: seed the calibration batch (CALIBRATION_STRATA) with
+    origin='calibration'. One-off top-up to quota per (title, substratum);
+    refresh's quota top-up ignores these strata, so re-running is the only way
+    they grow. Out of the stable core by origin; judged in scope-full and
+    scope-calibration runs.
+    """
+    conn = psycopg.connect(DATABASE_URL)
+    try:
+        titles = titles or _corpus_titles(conn)
+        counts = _active_counts(conn)
+        total = 0
+        for title in titles:
+            print(f"[seed-cal] Title {title}")
+            for stratum, spec in CALIBRATION_STRATA.items():
+                have = counts.get((title, stratum), 0)
+                if have < spec["quota"]:
+                    total += _fill_stratum(conn, title, stratum,
+                                           spec["quota"] - have, dry_run,
+                                           spec=spec, origin="calibration")
+        print(f"[seed-cal] Done — {total} calibration questions added")
     finally:
         conn.close()
 
@@ -441,6 +508,12 @@ if __name__ == "__main__":
                         help="quota multiplier (use small values for smoke tests)")
     p_seed.add_argument("--dry-run", action="store_true")
 
+    p_cal = sub.add_parser("seed-calibration",
+                           help="Phase 10 B.2: seed hard adversarial substrata "
+                                "(origin='calibration', outside the stable core)")
+    p_cal.add_argument("--titles", type=int, nargs="+")
+    p_cal.add_argument("--dry-run", action="store_true")
+
     p_ref = sub.add_parser("refresh", help="post-sync retire/re-reference/top-up")
     p_ref.add_argument("--dry-run", action="store_true")
     p_ref.add_argument("--no-top-up", action="store_true")
@@ -450,6 +523,8 @@ if __name__ == "__main__":
     args = ap.parse_args()
     if args.cmd == "seed":
         cmd_seed(args.titles, args.scale, args.dry_run)
+    elif args.cmd == "seed-calibration":
+        cmd_seed_calibration(args.titles, args.dry_run)
     elif args.cmd == "refresh":
         cmd_refresh(args.dry_run, top_up=not args.no_top_up)
     else:

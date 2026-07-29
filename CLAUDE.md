@@ -214,11 +214,20 @@ python eval/src/run_library_eval.py --scope full   # monthly full run
         100 queries, poor-result queue depth, regression closure.
       - Frontend: verifying loader stage, "· verified" confidence chip with
         judge justification, grounding-verified note, thumbs feedback row.
-      - NOT done (conditional per docx B.2): re-fitting confidence weights
-        against judge grounding. Variance precondition is only met in the
-        adversarial stratum (std 0.185, n=29) — thin; grow the adversarial
-        quota first if calibration is wanted. The 9.1 no-spurious-reweighting
-        decision stands; not_found remains the confidence primitive.
+      - Calibration variance batch (2026-07-28): library.py seed-calibration
+        seeds CALIBRATION_STRATA (adv_synthesis, adv_near_miss, adv_scope; 2
+        per title × 8 = 48 Qs) with origin='calibration' — OUTSIDE the stable
+        core (core stays 159; trend untouched) but judged by scope-full and the
+        new run_library_eval --scope calibration. Seeded + judged on laptop
+        AND droplet (run #4 local: composite 0.795, grounding_std 0.158;
+        adv_synthesis 0.192 with scores spread 3/4/5 — the best gradient;
+        adv_near_miss 0.085; adv_scope 0.129). Variance pool for calibration
+        is now ~77 Qs (29 adversarial + 48 calibration) vs 4 saturated strata.
+      - REMAINING (conditional per docx B.2): actually re-fitting the weights —
+        extend eval/src/optimize_confidence.py to fit inference-time signals
+        against judge grounding over the variance pool, adopt only if tier
+        ordering holds AND Spearman ≥ 0.60. Until then the 9.1 decision stands;
+        not_found remains the confidence primitive.
       - Local dev DB migrated 2026-07-28 (note: postgres-owned tables need
         sudo -u postgres psql regulation_rag < scripts/<file>.sql — stdin
         redirect, NOT -f; the postgres OS user can't read /home/bradhinkel).
