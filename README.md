@@ -8,6 +8,14 @@ A retrieval-augmented generation (RAG) system over the U.S. Code of Federal Regu
 
 The corpus covers 8 major CFR titles — agriculture, food and drugs, public health, energy, aviation, labor, environment, and transportation (Titles 7, 10, 14, 21, 29, 40, 42, 49) — totaling ~253,000 regulatory sections ingested directly from the free [eCFR API](https://www.ecfr.gov/developers).
 
+Beyond basic Q&A, the system covers the regulatory **time axis** and audits its own quality:
+
+- **Temporal queries** — "what changed?" questions diff the current text against archived versions of the same sections.
+- **Corpus freshness** — a weekly incremental sync detects amended sections via the eCFR versioner and swaps them in atomically; every citation carries a "current as of" date.
+- **Inline grounding verification** — every answer gets a deterministic confidence score; answers in the ambiguous band are escalated to an independent LLM judge that checks each claim against the retrieved text before delivery (validated at 100% catch rate on seeded ungrounded answers).
+- **Self-maintaining evaluation library** — 200+ stratified questions (definitions, numeric standards, procedures, penalties, enumerated lists, adversarial, out-of-corpus negatives) anchored to CFR sections; the library retires/re-references questions automatically as the corpus changes, and scheduled runs publish a longitudinal quality trend to `/health`.
+- **Improvement loop** — user thumbs-down, judge-flagged, and security-downgraded answers enter a triage queue; triaged failures are promoted into the eval library as regression cases and tracked to closure.
+
 ## Links
 
 - **Live system:** [regs.bradhinkel.com](https://regs.bradhinkel.com)
@@ -19,6 +27,7 @@ The corpus covers 8 major CFR titles — agriculture, food and drugs, public hea
 - **Vector store:** PostgreSQL 16 + pgvector
 - **Embeddings:** OpenAI `text-embedding-3-small`
 - **Generation:** Anthropic `claude-haiku-4-5`
+- **Grounding judge / eval:** Anthropic `claude-sonnet-4-6`
 - **Frontend:** Next.js 14, TypeScript, Tailwind CSS
 - **Ingest:** lxml + httpx against the eCFR API
 
@@ -61,6 +70,17 @@ sudo -u postgres psql < src/db/schema.sql
 
 This creates the `regulation_rag` database, the `regulation_app` user, and the schema (chunks table, vector index, status enum for versioned swaps).
 
+Then apply the feature migrations (query history confidence, sync state, the eval library, and the inline-quality columns):
+
+```bash
+sudo -u postgres psql regulation_rag < scripts/migrate_queries_confidence.sql
+sudo -u postgres psql regulation_rag < scripts/migrate_sync_tables.sql
+sudo -u postgres psql regulation_rag < scripts/migrate_eval_library.sql
+sudo -u postgres psql regulation_rag < scripts/migrate_part_b.sql
+```
+
+(Use the stdin-redirect form as shown — the postgres OS user typically can't read files inside your home directory.)
+
 ### 5. Ingest regulations
 
 Start with a single title, or ingest the full 8-title corpus:
@@ -94,10 +114,18 @@ Open http://localhost:3002.
 ### Optional: run the evaluation harness
 
 ```bash
+# Classic config-driven harness
 python eval/src/evaluate.py --config eval/configs/baseline.yaml
+
+# Self-maintaining eval library (Phase 10)
+python eval/src/library.py seed              # author the stratified library (one-off LLM cost)
+python eval/src/library.py status            # stratum coverage + stable-core size
+python eval/src/run_library_eval.py --scope core   # judged run over the stable core
+python eval/src/eval_grounding_gate.py --n 20      # hallucination-gate catch rate
+python eval/src/triage.py list                     # poor-result triage queue
 ```
 
-See `eval/configs/` for tunable retrieval and generation configurations.
+See `eval/configs/` for tunable retrieval and generation configurations, and `docs/confidence_calibration_findings.md` for the confidence-calibration study.
 
 ## Requirements & licenses
 
