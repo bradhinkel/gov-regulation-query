@@ -223,6 +223,40 @@ python eval/src/run_library_eval.py --scope full   # monthly full run
         adv_synthesis 0.192 with scores spread 3/4/5 — the best gradient;
         adv_near_miss 0.085; adv_scope 0.129). Variance pool for calibration
         is now ~77 Qs (29 adversarial + 48 calibration) vs 4 saturated strata.
+- [x] Phase 10 (Revised) Part C: forward-looking retrieval via pluggable source
+      registry. DEPLOYED to droplet 2026-07-29 (backend + frontend).
+      - src/sources/: registry (description, citation format, status vocab,
+        TTL per source). Federal Register client: part-scoped precision search
+        FIRST (parts from the codified retrieval's top chunks), then
+        relevance-ranked term search (2y window; order=newest surfaces
+        unrelated recent docs — don't revert). Status derivation: comment-open
+        / pending / proposed / final-not-yet-codified. regulations.gov v4
+        docket enrichment (DATA_GOV_API_KEY optional; links always attached).
+        30-min TTL cache; every payload stamped fetched_at.
+      - ONE multi-class router (classify_intent_multi: off_topic/codified/
+        temporal_past/forward_looking/blended) replaced the binary classifier
+        + temporal regex in the route. Routing eval eval_partc_routing.py:
+        100% (32/32) incl. change-language collision cases.
+      - generate_forward: mandatory inline status labels + FR citations +
+        comment windows; deterministic backstops (label appended if missing;
+        _append_missing_comment_windows adds any omitted close date verbatim
+        from API data). Blended mode contrasts codified (chunks) vs proposed
+        (FR docs), confidence computed only when chunks present. Falls back
+        to codified answer when no FR docs match (returns None).
+      - Judge forward clause (judge_grounding forward_looking=True): caps
+        grounding at 2 on unlabeled proposed claims. Escalation passes FR
+        docs as judge context via _FRDocChunk shim. security.py allowlist +=
+        federalregister.gov, regulations.gov (required — Phase 8.5 would
+        auto-downgrade every Part C answer otherwise).
+      - Frontend: 'scanning' loader stage; non-binding banner; live·fetched
+        trust chip; FR citation group w/ status badges + docket links in
+        CitationsRail; parseAnswer lifts "XX FR YYYYY" citations.
+      - C.7 results: status-label 100% PASS; comment-window 100% (32 cited
+        windows); forward grounding 0.958; routing 100%; seeded unlabeled
+        answer CAUGHT by judge (grounding=2). eval_partc_{routing,forward}.py.
+      - Deviation from docx: Part C eval cases are standalone scripts, NOT
+        library strata — live FR state changes daily, which violates the
+        library's anchored ground-truth model (refresh only tracks eCFR).
       - Calibration fit EXECUTED and gate FAILED (2026-07-28, run #5, 183
         records w/ genuine variance): optimize_confidence.py --from-db fits
         signals against judge grounding_norm. Best ρ=0.154 (current weights

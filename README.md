@@ -15,6 +15,7 @@ Beyond basic Q&A, the system covers the regulatory **time axis** and audits its 
 - **Inline grounding verification** — every answer gets a deterministic confidence score; answers in the ambiguous band are escalated to an independent LLM judge that checks each claim against the retrieved text before delivery (validated at 100% catch rate on seeded ungrounded answers).
 - **Self-maintaining evaluation library** — 200+ stratified questions (definitions, numeric standards, procedures, penalties, enumerated lists, adversarial, out-of-corpus negatives) anchored to CFR sections; the library retires/re-references questions automatically as the corpus changes, and scheduled runs publish a longitudinal quality trend to `/health`.
 - **Improvement loop** — user thumbs-down, judge-flagged, and security-downgraded answers enter a triage queue; triaged failures are promoted into the eval library as regression cases and tracked to closure.
+- **Forward-looking retrieval** — questions about *proposed* or upcoming changes are routed to a live [Federal Register](https://www.federalregister.gov/developers/documentation/api/v1) search (with regulations.gov docket links). Every proposed-rule claim carries a mandatory non-binding status label, its FR citation, and comment-period dates; results are live-fetched (never cached as corpus) and the grounding judge rejects any answer presenting a proposal as current law. Together with temporal diffing this covers the full time axis: what the rule said, what it says today, and what it may become.
 
 ## Links
 
@@ -116,6 +117,10 @@ Open http://localhost:3002.
 ```bash
 # Classic config-driven harness
 python eval/src/evaluate.py --config eval/configs/baseline.yaml
+
+# Part C forward-looking evals
+python eval/src/eval_partc_routing.py              # intent-routing accuracy
+python eval/src/eval_partc_forward.py              # status labels + comment windows
 
 # Self-maintaining eval library (Phase 10)
 python eval/src/library.py seed              # author the stratified library (one-off LLM cost)
