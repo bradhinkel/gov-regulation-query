@@ -223,11 +223,18 @@ python eval/src/run_library_eval.py --scope full   # monthly full run
         adv_synthesis 0.192 with scores spread 3/4/5 — the best gradient;
         adv_near_miss 0.085; adv_scope 0.129). Variance pool for calibration
         is now ~77 Qs (29 adversarial + 48 calibration) vs 4 saturated strata.
-      - REMAINING (conditional per docx B.2): actually re-fitting the weights —
-        extend eval/src/optimize_confidence.py to fit inference-time signals
-        against judge grounding over the variance pool, adopt only if tier
-        ordering holds AND Spearman ≥ 0.60. Until then the 9.1 decision stands;
-        not_found remains the confidence primitive.
+      - Calibration fit EXECUTED and gate FAILED (2026-07-28, run #5, 183
+        records w/ genuine variance): optimize_confidence.py --from-db fits
+        signals against judge grounding_norm. Best ρ=0.154 (current weights
+        0.133; hard-strata-only 0.169 n.s.; concentration ρ=−0.21) vs the
+        ≥0.60 adoption gate. The 9.1 negative result is UPGRADED: with a real
+        gradient, inference-time signals still can't predict grounding.
+        Weights unchanged (0.35/0.65/0.0); composite's role is escalation
+        ROUTING, judge provides grounding assurance, not_found stays the
+        calibrated primitive. Full analysis:
+        docs/confidence_calibration_findings.md (B.2 addendum);
+        eval/results/judge_grounding_fit.json. run_library_eval now persists
+        confidence components per result for future fits.
       - Local dev DB migrated 2026-07-28 (note: postgres-owned tables need
         sudo -u postgres psql regulation_rag < scripts/<file>.sql — stdin
         redirect, NOT -f; the postgres OS user can't read /home/bradhinkel).

@@ -68,3 +68,43 @@ A meaningful confidence *gradient* would require quality variance to predict —
 e.g., a harder/adversarial question mix, or a different target (answer
 completeness vs. a reference) — plus a robust judge (multi-sample or stronger
 model). Platt scaling (plan Task 3.5) is moot until a predictive signal exists.
+
+---
+
+## Phase 10 B.2 addendum (2026-07-28): the revisit — precondition met, gate still fails
+
+Phase 9.1's caveat was that calibration could not be evaluated on a
+zero-variance distribution. Phase 10 removed that caveat: the eval library now
+carries a genuine grounding gradient (48-question calibration batch across
+three hardness axes + the adversarial stratum; library-wide judge
+grounding_std 0.123, hard-strata std 0.170, scores spread across 3/4/5 —
+run #5, 183 usable records, Sonnet judge).
+
+`optimize_confidence.py --from-db --runs 5` (target = unified judge
+grounding_norm, the Part A/B rubric):
+
+| composite | Spearman ρ | p |
+|---|---|---|
+| fit optimum (0.80 / 0.20 / 0.00) | 0.154 | 0.037 |
+| current production (0.35 / 0.65 / 0.00) | 0.133 | 0.074 |
+| fit optimum, hard strata only (n=77) | 0.169 | 0.142 |
+
+Individual signals: retrieval_score ρ=0.14; citation_coverage ρ=0.08;
+retrieval_concentration ρ=−0.21 (again *negatively* correlated — the 9.1
+weight-0 decision stands).
+
+**Conclusion — the 9.1 negative result is upgraded, not overturned.** With a
+real gradient to predict, no inference-time signal (nor any convex weighting
+of the three) predicts judge grounding: the ceiling is ρ≈0.15 against the
+≥0.60 adoption gate. The B.6 conditional metric is now *evaluated and failed*
+rather than "not yet applicable."
+
+**Decisions:**
+- Production weights unchanged (0.35 / 0.65 / 0.00); concentration stays a
+  weight-0 diagnostic.
+- The deterministic composite's role is **escalation routing** (Part B band),
+  not quality prediction. Grounding assurance comes from the judge on
+  escalated queries — the architecture validated by the 100% system-catch
+  gate — and `not_found` remains the calibrated confidence primitive.
+- Tier "ordering OK" in the fit output is weak evidence here (only two tiers
+  materialize; high 0.978 vs medium 0.939) and does not offset the ρ failure.
