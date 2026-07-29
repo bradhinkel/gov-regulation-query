@@ -46,6 +46,12 @@ export default function ResultView({
   const tier = conf?.tier ?? "medium";
   const confLabel = CONF_LABEL[tier] ?? "Confidence";
   const fresh = formatShortMonth(latestCitationDate(data.citations));
+  const sourceCount = data.citations.length + (data.fr_documents?.length ?? 0);
+  const fetchedTime = data.fetched_at
+    ? new Date(data.fetched_at).toLocaleString("en-US", {
+        month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+      })
+    : null;
 
   const titleOptions = [
     { value: "", label: "All titles" },
@@ -89,13 +95,22 @@ export default function ResultView({
               <Ico name="clock" />Change comparison
             </span>
           )}
+          {data.forward_looking && (
+            <span
+              className="trust-chip live"
+              title="This answer includes live Federal Register results — proposed rules are not current law"
+            >
+              <span className="dot" />
+              Live · fetched {fetchedTime ?? "now"}
+            </span>
+          )}
           <button
             className="trust-chip grounded"
             onClick={flashRail}
-            title={`Jump to the ${data.citations.length} cited sections`}
+            title={`Jump to the ${sourceCount} cited sources`}
           >
             <Ico name="shieldcheck" />
-            Grounded in <b>{data.citations.length}</b> cited sections
+            Grounded in <b>{sourceCount}</b> cited {data.forward_looking ? "sources" : "sections"}
             <Ico name="chevron" className="jump" />
           </button>
           {fresh && (
@@ -126,6 +141,18 @@ export default function ResultView({
         </div>
       </div>
 
+      {data.forward_looking && (
+        <div className="nonbinding-banner no-print">
+          <Ico name="clock" />
+          <span>
+            <b>Not yet law.</b> This answer describes <b>proposed or pending</b> federal
+            rules from the Federal Register. Proposals can change or be withdrawn — do
+            not act on them as binding requirements. Current binding rules are the
+            codified CFR sections only.
+          </span>
+        </div>
+      )}
+
       <div className="result-grid">
         <section className="panel">
           <div className="panel-tabbar">
@@ -148,7 +175,7 @@ export default function ResultView({
             <Prose blocks={reg === "plain" ? plainBlocks : legalBlocks} />
           </div>
         </section>
-        <CitationsRail citations={data.citations} />
+        <CitationsRail citations={data.citations} frDocuments={data.fr_documents} />
       </div>
 
       {q?.judge_justification && (

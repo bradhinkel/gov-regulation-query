@@ -50,11 +50,12 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
         return f"event: {event}\ndata: {json.dumps(data)}\n\n"
 
     try:
-        # Step 0: Intent gate (Phase 8.5) — reject off-topic before spending
-        # tokens on retrieval or generation.
+        # Step 0: One multi-class intent call (Phase 10 Part C) — replaces the
+        # binary off-topic gate + the temporal regex, and discriminates the
+        # past/future "change language" collision in one place.
         yield sse("status", {"status": "classifying"})
-        is_regulatory = await rag_service.run_classify(request.query)
-        if not is_regulatory:
+        intent = await rag_service.run_classify_multi(request.query)
+        if intent == "off_topic":
             yield sse("off_topic", {"tier": "off_topic", "message": _OFF_TOPIC_MESSAGE})
             return
 
@@ -71,14 +72,21 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
             use_hyde=request.use_hyde,
         )
 
-        # Step 2: Generate. Temporal "what changed?" queries get a diff-oriented
-        # answer from current vs archived versions; if no section has recorded
-        # changes, fall back to a normal answer.
+        # Step 2: Generate by intent. temporal_past diffs current vs archived
+        # versions; forward_looking/blended scan the Federal Register for
+        # proposed and not-yet-codified rules. Every specialized path falls
+        # back to a normal codified answer when it has nothing to say.
         result = None
-        if rag_service.is_temporal(request.query):
+        if intent == "temporal_past":
             yield sse("status", {"status": "comparing"})
             result = await rag_service.run_temporal(
                 query=request.query, chunks=chunks, timing=timing,
+            )
+        elif intent in ("forward_looking", "blended"):
+            yield sse("status", {"status": "scanning"})
+            result = await rag_service.run_forward(
+                query=request.query, chunks=chunks, timing=timing,
+                blended=(intent == "blended"),
             )
 
         if result is None:
@@ -159,6 +167,9 @@ async def _sse_stream(request: QueryRequest) -> AsyncIterator[str]:
             "quality": quality,
             "security_downgrade": security_downgrade,
             "temporal": result.get("temporal", False),
+            "forward_looking": result.get("forward_looking", False),
+            "fr_documents": result.get("fr_documents"),
+            "fetched_at": result.get("fetched_at"),
             "created_at": saved["created_at"],
         }
 

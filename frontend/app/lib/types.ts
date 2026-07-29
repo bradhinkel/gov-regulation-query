@@ -34,6 +34,26 @@ export interface Quality {
   tier_overridden?: boolean;
 }
 
+// Phase 10 Part C — a Federal Register document cited by a forward-looking answer.
+export interface FRDocument {
+  source: string;
+  status: string; // proposed | comment-open | pending | final-not-yet-codified
+  doc_type?: string;
+  title?: string;
+  abstract?: string;
+  document_number?: string;
+  fr_citation?: string; // "91 FR 47162"
+  publication_date?: string;
+  comments_close_on?: string | null;
+  effective_on?: string | null;
+  rins?: string[];
+  docket_ids?: string[];
+  agencies?: string[];
+  cfr_references?: string[];
+  url?: string;
+  dockets?: { docket_id: string; url: string; docket_title?: string }[];
+}
+
 export interface QueryResult {
   id: string;
   query: string;
@@ -47,6 +67,9 @@ export interface QueryResult {
   quality?: Quality | null;
   security_downgrade?: boolean;
   temporal?: boolean;
+  forward_looking?: boolean;
+  fr_documents?: FRDocument[] | null;
+  fetched_at?: string | null;
   created_at: string;
 }
 

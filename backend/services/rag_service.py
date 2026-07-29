@@ -19,8 +19,12 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.query import retrieve, fetch_section_versions
-from src.generate import generate, classify_intent, is_temporal_query, generate_temporal
+from src.generate import (
+    generate, classify_intent, classify_intent_multi, is_temporal_query,
+    generate_temporal, generate_forward,
+)
 from src.escalation import escalation_reason, run_escalation
+from src.sources import fetch_forward_documents
 
 # Defaults driven by eval results (Phase 4 winner: top_k=10, sequential Haiku)
 _DEFAULT_SOURCE_SYSTEM = os.getenv("RAG_SOURCE_SYSTEM", "federal_regulations")
@@ -35,6 +39,49 @@ async def run_classify(query: str) -> bool:
     """
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, lambda: classify_intent(query))
+
+
+async def run_classify_multi(query: str) -> str:
+    """
+    Phase 10 Part C router: off_topic | codified | temporal_past |
+    forward_looking | blended. One Haiku call, replaces the binary
+    classifier + the Phase 9.4 temporal regex in the query path.
+    """
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, lambda: classify_intent_multi(query))
+
+
+async def run_forward(query: str, chunks: list, timing: dict,
+                      blended: bool = False) -> dict | None:
+    """
+    Phase 10 Part C: fetch live Federal Register documents and generate a
+    forward-looking (or blended) answer. Returns None when no matching
+    documents exist — the caller falls back to a codified answer.
+    """
+    # Affected CFR parts from the codified retrieval — the precision fallback
+    # when FR full-text search misses (aligns FR results with the citation
+    # space the corpus already identified as relevant).
+    cfr_parts: list[tuple[int, str]] = []
+    for c in chunks:
+        t, p = getattr(c, "title_number", None), getattr(c, "part_number", None)
+        if t and p and (t, p) not in cfr_parts:
+            cfr_parts.append((t, p))
+
+    loop = asyncio.get_event_loop()
+    payload = await loop.run_in_executor(
+        None, lambda: fetch_forward_documents(query, cfr_parts=cfr_parts))
+    if not payload["documents"]:
+        return None
+    gen = await loop.run_in_executor(
+        None, lambda: generate_forward(
+            query, payload, chunks=chunks if blended else None))
+    if gen is None:
+        return None
+    result = _to_result_dict(gen, timing)
+    result["forward_looking"] = True
+    result["fr_documents"] = payload["documents"]
+    result["fetched_at"] = payload["fetched_at"]
+    return result
 
 
 async def run_retrieve(

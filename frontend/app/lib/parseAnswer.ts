@@ -9,13 +9,17 @@ import type { Block } from "./types";
 
 // A CFR citation, including nested subsection parens like (a)(2)(i).
 const CFR = String.raw`\d+\s+CFR\s+§?\s*[\d.]+(?:\([a-zA-Z0-9]+\))*`;
-const CFR_PAREN_RE = new RegExp(String.raw`\(\s*(${CFR})\s*\)`, "g");
-// A quoted span immediately followed by a parenthesized CFR citation.
+// A Federal Register citation ("91 FR 47162") or docket ID — Part C
+// forward-looking answers cite these instead of CFR sections.
+const FR = String.raw`\d+\s+FR\s+\d+`;
+const CITE = String.raw`(?:${CFR}|${FR})`;
+const CFR_PAREN_RE = new RegExp(String.raw`\(\s*(${CITE})\s*\)`, "g");
+// A quoted span immediately followed by a parenthesized citation.
 const VERBATIM_RE = new RegExp(
-  String.raw`[“"]([^“”"]+)[”"]\s*\(\s*(${CFR})\s*\)`,
+  String.raw`[“"]([^“”"]+)[”"]\s*\(\s*(${CITE})\s*\)`,
   "g"
 );
-const TRAILING_CITE_RE = new RegExp(String.raw`\(\s*(${CFR})\s*\)\.?\s*$`);
+const TRAILING_CITE_RE = new RegExp(String.raw`\(\s*(${CITE})\s*\)\.?\s*$`);
 
 function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

@@ -55,7 +55,10 @@ def validate_query(query: str) -> str:
 # ── Output validation ────────────────────────────────────────────────────────
 
 # Generated regulatory answers should only ever cite official sources.
-ALLOWED_URL_DOMAINS = ("ecfr.gov", "cfr.gov", "govinfo.gov")
+# federalregister.gov + regulations.gov added in Phase 10 Part C — without
+# them every forward-looking answer would be auto-downgraded by this check.
+ALLOWED_URL_DOMAINS = ("ecfr.gov", "cfr.gov", "govinfo.gov",
+                       "federalregister.gov", "regulations.gov")
 
 _URL_RE = re.compile(r"https?://([^/\s)\"']+)", re.IGNORECASE)
 _CODE_BLOCK_RE = re.compile(r"```")

@@ -67,6 +67,9 @@ class QueryResponse(BaseModel):
     confidence: Optional[ConfidenceOut] = None
     quality: Optional[QualityOut] = None
     security_downgrade: bool = False
+    forward_looking: bool = False                 # Part C: answer includes proposed rules
+    fr_documents: Optional[list[dict]] = None     # Federal Register docs cited
+    fetched_at: Optional[str] = None              # live-source fetch timestamp
     created_at: str
 
 

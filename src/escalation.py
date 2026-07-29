@@ -65,14 +65,36 @@ def grounding_to_tier(grounding: int) -> str:
     return "low"
 
 
+class _FRDocChunk:
+    """Shim so judge._chunk_context can render Federal Register documents as
+    grounding context for forward-looking/blended answers (Part C)."""
+
+    def __init__(self, d: dict):
+        self.cfr_reference = d.get("fr_citation") or d.get("document_number") or "FR"
+        self.chunk_text = (
+            f"[status: {d.get('status')}] {d.get('title')}\n"
+            f"Comments close: {d.get('comments_close_on') or 'n/a'} | "
+            f"Effective: {d.get('effective_on') or 'n/a'} | "
+            f"Affects: {', '.join(d.get('cfr_references') or [])}\n"
+            f"{d.get('abstract') or ''}"
+        )
+
+
 def run_escalation(query: str, result: dict, chunks: list, reason: str) -> dict:
     """
     Judge one in-band answer inline. Returns the quality payload; the caller
     applies the tier override (judge wins) and the final security check.
+    Forward-looking/blended answers add their Federal Register documents to
+    the judge context and enforce the non-binding status-label rule.
     """
+    forward = bool(result.get("forward_looking"))
+    context = list(chunks)
+    if forward:
+        context += [_FRDocChunk(d) for d in result.get("fr_documents") or []]
     verdict = judge_grounding(
-        query, result["plain_english"], chunks,
+        query, result["plain_english"], context,
         legal_language=result.get("legal_language"),
+        forward_looking=forward,
     )
     deterministic_tier = (result.get("confidence") or {}).get("tier")
 

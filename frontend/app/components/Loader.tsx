@@ -2,7 +2,13 @@
 
 import { Ico } from "./Icons";
 
-type LoadStatus = "classifying" | "retrieving" | "comparing" | "generating" | "verifying";
+type LoadStatus =
+  | "classifying"
+  | "retrieving"
+  | "comparing"
+  | "scanning"
+  | "generating"
+  | "verifying";
 
 interface LoaderProps {
   query: string;
@@ -29,6 +35,11 @@ const BASE_STEPS: Step[] = [
     sub: "Diffing the active and archived editions",
   },
   {
+    key: "scanning",
+    label: "Scanning the Federal Register",
+    sub: "Finding proposed rules and upcoming changes",
+  },
+  {
     key: "generating",
     label: "Generating grounded answer",
     sub: "Synthesizing three registers with verbatim quotes",
@@ -41,11 +52,13 @@ const BASE_STEPS: Step[] = [
 ];
 
 export default function Loader({ query, status, temporal }: LoaderProps) {
-  // The temporal "compare" stage only appears for "what changed?" queries; the
-  // "verifying" stage only appears once the grounding judge actually escalates.
+  // Conditional stages appear only when their path actually runs: "comparing"
+  // for temporal queries, "scanning" for forward-looking ones, "verifying"
+  // once the grounding judge escalates.
   const steps = BASE_STEPS.filter(
     (s) =>
       (s.key !== "comparing" || temporal || status === "comparing") &&
+      (s.key !== "scanning" || status === "scanning") &&
       (s.key !== "verifying" || status === "verifying")
   );
   const activeIdx = Math.max(

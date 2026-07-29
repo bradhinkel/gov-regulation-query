@@ -111,6 +111,18 @@ def _parse_verdict(raw: str) -> dict:
             "justification": str(data.get("justification", "")).strip()}
 
 
+# Phase 10 Part C: appended to the rubric when judging forward-looking
+# answers. A proposed rule presented as binding is the critical failure mode.
+_FORWARD_CLAUSE = """
+
+This answer discusses PROPOSED or upcoming rules (Federal Register documents).
+Additional hard rule: every claim presenting proposed or pending content must
+carry an explicit non-binding status label (e.g. "PROPOSED", "comment period",
+"not yet in effect", "pending"). If ANY proposed-content claim reads as if it
+were current binding law — no status label — cap grounding at 2 and say so in
+the justification."""
+
+
 def judge_grounding(
     question: str,
     answer: str,
@@ -119,9 +131,11 @@ def judge_grounding(
     legal_language: str | None = None,
     reference: str | None = None,
     model: str | None = None,
+    forward_looking: bool = False,
 ) -> JudgeVerdict:
     """
     Judge one answer. `reference` present → offline mode (adds correctness).
+    `forward_looking` → enforce non-binding status labels (Part C).
     Never raises: a judge failure returns a verdict with error set and None
     scores; the caller decides fail-open vs fail-closed.
     """
@@ -137,6 +151,7 @@ def judge_grounding(
     else:
         sections.append("No ground-truth reference is available; set correctness to null.")
 
+    system = _JUDGE_SYSTEM + (_FORWARD_CLAUSE if forward_looking else "")
     in_tok = out_tok = 0
     last_err = ""
     for attempt in range(2):
@@ -145,7 +160,7 @@ def judge_grounding(
                 model=model or JUDGE_MODEL,
                 max_tokens=JUDGE_MAX_TOKENS,
                 temperature=0,
-                system=_JUDGE_SYSTEM,
+                system=system,
                 # extra_body: installed SDK predates the typed output_config kwarg;
                 # the API accepts it regardless.
                 extra_body={"output_config": {"format": {"type": "json_schema",

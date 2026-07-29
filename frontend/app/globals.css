@@ -754,6 +754,37 @@ button.trust-chip.grounded:hover { border-color: var(--verified); background: rg
 .provenance b { color: var(--text-2); font-weight: 600; }
 .provenance a { color: var(--accent); }
 
+/* Phase 10 Part C — forward-looking treatment */
+.nonbinding-banner {
+  display: flex; gap: 11px; align-items: flex-start;
+  margin: 14px 0 4px; padding: 13px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-left-width: 4px;
+  border-radius: 10px; background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  font-size: 13px; line-height: 1.55; color: var(--text-2);
+}
+.nonbinding-banner svg { width: 16px; height: 16px; flex: none; color: var(--accent); margin-top: 2px; }
+.nonbinding-banner b { color: var(--text-1); }
+
+.trust-chip.live .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); animation: live-pulse 2s infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.status-badge {
+  display: inline-block; margin-left: 8px; padding: 1px 8px;
+  border-radius: 999px; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase; vertical-align: 1px;
+  border: 1px solid var(--border); color: var(--text-3);
+}
+.status-badge.s-comment-open { color: var(--verified); border-color: color-mix(in srgb, var(--verified) 55%, var(--border)); }
+.status-badge.s-proposed, .status-badge.s-pending { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+.status-badge.s-final-not-yet-codified { color: var(--text-2); }
+
 /* Phase 10 Part B — thumbs feedback under the answer */
 .feedback-row {
   display: flex; gap: 10px; align-items: center;

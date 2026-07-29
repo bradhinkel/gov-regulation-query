@@ -1,13 +1,21 @@
 "use client";
 
-import type { Citation } from "../lib/types";
+import type { Citation, FRDocument } from "../lib/types";
 import { ecfrUrl, formatAgency, formatLongDate, titleLabel } from "../lib/cfr";
 import { Ico } from "./Icons";
 
 interface CitationsRailProps {
   citations: Citation[];
+  frDocuments?: FRDocument[] | null;
   compact?: boolean;
 }
+
+const STATUS_LABEL: Record<string, string> = {
+  proposed: "Proposed",
+  "comment-open": "Comment period open",
+  pending: "Pending final action",
+  "final-not-yet-codified": "Final — not yet codified",
+};
 
 interface Group {
   titleNum?: number;
@@ -15,7 +23,9 @@ interface Group {
   items: { c: Citation; n: number }[];
 }
 
-export default function CitationsRail({ citations, compact = true }: CitationsRailProps) {
+export default function CitationsRail({ citations, frDocuments, compact = true }: CitationsRailProps) {
+  const frDocs = frDocuments ?? [];
+  const total = citations.length + frDocs.length;
   // Group by CFR title, preserving order of first appearance; number globally.
   const groups: Group[] = [];
   const seen = new Map<number, Group>();
@@ -35,7 +45,8 @@ export default function CitationsRail({ citations, compact = true }: CitationsRa
       <div className="rail-head">
         <span className="rail-title">
           <Ico name="shieldcheck" style={{ width: 16, height: 16, color: "var(--verified)" }} />
-          Grounded sections <span className="count">{citations.length}</span>
+          {frDocs.length > 0 ? "Cited sources" : "Grounded sections"}{" "}
+          <span className="count">{total}</span>
         </span>
         <a
           href="https://www.ecfr.gov"
@@ -48,9 +59,17 @@ export default function CitationsRail({ citations, compact = true }: CitationsRa
         </a>
       </div>
       <div className="rail-sub">
-        Every claim in the answer traces to one of these <b>{citations.length}</b> sections.
+        Every claim in the answer traces to one of these <b>{total}</b> sources.
       </div>
       <div className="rail-list">
+        {frDocs.length > 0 && (
+          <div>
+            <div className="title-group-label">Federal Register — proposed &amp; upcoming</div>
+            {frDocs.map((d, i) => (
+              <FRDocCard key={d.document_number ?? i} d={d} n={citations.length + i + 1} />
+            ))}
+          </div>
+        )}
         {groups.map((g, gi) => (
           <div key={gi}>
             <div className="title-group-label">{g.name}</div>
@@ -61,6 +80,54 @@ export default function CitationsRail({ citations, compact = true }: CitationsRa
         ))}
       </div>
     </aside>
+  );
+}
+
+function FRDocCard({ d, n }: { d: FRDocument; n: number }) {
+  const status = STATUS_LABEL[d.status] ?? d.status;
+  const closes = formatLongDate(d.comments_close_on ?? undefined);
+  const effective = formatLongDate(d.effective_on ?? undefined);
+  const docket = d.dockets?.[0];
+  return (
+    <a
+      className="cite-card fr-card"
+      href={d.url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span className="ext">
+        <Ico name="ext" />
+      </span>
+      <div className="cc-top">
+        <span className="cite-num">{n}</span>
+        <div className="cite-main">
+          <div className="cite-ref-line">
+            {d.fr_citation ?? d.document_number}
+            <span className={"status-badge s-" + d.status}>{status}</span>
+          </div>
+          {d.title && <div className="cite-heading">{d.title}</div>}
+          {d.agencies?.length ? <div className="cite-agency"><span className="ag">{d.agencies[0]}</span></div> : null}
+          {(closes || effective || d.cfr_references?.length) && (
+            <div className="cite-fresh">
+              {closes && <>comments close {closes}</>}
+              {!closes && effective && <>effective {effective}</>}
+              {d.cfr_references?.length ? (
+                <>
+                  {closes || effective ? " · " : ""}
+                  affects {d.cfr_references.slice(0, 2).join(", ")}
+                </>
+              ) : null}
+            </div>
+          )}
+          {docket && (
+            <div className="cite-agency">
+              docket{" "}
+              <span className="ag">{docket.docket_id}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </a>
   );
 }
 

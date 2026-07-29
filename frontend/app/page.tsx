@@ -18,6 +18,7 @@ type Status =
   | "classifying"
   | "retrieving"
   | "comparing"
+  | "scanning"
   | "generating"
   | "verifying"
   | "done"
@@ -28,6 +29,7 @@ const LOADING_STATUSES: Status[] = [
   "classifying",
   "retrieving",
   "comparing",
+  "scanning",
   "generating",
   "verifying",
 ];
@@ -148,7 +150,15 @@ export default function Home() {
     body = (
       <Loader
         query={lastQuery}
-        status={status as "classifying" | "retrieving" | "comparing" | "generating" | "verifying"}
+        status={
+          status as
+            | "classifying"
+            | "retrieving"
+            | "comparing"
+            | "scanning"
+            | "generating"
+            | "verifying"
+        }
         temporal={temporal}
       />
     );
