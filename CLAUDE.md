@@ -219,8 +219,8 @@ python eval/src/run_library_eval.py --scope full   # monthly full run
         adversarial stratum (std 0.185, n=29) — thin; grow the adversarial
         quota first if calibration is wanted. The 9.1 no-spurious-reweighting
         decision stands; not_found remains the confidence primitive.
-      - PENDING: local dev DB migration needs superuser (queries table is
-        postgres-owned): sudo -u postgres psql regulation_rag <
-        scripts/migrate_part_b.sql   (stdin redirect, NOT -f: the postgres OS
-        user can't read files under /home/bradhinkel). Until then the local
-        backend can't persist queries (droplet unaffected).
+      - Local dev DB migrated 2026-07-28 (note: postgres-owned tables need
+        sudo -u postgres psql regulation_rag < scripts/<file>.sql — stdin
+        redirect, NOT -f; the postgres OS user can't read /home/bradhinkel).
+        Local end-to-end verified: query persisted with Part B columns,
+        /feedback OK, /health quality block present.
